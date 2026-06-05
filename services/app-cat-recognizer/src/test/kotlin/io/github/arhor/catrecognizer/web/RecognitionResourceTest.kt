@@ -2,6 +2,7 @@ package io.github.arhor.catrecognizer.web
 
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
+import io.github.arhor.catrecognizer.recognition.model.RecognitionError
 import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
 import io.github.arhor.catrecognizer.detection.CatDetector
 import io.github.arhor.catrecognizer.detection.StubCatDetector
@@ -66,6 +67,42 @@ open class RecognitionResourceTest {
             .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
             .body("worker.consecutiveFailures", `is`(0))
             .body("worker.lastErrorCode", nullValue())
+    }
+
+    @Test
+    fun `GET latest returns failure payload with nested error details`() {
+        state.recordFailure(
+            RecognitionResult(
+                status = CatPresenceStatus.UNKNOWN,
+                observedAt = Instant.parse("2026-06-05T12:01:00Z"),
+                confidence = null,
+                detectorMode = "stub",
+                source = "snapshot",
+                error = RecognitionError(
+                    code = "FRAME_FETCH_FAILED",
+                    message = "camera unavailable",
+                    retriable = true,
+                ),
+            ),
+        )
+
+        given()
+            .`when`().get("/api/recognition/latest")
+            .then()
+            .statusCode(200)
+            .body("status", `is`("UNKNOWN"))
+            .body("observedAt", `is`("2026-06-05T12:01:00Z"))
+            .body("confidence", nullValue())
+            .body("detectorMode", `is`("stub"))
+            .body("source", `is`("snapshot"))
+            .body("error.code", `is`("FRAME_FETCH_FAILED"))
+            .body("error.message", `is`("camera unavailable"))
+            .body("error.retriable", `is`(true))
+            .body("worker.enabled", `is`(false))
+            .body("worker.running", `is`(false))
+            .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
+            .body("worker.consecutiveFailures", `is`(1))
+            .body("worker.lastErrorCode", `is`("FRAME_FETCH_FAILED"))
     }
 
     @Test
