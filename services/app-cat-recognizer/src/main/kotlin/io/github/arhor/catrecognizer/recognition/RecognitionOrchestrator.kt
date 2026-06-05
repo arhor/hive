@@ -13,6 +13,7 @@ import io.github.arhor.catrecognizer.state.LatestRecognitionState
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import java.time.Instant
+import java.util.Locale
 
 @ApplicationScoped
 class RecognitionOrchestrator @Inject constructor(
@@ -100,5 +101,5 @@ class RecognitionOrchestrator @Inject constructor(
     }
 
     private fun detectorMode(): String =
-        config.detection().mode().name.lowercase()
+        config.detection().mode().name.lowercase(Locale.ROOT)
 }

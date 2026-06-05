@@ -13,6 +13,7 @@ import java.time.Duration
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 class RecognitionOrchestratorTest {
@@ -67,6 +68,7 @@ class RecognitionOrchestratorTest {
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("FRAME_FETCH_FAILED", result.error?.code)
         assertEquals("stub", result.detectorMode)
+        assertNotEquals(sampleFrame.observedAt, result.observedAt)
         assertEquals(result, snapshot.latestResult)
         assertEquals(1, snapshot.consecutiveFailures)
         assertEquals("FRAME_FETCH_FAILED", snapshot.lastError?.code)
