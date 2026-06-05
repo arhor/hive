@@ -7,14 +7,20 @@ import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.recognition.model.RecognitionError
 import io.github.arhor.catrecognizer.recognition.model.RecognitionResult
 import java.time.Instant
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class CoreModelShapeTest {
 
+    private val json = Json
+
     @Test
-    fun `frame payload compares byte content and accepts nullable content type`() {
+    fun `frame payload compares byte content`() {
         val left = FramePayload(
             bytes = byteArrayOf(1, 2, 3),
             contentType = null,
@@ -25,7 +31,7 @@ class CoreModelShapeTest {
             contentType = null,
             observedAt = Instant.parse("2026-06-05T12:00:00Z"),
         )
-        val different = FramePayload(
+        val differentBytes = FramePayload(
             bytes = byteArrayOf(1, 2, 4),
             contentType = null,
             observedAt = Instant.parse("2026-06-05T12:00:00Z"),
@@ -33,28 +39,61 @@ class CoreModelShapeTest {
 
         assertEquals(left, right)
         assertEquals(left.hashCode(), right.hashCode())
-        assertNotEquals(left, different)
+        assertNotEquals(left, differentBytes)
     }
 
     @Test
-    fun `detection outcomes accept nullable confidence`() {
+    fun `frame payload changes when content type differs`() {
+        val base = FramePayload(
+            bytes = byteArrayOf(1, 2, 3),
+            contentType = null,
+            observedAt = Instant.parse("2026-06-05T12:00:00Z"),
+        )
+        val withContentType = base.copy(contentType = "image/jpeg")
+
+        assertNotEquals(base, withContentType)
+    }
+
+    @Test
+    fun `frame payload changes when observed at differs`() {
+        val base = FramePayload(
+            bytes = byteArrayOf(1, 2, 3),
+            contentType = null,
+            observedAt = Instant.parse("2026-06-05T12:00:00Z"),
+        )
+        val observedLater = base.copy(observedAt = Instant.parse("2026-06-05T12:00:01Z"))
+
+        assertNotEquals(base, observedLater)
+    }
+
+    @Test
+    fun `detection outcomes preserve nullable confidence through serialization`() {
+        val present = DetectionOutcome.Present(confidence = null)
+        val absent = DetectionOutcome.Absent(confidence = null)
+
         assertEquals(
-            DetectionOutcome.Present(confidence = null),
-            DetectionOutcome.Present(confidence = null),
+            present,
+            json.decodeFromString(
+                DetectionOutcome.serializer(),
+                json.encodeToString(DetectionOutcome.serializer(), present),
+            ),
         )
         assertEquals(
-            DetectionOutcome.Absent(confidence = null),
-            DetectionOutcome.Absent(confidence = null),
+            absent,
+            json.decodeFromString(
+                DetectionOutcome.serializer(),
+                json.encodeToString(DetectionOutcome.serializer(), absent),
+            ),
         )
     }
 
     @Test
-    fun `recognition result uses detector mode string`() {
+    fun `recognition result round trips through json with nullable fields`() {
         val result = RecognitionResult(
             status = CatPresenceStatus.UNKNOWN,
             observedAt = Instant.parse("2026-06-05T12:00:00Z"),
             confidence = null,
-            detectorMode = DetectionMode.STUB.name,
+            detectorMode = "stub",
             source = "camera",
             error = RecognitionError(
                 code = "stub",
@@ -63,6 +102,10 @@ class CoreModelShapeTest {
             ),
         )
 
-        assertEquals(DetectionMode.STUB.name, result.detectorMode)
+        val encoded = json.encodeToString(result)
+        val decoded = json.decodeFromString<RecognitionResult>(encoded)
+
+        assertEquals(result, decoded)
+        assertTrue(encoded.contains("\"detectorMode\":\"stub\""))
     }
 }
