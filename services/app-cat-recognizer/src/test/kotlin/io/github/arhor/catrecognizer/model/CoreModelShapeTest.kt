@@ -1,6 +1,5 @@
 package io.github.arhor.catrecognizer.model
 
-import io.github.arhor.catrecognizer.detection.DetectionMode
 import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
 import io.github.arhor.catrecognizer.frame.model.FramePayload
 import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
@@ -70,6 +69,7 @@ class CoreModelShapeTest {
     fun `detection outcomes preserve nullable confidence through serialization`() {
         val present = DetectionOutcome.Present(confidence = null)
         val absent = DetectionOutcome.Absent(confidence = null)
+        val unknown = DetectionOutcome.Unknown(reason = "stub detector")
 
         assertEquals(
             present,
@@ -83,6 +83,13 @@ class CoreModelShapeTest {
             json.decodeFromString(
                 DetectionOutcome.serializer(),
                 json.encodeToString(DetectionOutcome.serializer(), absent),
+            ),
+        )
+        assertEquals(
+            unknown,
+            json.decodeFromString(
+                DetectionOutcome.serializer(),
+                json.encodeToString(DetectionOutcome.serializer(), unknown),
             ),
         )
     }

@@ -23,6 +23,9 @@ class RecognizerConfigBindingTest {
 
         assertEquals(DetectionMode.STUB, config.detection().mode())
 
+        assertEquals(Duration.ofSeconds(30), config.state().staleAfter())
+        assertTrue(config.debug().manualTriggerEnabled())
+
         assertEquals(Duration.ofSeconds(2), config.camera().connectTimeout())
         assertEquals(Duration.ofSeconds(5), config.camera().readTimeout())
     }
