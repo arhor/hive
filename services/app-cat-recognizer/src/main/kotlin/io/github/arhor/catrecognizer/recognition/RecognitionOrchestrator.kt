@@ -23,6 +23,7 @@ class RecognitionOrchestrator @Inject constructor(
 
     fun runRecognition(): RecognitionResult {
         return try {
+            val detectorMode = detectorMode()
             val frame = frameSource.fetchFrame()
             val outcome = detector.detect(frame)
             val result = when (outcome) {
@@ -30,7 +31,7 @@ class RecognitionOrchestrator @Inject constructor(
                     status = CatPresenceStatus.DETECTED,
                     observedAt = frame.observedAt,
                     confidence = outcome.confidence,
-                    detectorMode = config.detection().mode().name,
+                    detectorMode = detectorMode,
                     source = "snapshot",
                 )
 
@@ -38,7 +39,7 @@ class RecognitionOrchestrator @Inject constructor(
                     status = CatPresenceStatus.NOT_DETECTED,
                     observedAt = frame.observedAt,
                     confidence = outcome.confidence,
-                    detectorMode = config.detection().mode().name,
+                    detectorMode = detectorMode,
                     source = "snapshot",
                 )
 
@@ -46,7 +47,7 @@ class RecognitionOrchestrator @Inject constructor(
                     status = CatPresenceStatus.UNKNOWN,
                     observedAt = frame.observedAt,
                     confidence = null,
-                    detectorMode = config.detection().mode().name,
+                    detectorMode = detectorMode,
                     source = "snapshot",
                     error = RecognitionError(
                         code = "DETECTOR_UNKNOWN",
@@ -68,7 +69,7 @@ class RecognitionOrchestrator @Inject constructor(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = Instant.now(),
                 confidence = null,
-                detectorMode = config.detection().mode().name,
+                detectorMode = detectorMode(),
                 source = "snapshot",
                 error = RecognitionError(
                     code = error.code,
@@ -83,7 +84,7 @@ class RecognitionOrchestrator @Inject constructor(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = Instant.now(),
                 confidence = null,
-                detectorMode = config.detection().mode().name,
+                detectorMode = detectorMode(),
                 source = "snapshot",
                 error = RecognitionError(
                     code = "DETECTOR_FAILED",
@@ -95,4 +96,7 @@ class RecognitionOrchestrator @Inject constructor(
             result
         }
     }
+
+    private fun detectorMode(): String =
+        config.detection().mode().name.lowercase()
 }

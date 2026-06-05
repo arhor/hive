@@ -38,6 +38,7 @@ class RecognitionOrchestratorTest {
 
         assertEquals(CatPresenceStatus.DETECTED, result.status)
         assertEquals(0.9, result.confidence)
+        assertEquals("always_present", result.detectorMode)
         assertNull(result.error)
         assertEquals(result, snapshot.latestResult)
         assertEquals(0, snapshot.consecutiveFailures)
@@ -65,6 +66,7 @@ class RecognitionOrchestratorTest {
 
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("FRAME_FETCH_FAILED", result.error?.code)
+        assertEquals("stub", result.detectorMode)
         assertEquals(result, snapshot.latestResult)
         assertEquals(1, snapshot.consecutiveFailures)
         assertEquals("FRAME_FETCH_FAILED", snapshot.lastError?.code)
@@ -81,9 +83,14 @@ class RecognitionOrchestratorTest {
         )
 
         val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
 
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("DETECTOR_FAILED", result.error?.code)
+        assertEquals("stub", result.detectorMode)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(1, snapshot.consecutiveFailures)
+        assertEquals("DETECTOR_FAILED", snapshot.lastError?.code)
     }
 
     private fun config(mode: DetectionMode): RecognizerConfig =
