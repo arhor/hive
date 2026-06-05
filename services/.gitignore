@@ -1,0 +1,74 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin / Java
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Quarkus
+.quarkus/
+quarkus.log
+target/
+
+# Native image / Quarkus native runners
+*-runner
+*-runner.exe
+*.build_artifacts.txt
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.local
+application-local.properties
+application-local.yml
+application-local.yaml
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker / Compose local overrides
+docker-compose.override.yml
+
+# Test / coverage reports
+coverage/
+htmlReport/
+test-results/
+**/test-results/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
