@@ -2,8 +2,9 @@ package io.github.arhor.catrecognizer.web
 
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.recognition.RecognitionOrchestrator
+import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.recognition.model.InstantIso8601Serializer
-import io.github.arhor.catrecognizer.recognition.model.RecognitionResult
+import io.github.arhor.catrecognizer.recognition.model.RecognitionError
 import io.github.arhor.catrecognizer.state.LatestRecognitionState
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
@@ -27,8 +28,14 @@ class RecognitionResource @Inject constructor(
     @Path("/latest")
     fun latest(): RecognitionLatestResponse {
         val snapshot = state.snapshot()
+        val result = snapshot.latestResult
         return RecognitionLatestResponse(
-            result = snapshot.latestResult,
+            status = result?.status,
+            observedAt = result?.observedAt,
+            confidence = result?.confidence,
+            detectorMode = result?.detectorMode,
+            source = result?.source,
+            error = result?.error,
             worker = WorkerSummary(
                 enabled = snapshot.workerEnabled,
                 running = snapshot.workerRunning,
@@ -52,7 +59,13 @@ class RecognitionResource @Inject constructor(
 
 @Serializable
 data class RecognitionLatestResponse(
-    val result: RecognitionResult?,
+    val status: CatPresenceStatus?,
+    @Serializable(with = InstantIso8601Serializer::class)
+    val observedAt: Instant?,
+    val confidence: Double?,
+    val detectorMode: String?,
+    val source: String?,
+    val error: RecognitionError?,
     val worker: WorkerSummary,
 )
 

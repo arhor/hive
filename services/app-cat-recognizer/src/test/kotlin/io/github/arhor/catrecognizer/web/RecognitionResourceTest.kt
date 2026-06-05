@@ -1,19 +1,24 @@
 package io.github.arhor.catrecognizer.web
 
 import io.github.arhor.catrecognizer.config.RecognizerConfig
+import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
-import io.github.arhor.catrecognizer.detection.StubCatDetector
 import io.github.arhor.catrecognizer.detection.CatDetector
+import io.github.arhor.catrecognizer.detection.StubCatDetector
 import io.github.arhor.catrecognizer.frame.FrameSource
 import io.github.arhor.catrecognizer.frame.SnapshotFrameSource
 import io.github.arhor.catrecognizer.frame.model.FramePayload
+import io.github.arhor.catrecognizer.recognition.model.RecognitionResult
+import io.github.arhor.catrecognizer.state.LatestRecognitionState
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.QuarkusTestProfile
 import io.quarkus.test.junit.TestProfile
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.Matchers.closeTo
+import org.hamcrest.Matchers.hasKey
+import org.hamcrest.Matchers.nullValue
+import org.hamcrest.Matchers.not
 import jakarta.inject.Inject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,19 +31,41 @@ class RecognitionResourceTest {
     @Inject
     lateinit var config: RecognizerConfig
 
+    @Inject
+    lateinit var state: LatestRecognitionState
+
     @BeforeEach
     fun setUp() {
         installRecognitionMocks(config)
+        state.recordSuccess(
+            RecognitionResult(
+                status = CatPresenceStatus.DETECTED,
+                observedAt = Instant.parse("2026-06-05T12:00:00Z"),
+                confidence = 0.91,
+                detectorMode = "stub",
+                source = "snapshot",
+            ),
+        )
     }
 
     @Test
-    fun `GET latest returns worker summary`() {
+    fun `GET latest returns flattened recognition payload`() {
         given()
             .`when`().get("/api/recognition/latest")
             .then()
             .statusCode(200)
+            .body("$", not(hasKey("result")))
+            .body("status", `is`("DETECTED"))
+            .body("observedAt", `is`("2026-06-05T12:00:00Z"))
+            .body("confidence", `is`(0.91f))
+            .body("detectorMode", `is`("stub"))
+            .body("source", `is`("snapshot"))
+            .body("error", nullValue())
             .body("worker.enabled", `is`(false))
             .body("worker.running", `is`(false))
+            .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
+            .body("worker.consecutiveFailures", `is`(0))
+            .body("worker.lastErrorCode", nullValue())
     }
 
     @Test
@@ -48,8 +75,11 @@ class RecognitionResourceTest {
             .then()
             .statusCode(200)
             .body("status", `is`("DETECTED"))
+            .body("observedAt", `is`("2026-06-05T12:00:00Z"))
             .body("confidence", `is`(0.91f))
             .body("detectorMode", `is`("stub"))
+            .body("source", `is`("snapshot"))
+            .body("error", nullValue())
     }
 
     @Test
@@ -59,6 +89,8 @@ class RecognitionResourceTest {
             .then()
             .statusCode(200)
             .body("workerEnabled", `is`(false))
+            .body("pollInterval", `is`("5s"))
+            .body("failureBackoff", `is`("30s"))
             .body("detectionMode", `is`("stub"))
             .body("snapshotConfigured", `is`(true))
     }

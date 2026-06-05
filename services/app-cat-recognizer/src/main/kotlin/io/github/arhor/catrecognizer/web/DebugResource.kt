@@ -7,6 +7,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import kotlinx.serialization.Serializable
+import java.time.Duration
 import java.util.Locale
 
 @Path("/api/debug")
@@ -20,8 +21,8 @@ class DebugResource @Inject constructor(
     fun config(): RuntimeConfigSummary =
         RuntimeConfigSummary(
             workerEnabled = config.worker().enabled(),
-            pollInterval = config.worker().pollInterval().toString(),
-            failureBackoff = config.worker().failureBackoff().toString(),
+            pollInterval = config.worker().pollInterval().toFriendlyString(),
+            failureBackoff = config.worker().failureBackoff().toFriendlyString(),
             detectionMode = config.detection().mode().name.lowercase(Locale.ROOT),
             snapshotConfigured = config.camera().snapshotUrl().isNotBlank(),
         )
@@ -35,3 +36,5 @@ data class RuntimeConfigSummary(
     val detectionMode: String,
     val snapshotConfigured: Boolean,
 )
+
+private fun Duration.toFriendlyString(): String = "${toSeconds()}s"
