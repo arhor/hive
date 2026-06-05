@@ -45,6 +45,14 @@ class SnapshotFrameSource @Inject constructor(
                     retriable = true,
                 )
             }
+        } catch (exception: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw FrameSourceError(
+                code = "FRAME_FETCH_FAILED",
+                message = "Failed to fetch snapshot from $snapshotUrl",
+                retriable = true,
+                cause = exception,
+            )
         } catch (exception: FrameSourceError) {
             throw exception
         } catch (exception: Exception) {

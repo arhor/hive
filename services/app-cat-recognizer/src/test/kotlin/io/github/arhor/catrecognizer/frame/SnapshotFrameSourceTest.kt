@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class SnapshotFrameSourceTest {
 
@@ -33,7 +34,7 @@ class SnapshotFrameSourceTest {
             start()
         }
 
-        val frameSource = SnapshotFrameSource(config("http://localhost:${server!!.address.port}/snapshot"))
+        val frameSource = SnapshotFrameSource(config("http://127.0.0.1:${server!!.address.port}/snapshot"))
 
         val frame = frameSource.fetchFrame()
 
@@ -51,6 +52,48 @@ class SnapshotFrameSourceTest {
 
         assertEquals("FRAME_FETCH_FAILED", error.code)
         assertEquals(true, error.retriable)
+    }
+
+    @Test
+    fun `maps non-2xx snapshot responses to retriable frame source errors`() {
+        server = HttpServer.create(InetSocketAddress(0), 0).apply {
+            createContext("/snapshot") { exchange ->
+                exchange.sendResponseHeaders(404, -1)
+                exchange.close()
+            }
+            start()
+        }
+
+        val frameSource = SnapshotFrameSource(config("http://127.0.0.1:${server!!.address.port}/snapshot"))
+
+        val error = assertFailsWith<FrameSourceError> {
+            frameSource.fetchFrame()
+        }
+
+        assertEquals("FRAME_FETCH_FAILED", error.code)
+        assertEquals(true, error.retriable)
+        assertTrue(error.message.contains("HTTP 404"))
+    }
+
+    @Test
+    fun `restores interrupt flag when snapshot fetch is interrupted`() {
+        val frameSource = SnapshotFrameSource(config("http://127.0.0.1:1/snapshot"))
+
+        try {
+            Thread.currentThread().interrupt()
+
+            val error = assertFailsWith<FrameSourceError> {
+                frameSource.fetchFrame()
+            }
+
+            assertEquals("FRAME_FETCH_FAILED", error.code)
+            assertEquals(true, error.retriable)
+            assertTrue(error.message.contains("127.0.0.1:1/snapshot"))
+            assertTrue(Thread.currentThread().isInterrupted)
+            assertTrue(error.cause is InterruptedException)
+        } finally {
+            Thread.interrupted()
+        }
     }
 
     private fun config(snapshotUrl: String): RecognizerConfig =
