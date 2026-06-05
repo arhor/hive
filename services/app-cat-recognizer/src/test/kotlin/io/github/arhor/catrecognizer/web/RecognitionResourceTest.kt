@@ -26,7 +26,7 @@ import java.time.Instant
 
 @QuarkusTest
 @TestProfile(RecognitionResourceTest.Profile::class)
-class RecognitionResourceTest {
+open class RecognitionResourceTest {
 
     @Inject
     lateinit var config: RecognizerConfig
