@@ -1,2 +1,28 @@
 .worktrees/
 .env
+
+# Home Assistant runtime / generated files
+homeassistant/config/.HA_VERSION
+homeassistant/config/.cache/
+homeassistant/config/.ha_run.lock
+homeassistant/config/.storage/
+
+# Logs
+homeassistant/config/*.log
+homeassistant/config/*.log.*
+
+# Database
+homeassistant/config/home-assistant_v2.db*
+homeassistant/config/*.db
+homeassistant/config/*.db-*
+homeassistant/config/*.sqlite
+homeassistant/config/*.sqlite-*
+
+# Secrets
+homeassistant/config/secrets.yaml
+
+# Optional generated/runtime folders
+homeassistant/config/deps/
+homeassistant/config/tts/
+homeassistant/config/backups/
+homeassistant/config/*.tar
