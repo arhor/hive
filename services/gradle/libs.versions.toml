@@ -1,0 +1,14 @@
+# Catalog of libraries/plugins and their versions for the build to use
+# See https://docs.gradle.org/current/userguide/platforms.html for more information
+[versions]
+kotlin = "2.3.21"
+quarkus = "3.36.1"
+
+[libraries]
+quarkus-platform = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }
+
+[plugins]
+kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+quarkus = { id = "io.quarkus", version.ref = "quarkus" }
