@@ -4,6 +4,7 @@ import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.detection.CatDetector
 import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
 import io.github.arhor.catrecognizer.frame.FrameSource
+import io.github.arhor.catrecognizer.frame.model.FramePayload
 import io.github.arhor.catrecognizer.frame.model.FrameSourceError
 import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.recognition.model.RecognitionError
@@ -22,9 +23,10 @@ class RecognitionOrchestrator @Inject constructor(
 ) {
 
     fun runRecognition(): RecognitionResult {
+        var frame: FramePayload? = null
         return try {
             val detectorMode = detectorMode()
-            val frame = frameSource.fetchFrame()
+            frame = frameSource.fetchFrame()
             val outcome = detector.detect(frame)
             val result = when (outcome) {
                 is DetectionOutcome.Present -> RecognitionResult(
@@ -82,7 +84,7 @@ class RecognitionOrchestrator @Inject constructor(
         } catch (error: Exception) {
             val result = RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
-                observedAt = Instant.now(),
+                observedAt = frame?.observedAt ?: Instant.now(),
                 confidence = null,
                 detectorMode = detectorMode(),
                 source = "snapshot",

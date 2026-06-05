@@ -88,6 +88,7 @@ class RecognitionOrchestratorTest {
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("DETECTOR_FAILED", result.error?.code)
         assertEquals("stub", result.detectorMode)
+        assertEquals(sampleFrame.observedAt, result.observedAt)
         assertEquals(result, snapshot.latestResult)
         assertEquals(1, snapshot.consecutiveFailures)
         assertEquals("DETECTOR_FAILED", snapshot.lastError?.code)
