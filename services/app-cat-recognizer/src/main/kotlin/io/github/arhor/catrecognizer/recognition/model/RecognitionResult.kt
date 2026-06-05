@@ -1,6 +1,5 @@
 package io.github.arhor.catrecognizer.recognition.model
 
-import io.github.arhor.catrecognizer.detection.DetectionMode
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -15,7 +14,7 @@ data class RecognitionResult(
     @Serializable(with = InstantIso8601Serializer::class)
     val observedAt: Instant,
     val confidence: Double? = null,
-    val detectorMode: DetectionMode,
+    val detectorMode: String,
     val source: String,
     val error: RecognitionError? = null,
 )

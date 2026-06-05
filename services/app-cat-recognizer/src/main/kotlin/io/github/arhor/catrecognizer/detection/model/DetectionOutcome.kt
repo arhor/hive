@@ -7,12 +7,12 @@ sealed interface DetectionOutcome {
 
     @Serializable
     data class Present(
-        val confidence: Double,
+        val confidence: Double?,
     ) : DetectionOutcome
 
     @Serializable
     data class Absent(
-        val confidence: Double,
+        val confidence: Double?,
     ) : DetectionOutcome
 
     @Serializable
