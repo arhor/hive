@@ -89,8 +89,8 @@ open class RecognitionResourceTest {
             .then()
             .statusCode(200)
             .body("workerEnabled", `is`(false))
-            .body("pollInterval", `is`("5s"))
-            .body("failureBackoff", `is`("30s"))
+            .body("pollInterval", `is`("500ms"))
+            .body("failureBackoff", `is`("1500ms"))
             .body("detectionMode", `is`("stub"))
             .body("snapshotConfigured", `is`(true))
     }
@@ -98,6 +98,8 @@ open class RecognitionResourceTest {
     class Profile : QuarkusTestProfile {
         override fun getConfigOverrides(): Map<String, String> = mapOf(
             "cat-recognizer.worker.enabled" to "false",
+            "cat-recognizer.worker.poll-interval" to "500ms",
+            "cat-recognizer.worker.failure-backoff" to "1500ms",
             "cat-recognizer.debug.manual-trigger-enabled" to "true",
         )
     }

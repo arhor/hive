@@ -37,4 +37,9 @@ data class RuntimeConfigSummary(
     val snapshotConfigured: Boolean,
 )
 
-private fun Duration.toFriendlyString(): String = "${toSeconds()}s"
+internal fun Duration.toFriendlyString(): String =
+    if (toNanosPart() == 0) {
+        "${seconds}s"
+    } else {
+        "${toMillis()}ms"
+    }
