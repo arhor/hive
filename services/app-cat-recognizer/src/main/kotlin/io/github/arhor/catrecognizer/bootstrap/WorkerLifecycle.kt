@@ -30,7 +30,23 @@ class WorkerLifecycle @Inject constructor(
         }
     }
 
+    internal var submitWorkerAction: (Runnable) -> Unit = { task ->
+        executor.submit(task)
+    }
+
+    internal var awaitWorkerTerminationAction: (Duration) -> Boolean = { timeout ->
+        executor.awaitTermination(timeout.toMillis(), TimeUnit.MILLISECONDS)
+    }
+
     fun onStart(@Observes event: StartupEvent) {
+        startWorker()
+    }
+
+    fun onShutdown(@Observes event: ShutdownEvent) {
+        stopWorker()
+    }
+
+    internal fun startWorker() {
         state.markWorkerEnabled(config.worker().enabled())
         if (!config.worker().enabled()) {
             state.markWorkerRunning(false)
@@ -42,14 +58,21 @@ class WorkerLifecycle @Inject constructor(
         }
 
         state.markWorkerRunning(true)
-        executor.submit { runLoop() }
+        try {
+            submitWorkerAction(Runnable { runLoop() })
+        } catch (error: RuntimeException) {
+            running.set(false)
+            state.markWorkerRunning(false)
+            throw error
+        }
     }
 
-    fun onShutdown(@Observes event: ShutdownEvent) {
+    internal fun stopWorker() {
         running.set(false)
-        state.markWorkerRunning(false)
         executor.shutdownNow()
-        executor.awaitTermination(5, TimeUnit.SECONDS)
+        if (awaitWorkerTerminationAction(SHUTDOWN_TIMEOUT)) {
+            state.markWorkerRunning(false)
+        }
     }
 
     internal fun delayFor(result: RecognitionResult): Duration =
@@ -82,5 +105,9 @@ class WorkerLifecycle @Inject constructor(
             return
         }
         Thread.sleep(duration.toMillis())
+    }
+
+    private companion object {
+        val SHUTDOWN_TIMEOUT: Duration = Duration.ofSeconds(5)
     }
 }

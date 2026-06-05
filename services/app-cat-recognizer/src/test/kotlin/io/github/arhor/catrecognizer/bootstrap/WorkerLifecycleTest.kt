@@ -11,14 +11,14 @@ import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.recognition.model.RecognitionError
 import io.github.arhor.catrecognizer.recognition.model.RecognitionResult
 import io.github.arhor.catrecognizer.state.LatestRecognitionState
-import io.quarkus.runtime.ShutdownEvent
-import io.quarkus.runtime.StartupEvent
 import java.time.Duration
 import java.time.Instant
+import java.util.concurrent.RejectedExecutionException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
 class WorkerLifecycleTest {
 
@@ -45,53 +45,78 @@ class WorkerLifecycleTest {
 
     @Test
     fun `delayFor returns poll interval after success`() {
-        val lifecycle = lifecycle(workerEnabled = true)
+        val harness = lifecycle(workerEnabled = true)
 
-        assertEquals(Duration.ofSeconds(5), lifecycle.delayFor(successResult))
+        assertEquals(Duration.ofSeconds(5), harness.lifecycle.delayFor(successResult))
     }
 
     @Test
     fun `delayFor returns failure backoff after error`() {
-        val lifecycle = lifecycle(workerEnabled = true)
+        val harness = lifecycle(workerEnabled = true)
 
-        assertEquals(Duration.ofSeconds(30), lifecycle.delayFor(failureResult))
+        assertEquals(Duration.ofSeconds(30), harness.lifecycle.delayFor(failureResult))
     }
 
     @Test
-    fun `startup with worker disabled marks worker as disabled and keeps it stopped`() {
-        val state = LatestRecognitionState()
-        val lifecycle = lifecycle(workerEnabled = false, state = state)
+    fun `disabled start keeps worker stopped and skips recognition work`() {
+        val harness = lifecycle(workerEnabled = false)
 
-        lifecycle.onStart(startupEvent())
+        harness.lifecycle.startWorker()
 
-        val snapshot = state.snapshot()
-        assertFalse(snapshot.workerEnabled)
-        assertFalse(snapshot.workerRunning)
-
-        lifecycle.onShutdown(shutdownEvent())
+        val snapshot = harness.state.snapshot()
+        assertEquals(false, snapshot.workerEnabled)
+        assertEquals(false, snapshot.workerRunning)
+        assertEquals(0, harness.submittedTasks.count)
     }
 
     @Test
-    fun `startup with worker enabled marks worker as enabled`() {
-        val state = LatestRecognitionState()
-        val lifecycle = lifecycle(workerEnabled = true, state = state)
+    fun `enabled start submits work and stop clears running after termination`() {
+        val harness = lifecycle(workerEnabled = true)
 
-        lifecycle.onStart(startupEvent())
+        harness.lifecycle.startWorker()
 
-        val snapshot = state.snapshot()
+        assertEquals(true, harness.state.snapshot().workerEnabled)
+        assertEquals(true, harness.state.snapshot().workerRunning)
+        assertEquals(1, harness.submittedTasks.count)
+
+        harness.lifecycle.stopWorker()
+
+        assertFalse(harness.state.snapshot().workerRunning)
+    }
+
+    @Test
+    fun `start rolls back workerRunning when submission fails`() {
+        val harness = lifecycle(workerEnabled = true, failSubmission = true)
+
+        assertFailsWith<RejectedExecutionException> {
+            harness.lifecycle.startWorker()
+        }
+
+        val snapshot = harness.state.snapshot()
         assertTrue(snapshot.workerEnabled)
-        assertTrue(snapshot.workerRunning)
+        assertFalse(snapshot.workerRunning)
+        assertEquals(1, harness.submittedTasks.count)
+    }
 
-        lifecycle.onShutdown(shutdownEvent())
-        assertFalse(state.snapshot().workerRunning)
+    @Test
+    fun `stop keeps workerRunning true when termination times out`() {
+        val harness = lifecycle(workerEnabled = true, terminationResult = false)
+
+        harness.lifecycle.startWorker()
+        harness.lifecycle.stopWorker()
+
+        assertTrue(harness.state.snapshot().workerRunning)
     }
 
     private fun lifecycle(
         workerEnabled: Boolean,
+        failSubmission: Boolean = false,
+        terminationResult: Boolean = true,
         state: LatestRecognitionState = LatestRecognitionState(),
-    ): WorkerLifecycle {
+    ): LifecycleHarness {
         val config = config(workerEnabled = workerEnabled)
-        return WorkerLifecycle(
+        val submittedTasks = TaskCounter()
+        val lifecycle = WorkerLifecycle(
             config = config,
             orchestrator = RecognitionOrchestrator(
                 frameSource = FrameSource {
@@ -106,7 +131,26 @@ class WorkerLifecycleTest {
                 config = config,
             ),
             state = state,
-        )
+        ).apply {
+            submitWorkerAction = { _ ->
+                submittedTasks.count += 1
+                if (failSubmission) {
+                    throw RejectedExecutionException("executor rejected worker submission")
+                }
+            }
+            awaitWorkerTerminationAction = { _ -> terminationResult }
+        }
+        return LifecycleHarness(lifecycle = lifecycle, state = state, submittedTasks = submittedTasks)
+    }
+
+    private data class LifecycleHarness(
+        val lifecycle: WorkerLifecycle,
+        val state: LatestRecognitionState,
+        val submittedTasks: TaskCounter,
+    )
+
+    private class TaskCounter {
+        var count: Int = 0
     }
 
     private fun config(workerEnabled: Boolean): RecognizerConfig =
@@ -137,10 +181,4 @@ class WorkerLifecycleTest {
                 override fun manualTriggerEnabled() = true
             }
         }
-
-    private fun startupEvent(): StartupEvent =
-        StartupEvent::class.java.getDeclaredConstructor().newInstance()
-
-    private fun shutdownEvent(): ShutdownEvent =
-        ShutdownEvent::class.java.getDeclaredConstructor().newInstance()
 }
