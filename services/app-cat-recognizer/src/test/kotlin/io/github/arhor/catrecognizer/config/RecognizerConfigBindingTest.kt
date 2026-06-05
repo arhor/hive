@@ -28,5 +28,8 @@ class RecognizerConfigBindingTest {
 
         assertEquals(Duration.ofSeconds(2), config.camera().connectTimeout())
         assertEquals(Duration.ofSeconds(5), config.camera().readTimeout())
+        assertEquals("http://esp32-cam.local/snapshot", config.camera().snapshotUrl())
+
+        assertTrue(config.detection().unknownOnError())
     }
 }
