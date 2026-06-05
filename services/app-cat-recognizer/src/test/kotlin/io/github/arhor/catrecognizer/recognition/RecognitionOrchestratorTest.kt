@@ -25,22 +25,28 @@ class RecognitionOrchestratorTest {
 
     @Test
     fun `maps present detection to detected result`() {
+        val state = LatestRecognitionState()
         val orchestrator = RecognitionOrchestrator(
             frameSource = FrameSource { sampleFrame },
             detector = CatDetector { DetectionOutcome.Present(confidence = 0.9) },
-            state = LatestRecognitionState(),
+            state = state,
             config = config(DetectionMode.ALWAYS_PRESENT),
         )
 
         val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
 
         assertEquals(CatPresenceStatus.DETECTED, result.status)
         assertEquals(0.9, result.confidence)
         assertNull(result.error)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(0, snapshot.consecutiveFailures)
+        assertEquals(null, snapshot.lastError)
     }
 
     @Test
     fun `maps frame source failure to unknown result`() {
+        val state = LatestRecognitionState()
         val orchestrator = RecognitionOrchestrator(
             frameSource = FrameSource {
                 throw FrameSourceError(
@@ -50,22 +56,27 @@ class RecognitionOrchestratorTest {
                 )
             },
             detector = CatDetector { DetectionOutcome.Present(confidence = 1.0) },
-            state = LatestRecognitionState(),
+            state = state,
             config = config(DetectionMode.STUB),
         )
 
         val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
 
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("FRAME_FETCH_FAILED", result.error?.code)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(1, snapshot.consecutiveFailures)
+        assertEquals("FRAME_FETCH_FAILED", snapshot.lastError?.code)
     }
 
     @Test
     fun `maps detector exceptions to unknown result`() {
+        val state = LatestRecognitionState()
         val orchestrator = RecognitionOrchestrator(
             frameSource = FrameSource { sampleFrame },
             detector = CatDetector { error("detector crashed") },
-            state = LatestRecognitionState(),
+            state = state,
             config = config(DetectionMode.STUB),
         )
 
