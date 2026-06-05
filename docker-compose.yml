@@ -1,30 +1,21 @@
 services:
   homeassistant:
     container_name: homeassistant
-    image: ${HOMEASSISTANT_IMAGE}
-    restart: unless-stopped
-    environment:
-      TZ: ${TZ}
-    ports:
-      - "8123:8123"
+    image: ghcr.io/home-assistant/home-assistant:stable
     volumes:
       - ./homeassistant/config:/config
-    networks:
-      - smarthome
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
 
   esphome:
     container_name: esphome
-    image: ${ESPHOME_IMAGE}
-    restart: unless-stopped
-    environment:
-      TZ: ${TZ}
-    ports:
-      - "6052:6052"
+    image: ghcr.io/esphome/esphome:stable
     volumes:
       - ./esphome/config:/config
-    networks:
-      - smarthome
-
-networks:
-  smarthome:
-    name: smarthome
+      - /etc/localtime:/etc/localtime:ro
+      - /dev:/dev
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
