@@ -26,6 +26,16 @@ class WorkerReadinessCheck(
                 .build()
         }
 
+        val lastError = snapshot.lastError
+        if (lastError != null && snapshot.consecutiveFailures > 0) {
+            return HealthCheckResponse.named(NAME)
+                .down()
+                .withData("state", "failing")
+                .withData("consecutiveFailures", snapshot.consecutiveFailures.toLong())
+                .withData("errorCode", lastError.code)
+                .build()
+        }
+
         val lastSuccessAt = snapshot.lastSuccessAt
         if (lastSuccessAt == null) {
             return HealthCheckResponse.named(NAME)

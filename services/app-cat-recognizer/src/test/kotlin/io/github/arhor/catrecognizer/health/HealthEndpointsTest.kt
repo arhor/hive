@@ -89,8 +89,8 @@ class FrameSourceHealthCheckIgnoresDetectorFailuresTest {
     lateinit var state: LatestRecognitionState
 
     @Test
-    fun `ready endpoint stays up for detector failures`() {
-        state.markWorkerEnabled(false)
+    fun `ready endpoint reports worker failure without blaming frame source`() {
+        state.markWorkerEnabled(true)
         state.recordFailure(
             RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
@@ -109,9 +109,11 @@ class FrameSourceHealthCheckIgnoresDetectorFailuresTest {
         given()
             .`when`().get("/q/health/ready")
             .then()
-            .statusCode(200)
-            .body("status", `is`("UP"))
-            .body("checks.find { it.name == 'worker-readiness' }.status", `is`("UP"))
+            .statusCode(503)
+            .body("status", `is`("DOWN"))
+            .body("checks.find { it.name == 'worker-readiness' }.status", `is`("DOWN"))
+            .body("checks.find { it.name == 'worker-readiness' }.data.state", `is`("failing"))
+            .body("checks.find { it.name == 'worker-readiness' }.data.errorCode", `is`("DETECTOR_FAILED"))
             .body("checks.find { it.name == 'frame-source' }.status", `is`("UP"))
             .body("checks.find { it.name == 'frame-source' }.data.consecutiveFailures", `is`(1))
     }
