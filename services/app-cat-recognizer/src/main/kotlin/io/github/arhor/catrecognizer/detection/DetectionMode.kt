@@ -4,4 +4,5 @@ enum class DetectionMode {
     STUB,
     ALWAYS_PRESENT,
     ALWAYS_ABSENT,
+    OPENCV,
 }

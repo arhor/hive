@@ -147,6 +147,30 @@ class RecognitionOrchestratorTest {
         assertNull(snapshot.lastSuccessAt)
     }
 
+    @Test
+    fun `maps opencv detector failure through existing detector failed behavior`() {
+        val state = LatestRecognitionState()
+        val orchestrator = orchestrator(
+            state = state,
+            detectorMode = DetectionMode.OPENCV,
+            detector = CatDetector { error("OpenCV failed to decode frame") },
+        )
+
+        val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
+
+        assertEquals(CatPresenceStatus.UNKNOWN, result.status)
+        assertEquals("opencv", result.detectorMode)
+        assertEquals("DETECTOR_FAILED", result.error?.code)
+        assertEquals("OpenCV failed to decode frame", result.error?.message)
+        assertEquals(true, result.error?.retriable)
+        assertEquals(sampleFrame.observedAt, result.observedAt)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(1, snapshot.consecutiveFailures)
+        assertEquals("DETECTOR_FAILED", snapshot.lastError?.code)
+        assertNull(snapshot.lastSuccessAt)
+    }
+
     private fun orchestrator(
         state: LatestRecognitionState,
         detectorMode: DetectionMode,

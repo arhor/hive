@@ -5,7 +5,6 @@ import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
 import io.github.arhor.catrecognizer.recognition.model.RecognitionError
 import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
 import io.github.arhor.catrecognizer.detection.CatDetector
-import io.github.arhor.catrecognizer.detection.StubCatDetector
 import io.github.arhor.catrecognizer.frame.FrameSource
 import io.github.arhor.catrecognizer.frame.SnapshotFrameSource
 import io.github.arhor.catrecognizer.frame.model.FramePayload
@@ -193,10 +192,7 @@ private fun installRecognitionMocks(config: RecognizerConfig) {
         FrameSource::class.java,
     )
     QuarkusMock.installMockForType(
-        object : StubCatDetector(config) {
-            override fun detect(frame: FramePayload): DetectionOutcome =
-                DetectionOutcome.Present(confidence = 0.91)
-        },
+        CatDetector { DetectionOutcome.Present(confidence = 0.91) },
         CatDetector::class.java,
     )
 }

@@ -2,6 +2,8 @@ package io.github.arhor.catrecognizer.config
 
 import io.github.arhor.catrecognizer.detection.DetectionMode
 import io.quarkus.test.junit.QuarkusTest
+import io.quarkus.test.junit.QuarkusTestProfile
+import io.quarkus.test.junit.TestProfile
 import jakarta.inject.Inject
 import java.time.Duration
 import kotlin.test.Test
@@ -31,5 +33,24 @@ class RecognizerConfigBindingTest {
         assertEquals("http://esp32-cam.local/snapshot", config.camera().snapshotUrl())
 
         assertTrue(config.detection().unknownOnError())
+    }
+}
+
+@QuarkusTest
+@TestProfile(RecognizerConfigBindingOpenCvTest.Profile::class)
+class RecognizerConfigBindingOpenCvTest {
+
+    @Inject
+    lateinit var config: RecognizerConfig
+
+    @Test
+    fun `binds opencv detection mode when overridden`() {
+        assertEquals(DetectionMode.OPENCV, config.detection().mode())
+    }
+
+    class Profile : QuarkusTestProfile {
+        override fun getConfigOverrides(): Map<String, String> = mapOf(
+            "cat-recognizer.detection.mode" to "OPENCV",
+        )
     }
 }
