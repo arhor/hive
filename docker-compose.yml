@@ -19,3 +19,17 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
+
+  cat-recognizer:
+    container_name: cat-recognizer
+    image: ${CAT_RECOGNIZER_IMAGE:-cat-recognizer:native}
+    build:
+      context: ./services/app-cat-recognizer
+      dockerfile: src/main/docker/Dockerfile.native
+    environment:
+      CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL: ${CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL:-http://esp32-cam.local/snapshot}
+      CAT_RECOGNIZER_DETECTION_MODE: ${CAT_RECOGNIZER_DETECTION_MODE:-STUB}
+      CAT_RECOGNIZER_WORKER_ENABLED: ${CAT_RECOGNIZER_WORKER_ENABLED:-false}
+      CAT_RECOGNIZER_DEBUG_MANUAL_TRIGGER_ENABLED: ${CAT_RECOGNIZER_DEBUG_MANUAL_TRIGGER_ENABLED:-true}
+    restart: unless-stopped
+    network_mode: host

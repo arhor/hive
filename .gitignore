@@ -27,3 +27,8 @@ homeassistant/config/deps/
 homeassistant/config/tts/
 homeassistant/config/backups/
 homeassistant/config/*.tar
+
+# Gradle / JVM build outputs
+.gradle/
+build/
+**/build/
