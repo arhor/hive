@@ -122,7 +122,7 @@ class FrameSourceHealthCheckIgnoresDetectorFailuresTest {
 }
 
 @QuarkusTest
-@TestProfile(HealthEndpointsDisabledProfile::class)
+@TestProfile(WorkerReadinessStoppedProfile::class)
 class WorkerReadinessStoppedTest {
 
     @Inject
@@ -193,6 +193,13 @@ class HealthEndpointsDisabledProfile : QuarkusTestProfile {
 }
 
 class FrameSourceFailureDisabledProfile : QuarkusTestProfile {
+    override fun getConfigOverrides(): Map<String, String> = mapOf(
+        "cat-recognizer.worker.enabled" to "false",
+        "cat-recognizer.debug.manual-trigger-enabled" to "true",
+    )
+}
+
+class WorkerReadinessStoppedProfile : QuarkusTestProfile {
     override fun getConfigOverrides(): Map<String, String> = mapOf(
         "cat-recognizer.worker.enabled" to "false",
         "cat-recognizer.debug.manual-trigger-enabled" to "true",

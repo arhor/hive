@@ -25,13 +25,12 @@ class RecognitionOrchestratorTest {
     )
 
     @Test
-    fun `maps present detection to detected result`() {
+    fun `maps present detection to detected result and records success`() {
         val state = LatestRecognitionState()
-        val orchestrator = RecognitionOrchestrator(
-            frameSource = FrameSource { sampleFrame },
-            detector = CatDetector { DetectionOutcome.Present(confidence = 0.9) },
+        val orchestrator = orchestrator(
             state = state,
-            config = config(DetectionMode.ALWAYS_PRESENT),
+            detectorMode = DetectionMode.ALWAYS_PRESENT,
+            detector = CatDetector { DetectionOutcome.Present(confidence = 0.9) },
         )
 
         val result = orchestrator.runRecognition()
@@ -42,14 +41,63 @@ class RecognitionOrchestratorTest {
         assertEquals("always_present", result.detectorMode)
         assertNull(result.error)
         assertEquals(result, snapshot.latestResult)
+        assertEquals(result.observedAt, snapshot.lastSuccessAt)
         assertEquals(0, snapshot.consecutiveFailures)
-        assertEquals(null, snapshot.lastError)
+        assertNull(snapshot.lastError)
     }
 
     @Test
-    fun `maps frame source failure to unknown result`() {
+    fun `maps absent detection to not detected result and records success`() {
         val state = LatestRecognitionState()
-        val orchestrator = RecognitionOrchestrator(
+        val orchestrator = orchestrator(
+            state = state,
+            detectorMode = DetectionMode.ALWAYS_ABSENT,
+            detector = CatDetector { DetectionOutcome.Absent(confidence = 1.0) },
+        )
+
+        val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
+
+        assertEquals(CatPresenceStatus.NOT_DETECTED, result.status)
+        assertEquals(1.0, result.confidence)
+        assertEquals("always_absent", result.detectorMode)
+        assertNull(result.error)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(result.observedAt, snapshot.lastSuccessAt)
+        assertEquals(0, snapshot.consecutiveFailures)
+        assertNull(snapshot.lastError)
+    }
+
+    @Test
+    fun `maps unknown detection to detector unknown result and records failure`() {
+        val state = LatestRecognitionState()
+        val orchestrator = orchestrator(
+            state = state,
+            detectorMode = DetectionMode.STUB,
+            detector = CatDetector { DetectionOutcome.Unknown(reason = "stub detector") },
+        )
+
+        val result = orchestrator.runRecognition()
+        val snapshot = state.snapshot()
+
+        assertEquals(CatPresenceStatus.UNKNOWN, result.status)
+        assertNull(result.confidence)
+        assertEquals("stub", result.detectorMode)
+        assertEquals("DETECTOR_UNKNOWN", result.error?.code)
+        assertEquals("stub detector", result.error?.message)
+        assertEquals(false, result.error?.retriable)
+        assertEquals(result, snapshot.latestResult)
+        assertEquals(1, snapshot.consecutiveFailures)
+        assertEquals("DETECTOR_UNKNOWN", snapshot.lastError?.code)
+        assertNull(snapshot.lastSuccessAt)
+    }
+
+    @Test
+    fun `maps frame source failure to unknown result and records failure`() {
+        val state = LatestRecognitionState()
+        val orchestrator = orchestrator(
+            state = state,
+            detectorMode = DetectionMode.STUB,
             frameSource = FrameSource {
                 throw FrameSourceError(
                     code = "FRAME_FETCH_FAILED",
@@ -58,8 +106,6 @@ class RecognitionOrchestratorTest {
                 )
             },
             detector = CatDetector { DetectionOutcome.Present(confidence = 1.0) },
-            state = state,
-            config = config(DetectionMode.STUB),
         )
 
         val result = orchestrator.runRecognition()
@@ -67,21 +113,23 @@ class RecognitionOrchestratorTest {
 
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("FRAME_FETCH_FAILED", result.error?.code)
+        assertEquals("camera unavailable", result.error?.message)
+        assertEquals(true, result.error?.retriable)
         assertEquals("stub", result.detectorMode)
         assertNotEquals(sampleFrame.observedAt, result.observedAt)
         assertEquals(result, snapshot.latestResult)
         assertEquals(1, snapshot.consecutiveFailures)
         assertEquals("FRAME_FETCH_FAILED", snapshot.lastError?.code)
+        assertNull(snapshot.lastSuccessAt)
     }
 
     @Test
-    fun `maps detector exceptions to unknown result`() {
+    fun `maps unexpected detector failure to unknown result and records failure`() {
         val state = LatestRecognitionState()
-        val orchestrator = RecognitionOrchestrator(
-            frameSource = FrameSource { sampleFrame },
-            detector = CatDetector { error("detector crashed") },
+        val orchestrator = orchestrator(
             state = state,
-            config = config(DetectionMode.STUB),
+            detectorMode = DetectionMode.STUB,
+            detector = CatDetector { error("detector crashed") },
         )
 
         val result = orchestrator.runRecognition()
@@ -89,12 +137,27 @@ class RecognitionOrchestratorTest {
 
         assertEquals(CatPresenceStatus.UNKNOWN, result.status)
         assertEquals("DETECTOR_FAILED", result.error?.code)
+        assertEquals("detector crashed", result.error?.message)
+        assertEquals(true, result.error?.retriable)
         assertEquals("stub", result.detectorMode)
         assertEquals(sampleFrame.observedAt, result.observedAt)
         assertEquals(result, snapshot.latestResult)
         assertEquals(1, snapshot.consecutiveFailures)
         assertEquals("DETECTOR_FAILED", snapshot.lastError?.code)
+        assertNull(snapshot.lastSuccessAt)
     }
+
+    private fun orchestrator(
+        state: LatestRecognitionState,
+        detectorMode: DetectionMode,
+        frameSource: FrameSource = FrameSource { sampleFrame },
+        detector: CatDetector,
+    ): RecognitionOrchestrator = RecognitionOrchestrator(
+        frameSource = frameSource,
+        detector = detector,
+        state = state,
+        config = config(detectorMode),
+    )
 
     private fun config(mode: DetectionMode): RecognizerConfig =
         object : RecognizerConfig {
