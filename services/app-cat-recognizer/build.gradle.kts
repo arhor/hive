@@ -20,6 +20,13 @@ kotlin {
     }
 }
 
+sourceSets {
+    named("integrationTest") {
+        kotlin.srcDir("src/native-test/kotlin")
+        resources.srcDir("src/native-test/resources")
+    }
+}
+
 allOpen {
     annotation("jakarta.ws.rs.Path")
     annotation("jakarta.enterprise.context.ApplicationScoped")
@@ -45,5 +52,6 @@ dependencies {
 
     testImplementation("io.quarkus:quarkus-junit")
     testImplementation("io.rest-assured:rest-assured")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 }
