@@ -138,7 +138,7 @@ class WorkerReadinessHealthCheckTest {
         state.recordSuccess(
             RecognitionResult(
                 status = CatPresenceStatus.DETECTED,
-                observedAt = Instant.parse("2026-06-05T12:00:00Z"),
+                observedAt = Instant.EPOCH,
                 confidence = 0.91,
                 detectorMode = "stub",
                 source = "snapshot",
