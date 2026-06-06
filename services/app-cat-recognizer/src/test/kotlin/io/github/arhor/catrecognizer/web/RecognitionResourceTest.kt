@@ -21,6 +21,7 @@ import org.hamcrest.Matchers.hasKey
 import org.hamcrest.Matchers.nullValue
 import org.hamcrest.Matchers.not
 import jakarta.inject.Inject
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -132,12 +133,21 @@ open class RecognitionResourceTest {
             .body("snapshotConfigured", `is`(true))
     }
 
+    @Test
+    fun `camera snapshot URL is configurable through Quarkus config`() {
+        assertEquals(
+            "http://example.test/snapshot",
+            config.camera().snapshotUrl(),
+        )
+    }
+
     class Profile : QuarkusTestProfile {
         override fun getConfigOverrides(): Map<String, String> = mapOf(
             "cat-recognizer.worker.enabled" to "false",
             "cat-recognizer.worker.poll-interval" to "500ms",
             "cat-recognizer.worker.failure-backoff" to "1500ms",
             "cat-recognizer.debug.manual-trigger-enabled" to "true",
+            "cat-recognizer.camera.snapshot-url" to "http://example.test/snapshot",
         )
     }
 }
