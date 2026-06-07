@@ -37,7 +37,7 @@ allOpen {
 dependencies {
     implementation(enforcedPlatform(libs.quarkus.platform))
 
-    implementation(libs.quarkiverse.opencv)
+    implementation(libs.quarkus.opencv)
     implementation(libs.quarkus.arc)
     implementation(libs.quarkus.container.image.docker)
     implementation(libs.quarkus.kotlin)

@@ -12,7 +12,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
-quarkiverse-opencv = { module = "io.quarkiverse.opencv:quarkus-opencv", version.ref = "opencv" }
+quarkus-opencv = { module = "io.quarkiverse.opencv:quarkus-opencv", version.ref = "opencv" }
 quarkus-arc = { module = "io.quarkus:quarkus-arc" }
 quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
 quarkus-junit = { module = "io.quarkus:quarkus-junit" }
