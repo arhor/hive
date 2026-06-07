@@ -12,11 +12,11 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
-quarkus-opencv = { module = "io.quarkiverse.opencv:quarkus-opencv", version.ref = "opencv" }
 quarkus-arc = { module = "io.quarkus:quarkus-arc" }
 quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
 quarkus-junit = { module = "io.quarkus:quarkus-junit" }
 quarkus-kotlin = { module = "io.quarkus:quarkus-kotlin" }
+quarkus-opencv = { module = "io.quarkiverse.opencv:quarkus-opencv", version.ref = "opencv" }
 quarkus-platform = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }
 quarkus-rest = { module = "io.quarkus:quarkus-rest" }
 quarkus-rest-kotlin = { module = "io.quarkus:quarkus-rest-kotlin" }

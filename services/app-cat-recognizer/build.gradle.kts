@@ -37,10 +37,10 @@ allOpen {
 dependencies {
     implementation(enforcedPlatform(libs.quarkus.platform))
 
-    implementation(libs.quarkus.opencv)
     implementation(libs.quarkus.arc)
     implementation(libs.quarkus.container.image.docker)
     implementation(libs.quarkus.kotlin)
+    implementation(libs.quarkus.opencv)
     implementation(libs.quarkus.rest)
     implementation(libs.quarkus.rest.kotlin)
     implementation(libs.quarkus.rest.kotlin.serialization)
@@ -51,8 +51,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.jdk8)
     implementation(libs.kotlinx.serialization.json)
 
-    testImplementation(libs.quarkus.junit)
-    testImplementation(libs.rest.assured)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.quarkus.junit)
+    testImplementation(libs.rest.assured)
 }
