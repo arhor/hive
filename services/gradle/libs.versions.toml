@@ -2,10 +2,27 @@
 # See https://docs.gradle.org/current/userguide/platforms.html for more information
 [versions]
 kotlin = "2.3.21"
+opencv = "2.1.0"
 quarkus = "3.36.1"
 
 [libraries]
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
+kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
+quarkiverse-opencv = { module = "io.quarkiverse.opencv:quarkus-opencv", version.ref = "opencv" }
+quarkus-arc = { module = "io.quarkus:quarkus-arc" }
+quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
+quarkus-junit = { module = "io.quarkus:quarkus-junit" }
+quarkus-kotlin = { module = "io.quarkus:quarkus-kotlin" }
 quarkus-platform = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }
+quarkus-rest = { module = "io.quarkus:quarkus-rest" }
+quarkus-rest-kotlin = { module = "io.quarkus:quarkus-rest-kotlin" }
+quarkus-rest-kotlin-serialization = { module = "io.quarkus:quarkus-rest-kotlin-serialization" }
+quarkus-smallrye-health = { module = "io.quarkus:quarkus-smallrye-health" }
+rest-assured = { module = "io.rest-assured:rest-assured" }
 
 [plugins]
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
