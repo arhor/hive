@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.quarkus.rest)
     implementation(libs.quarkus.rest.kotlin)
     implementation(libs.quarkus.rest.kotlin.serialization)
+    implementation(libs.quarkus.scheduler)
+    implementation(libs.quarkus.smallrye.fault.tolerance)
     implementation(libs.quarkus.smallrye.health)
 
     implementation(libs.kotlin.stdlib.jdk8)

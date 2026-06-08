@@ -1,14 +1,12 @@
 package io.github.arhor.catrecognizer.model
 
-import io.github.arhor.catrecognizer.detection.model.DetectionOutcome
-import io.github.arhor.catrecognizer.frame.model.FramePayload
-import io.github.arhor.catrecognizer.recognition.model.CatPresenceStatus
-import io.github.arhor.catrecognizer.recognition.model.RecognitionError
-import io.github.arhor.catrecognizer.recognition.model.RecognitionResult
-import java.time.Instant
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import io.github.arhor.catrecognizer.domain.CatPresenceStatus
+import io.github.arhor.catrecognizer.domain.DetectionOutcome
+import io.github.arhor.catrecognizer.domain.FramePayload
+import io.github.arhor.catrecognizer.domain.RecognitionError
+import io.github.arhor.catrecognizer.domain.RecognitionResult
 import kotlinx.serialization.json.Json
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -100,7 +98,6 @@ class CoreModelShapeTest {
             status = CatPresenceStatus.UNKNOWN,
             observedAt = Instant.parse("2026-06-05T12:00:00Z"),
             confidence = null,
-            detectorMode = "stub",
             source = "camera",
             error = RecognitionError(
                 code = "stub",
@@ -113,6 +110,6 @@ class CoreModelShapeTest {
         val decoded = json.decodeFromString<RecognitionResult>(encoded)
 
         assertEquals(result, decoded)
-        assertTrue(encoded.contains("\"detectorMode\":\"stub\""))
+        assertTrue(encoded.contains("\"source\":\"camera\""))
     }
 }

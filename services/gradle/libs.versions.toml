@@ -21,6 +21,8 @@ quarkus-platform = { module = "io.quarkus.platform:quarkus-bom", version.ref = "
 quarkus-rest = { module = "io.quarkus:quarkus-rest" }
 quarkus-rest-kotlin = { module = "io.quarkus:quarkus-rest-kotlin" }
 quarkus-rest-kotlin-serialization = { module = "io.quarkus:quarkus-rest-kotlin-serialization" }
+quarkus-scheduler = { module = "io.quarkus:quarkus-scheduler" }
+quarkus-smallrye-fault-tolerance = { module = "io.quarkus:quarkus-smallrye-fault-tolerance" }
 quarkus-smallrye-health = { module = "io.quarkus:quarkus-smallrye-health" }
 rest-assured = { module = "io.rest-assured:rest-assured" }
 
