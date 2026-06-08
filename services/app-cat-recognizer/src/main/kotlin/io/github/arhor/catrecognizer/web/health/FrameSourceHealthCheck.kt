@@ -1,4 +1,4 @@
-package io.github.arhor.catrecognizer.config
+package io.github.arhor.catrecognizer.web.health
 
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
 import jakarta.enterprise.context.ApplicationScoped
@@ -14,25 +14,32 @@ class FrameSourceHealthCheck(
 
     override fun call(): HealthCheckResponse {
         val snapshot = state.snapshot()
+        val failures = snapshot.consecutiveFailures.toLong()
         val lastError = snapshot.lastError
 
-        return if (lastError == null) {
-            HealthCheckResponse.named(NAME)
-                .up()
-                .withData("consecutiveFailures", snapshot.consecutiveFailures.toLong())
-                .build()
-        } else if (lastError.code == FRAME_FETCH_FAILED) {
-            HealthCheckResponse.named(NAME)
-                .down()
-                .withData("consecutiveFailures", snapshot.consecutiveFailures.toLong())
-                .withData("errorCode", lastError.code)
-                .withData("retriable", lastError.retriable)
-                .build()
-        } else {
-            HealthCheckResponse.named(NAME)
-                .withData("consecutiveFailures", snapshot.consecutiveFailures.toLong())
-                .up()
-                .build()
+        return when {
+            lastError == null -> {
+                HealthCheckResponse.named(NAME)
+                    .up()
+                    .withData("consecutiveFailures", failures)
+                    .build()
+            }
+
+            lastError.code == FRAME_FETCH_FAILED -> {
+                HealthCheckResponse.named(NAME)
+                    .down()
+                    .withData("consecutiveFailures", failures)
+                    .withData("errorCode", lastError.code)
+                    .withData("retriable", lastError.retriable)
+                    .build()
+            }
+
+            else -> {
+                HealthCheckResponse.named(NAME)
+                    .withData("consecutiveFailures", failures)
+                    .up()
+                    .build()
+            }
         }
     }
 

@@ -1,5 +1,6 @@
-package io.github.arhor.catrecognizer.config
+package io.github.arhor.catrecognizer.web.health
 
+import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
 import jakarta.enterprise.context.ApplicationScoped
 import org.eclipse.microprofile.health.HealthCheck

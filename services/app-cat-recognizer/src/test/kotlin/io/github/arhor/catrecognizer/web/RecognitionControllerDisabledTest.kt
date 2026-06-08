@@ -4,7 +4,7 @@ import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.QuarkusTestProfile
 import io.quarkus.test.junit.TestProfile
-import io.restassured.RestAssured
+import io.restassured.RestAssured.given
 import jakarta.inject.Inject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,8 +23,8 @@ class RecognitionControllerDisabledTest {
 
     @Test
     fun `POST run returns forbidden when manual trigger is disabled`() {
-        RestAssured.given()
-            .`when`().post("/recognition/run")
+        given()
+            .post("/recognition/run")
             .then()
             .statusCode(403)
     }

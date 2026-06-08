@@ -7,7 +7,7 @@ import io.github.arhor.catrecognizer.service.LatestRecognitionState
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.QuarkusTestProfile
 import io.quarkus.test.junit.TestProfile
-import io.restassured.RestAssured
+import io.restassured.RestAssured.given
 import jakarta.inject.Inject
 import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.Test
@@ -42,8 +42,8 @@ class FrameClientHealthCheckTest {
             ),
         )
 
-        RestAssured.given()
-            .`when`().get("/q/health/ready")
+        given()
+            .get("/q/health/ready")
             .then()
             .statusCode(503)
             .body("status", CoreMatchers.`is`("DOWN"))

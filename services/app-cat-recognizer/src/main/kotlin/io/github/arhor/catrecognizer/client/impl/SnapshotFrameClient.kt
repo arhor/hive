@@ -1,7 +1,8 @@
-package io.github.arhor.catrecognizer.client
+package io.github.arhor.catrecognizer.client.impl
 
+import io.github.arhor.catrecognizer.client.FrameClient
+import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
-import io.github.arhor.catrecognizer.domain.FramePayload
 import io.github.arhor.catrecognizer.domain.FrameSourceError
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -18,9 +19,10 @@ class SnapshotFrameClient @Inject constructor(
     private val config: RecognizerConfig,
 ) : FrameClient {
 
-    private val client: HttpClient = HttpClient.newBuilder()
-        .connectTimeout(config.camera().connectTimeout())
-        .build()
+    private val client: HttpClient =
+        HttpClient.newBuilder()
+            .connectTimeout(config.camera().connectTimeout())
+            .build()
 
     @Retry
     @Timeout(3_000)

@@ -1,4 +1,4 @@
-package io.github.arhor.catrecognizer.domain
+package io.github.arhor.catrecognizer.client.model
 
 import java.time.Instant
 

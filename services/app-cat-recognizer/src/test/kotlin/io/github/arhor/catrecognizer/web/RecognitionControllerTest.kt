@@ -1,11 +1,11 @@
 package io.github.arhor.catrecognizer.web
 
 import io.github.arhor.catrecognizer.client.FrameClient
-import io.github.arhor.catrecognizer.client.SnapshotFrameClient
+import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
+import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
-import io.github.arhor.catrecognizer.domain.FramePayload
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
@@ -51,7 +51,7 @@ class RecognitionControllerTest {
     @Test
     fun `GET latest returns flattened recognition payload`() {
         given()
-            .`when`().get("/recognition/latest")
+            .get("/recognition/latest")
             .then()
             .statusCode(200)
             .body("$", not(hasKey("result")))
@@ -83,7 +83,7 @@ class RecognitionControllerTest {
         )
 
         given()
-            .`when`().get("/recognition/latest")
+            .get("/recognition/latest")
             .then()
             .statusCode(200)
             .body("status", `is`("UNKNOWN"))
@@ -102,7 +102,7 @@ class RecognitionControllerTest {
     @Test
     fun `POST run returns recognition result when manual trigger is enabled`() {
         given()
-            .`when`().post("/recognition/run")
+            .post("/recognition/run")
             .then()
             .statusCode(200)
             .body("status", `is`("DETECTED"))
@@ -116,7 +116,7 @@ class RecognitionControllerTest {
     @Test
     fun `GET debug config returns safe runtime summary`() {
         given()
-            .`when`().get("/debug/config")
+            .get("/debug/config")
             .then()
             .statusCode(200)
             .body("pollInterval", `is`("500ms"))

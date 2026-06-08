@@ -1,6 +1,7 @@
 package io.github.arhor.catrecognizer.client
 
 import com.sun.net.httpserver.HttpServer
+import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
 import java.net.InetSocketAddress

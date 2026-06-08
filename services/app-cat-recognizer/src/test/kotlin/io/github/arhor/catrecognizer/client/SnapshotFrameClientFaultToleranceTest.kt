@@ -1,5 +1,6 @@
 package io.github.arhor.catrecognizer.client
 
+import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
 import org.eclipse.microprofile.faulttolerance.Retry
 import org.eclipse.microprofile.faulttolerance.Timeout
 import kotlin.test.Test

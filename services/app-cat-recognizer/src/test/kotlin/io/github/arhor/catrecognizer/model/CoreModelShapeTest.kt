@@ -1,8 +1,8 @@
 package io.github.arhor.catrecognizer.model
 
+import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
-import io.github.arhor.catrecognizer.domain.FramePayload
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
 import kotlinx.serialization.json.Json

@@ -20,17 +20,11 @@ kotlin {
     }
 }
 
-sourceSets {
-    named("integrationTest") {
-        kotlin.srcDir("src/native-test/kotlin")
-        resources.srcDir("src/native-test/resources")
-    }
-}
-
 allOpen {
-    annotation("jakarta.ws.rs.Path")
     annotation("jakarta.enterprise.context.ApplicationScoped")
+    annotation("jakarta.inject.Singleton")
     annotation("jakarta.persistence.Entity")
+    annotation("jakarta.ws.rs.Path")
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 

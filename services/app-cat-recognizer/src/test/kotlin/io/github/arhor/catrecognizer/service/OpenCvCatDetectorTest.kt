@@ -1,7 +1,7 @@
 package io.github.arhor.catrecognizer.service
 
+import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
-import io.github.arhor.catrecognizer.domain.FramePayload
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
 import java.awt.Color
