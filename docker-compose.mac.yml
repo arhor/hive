@@ -1,0 +1,13 @@
+services:
+  homeassistant:
+    network_mode: bridge
+    ports:
+      - "8123:8123"
+
+  esphome:
+    network_mode: bridge
+    ports:
+      - "6052:6052"
+      - "6053:6053"
+    environment:
+      ESPHOME_DASHBOARD_USE_PING: "true"

@@ -61,6 +61,12 @@ Docker-based smart home foundation with one folder per service and a root-level 
    docker compose up -d
    ```
 
+   On macOS, use the Docker Desktop override file instead:
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.mac.yml up -d
+   ```
+
 ## Access
 
 - Home Assistant: `http://<host-ip>:8123`
