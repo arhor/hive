@@ -5,8 +5,7 @@ plugins {
     alias(libs.plugins.quarkus)
 }
 
-group = "io.github.arhor"
-version = "1.0.0-SNAPSHOT"
+group = "io.github.arhor.catrecognizer"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -18,6 +17,7 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
         javaParameters = true
     }
+    jvmToolchain(25)
 }
 
 allOpen {

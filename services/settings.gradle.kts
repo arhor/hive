@@ -19,3 +19,4 @@ dependencyResolutionManagement {
 rootProject.name = "services"
 
 include(":app-cat-recognizer")
+include(":lib-esphome-client")
