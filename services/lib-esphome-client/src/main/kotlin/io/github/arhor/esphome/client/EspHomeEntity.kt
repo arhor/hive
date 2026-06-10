@@ -29,172 +29,172 @@ sealed interface EspHomeEntity {
     val key: Int
     val objectId: String
     val name: String
+
+    data class BinarySensor(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesBinarySensorResponse,
+    ) : EspHomeEntity
+
+    data class Cover(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesCoverResponse,
+    ) : EspHomeEntity
+
+    data class Fan(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesFanResponse,
+    ) : EspHomeEntity
+
+    data class Light(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesLightResponse,
+    ) : EspHomeEntity
+
+    data class Sensor(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesSensorResponse,
+    ) : EspHomeEntity
+
+    data class Switch(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesSwitchResponse,
+    ) : EspHomeEntity
+
+    data class TextSensor(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesTextSensorResponse,
+    ) : EspHomeEntity
+
+    data class Service(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesServicesResponse,
+    ) : EspHomeEntity
+
+    data class Camera(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesCameraResponse,
+    ) : EspHomeEntity
+
+    data class Climate(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesClimateResponse,
+    ) : EspHomeEntity
+
+    data class Number(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesNumberResponse,
+    ) : EspHomeEntity
+
+    data class Select(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesSelectResponse,
+    ) : EspHomeEntity
+
+    data class Siren(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesSirenResponse,
+    ) : EspHomeEntity
+
+    data class Lock(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesLockResponse,
+    ) : EspHomeEntity
+
+    data class Button(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesButtonResponse,
+    ) : EspHomeEntity
+
+    data class MediaPlayer(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesMediaPlayerResponse,
+    ) : EspHomeEntity
+
+    data class AlarmControlPanel(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesAlarmControlPanelResponse,
+    ) : EspHomeEntity
+
+    data class Text(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesTextResponse,
+    ) : EspHomeEntity
+
+    data class Date(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesDateResponse,
+    ) : EspHomeEntity
+
+    data class Time(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesTimeResponse,
+    ) : EspHomeEntity
+
+    data class Event(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesEventResponse,
+    ) : EspHomeEntity
+
+    data class Valve(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesValveResponse,
+    ) : EspHomeEntity
+
+    data class DateTime(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesDateTimeResponse,
+    ) : EspHomeEntity
+
+    data class Update(
+        override val key: Int,
+        override val objectId: String,
+        override val name: String,
+        val raw: ListEntitiesUpdateResponse,
+    ) : EspHomeEntity
 }
-
-data class EspHomeBinarySensorEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesBinarySensorResponse,
-) : EspHomeEntity
-
-data class EspHomeCoverEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesCoverResponse,
-) : EspHomeEntity
-
-data class EspHomeFanEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesFanResponse,
-) : EspHomeEntity
-
-data class EspHomeLightEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesLightResponse,
-) : EspHomeEntity
-
-data class EspHomeSensorEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesSensorResponse,
-) : EspHomeEntity
-
-data class EspHomeSwitchEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesSwitchResponse,
-) : EspHomeEntity
-
-data class EspHomeTextSensorEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesTextSensorResponse,
-) : EspHomeEntity
-
-data class EspHomeServiceEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesServicesResponse,
-) : EspHomeEntity
-
-data class EspHomeCameraEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesCameraResponse,
-) : EspHomeEntity
-
-data class EspHomeClimateEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesClimateResponse,
-) : EspHomeEntity
-
-data class EspHomeNumberEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesNumberResponse,
-) : EspHomeEntity
-
-data class EspHomeSelectEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesSelectResponse,
-) : EspHomeEntity
-
-data class EspHomeSirenEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesSirenResponse,
-) : EspHomeEntity
-
-data class EspHomeLockEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesLockResponse,
-) : EspHomeEntity
-
-data class EspHomeButtonEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesButtonResponse,
-) : EspHomeEntity
-
-data class EspHomeMediaPlayerEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesMediaPlayerResponse,
-) : EspHomeEntity
-
-data class EspHomeAlarmControlPanelEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesAlarmControlPanelResponse,
-) : EspHomeEntity
-
-data class EspHomeTextEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesTextResponse,
-) : EspHomeEntity
-
-data class EspHomeDateEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesDateResponse,
-) : EspHomeEntity
-
-data class EspHomeTimeEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesTimeResponse,
-) : EspHomeEntity
-
-data class EspHomeEventEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesEventResponse,
-) : EspHomeEntity
-
-data class EspHomeValveEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesValveResponse,
-) : EspHomeEntity
-
-data class EspHomeDateTimeEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesDateTimeResponse,
-) : EspHomeEntity
-
-data class EspHomeUpdateEntity(
-    override val key: Int,
-    override val objectId: String,
-    override val name: String,
-    val raw: ListEntitiesUpdateResponse,
-) : EspHomeEntity

@@ -101,24 +101,33 @@ class EspHomeProtocolClient(
         send(EspHomeMessageType.LIST_ENTITIES_REQUEST) {
             ListEntitiesRequest.newBuilder().build().toByteArray()
         }
-
         val entities = mutableListOf<EspHomeEntity>()
+
         while (true) {
             val frame = transport.receive()
             when (frame.messageType) {
-                EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE -> return entities
+                EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE -> {
+                    return entities
+                }
+
                 EspHomeMessageType.PING_REQUEST -> {
                     send(EspHomeMessageType.PING_RESPONSE) {
                         PingResponse.newBuilder().build().toByteArray()
                     }
                 }
-                in ENTITY_DISCOVERY_MESSAGE_TYPES -> entities += EspHomeEntityMapper.map(
-                    frame.messageType,
-                    frame.payload,
-                )
-                else -> throw EspHomeProtocolException(
-                    "Expected ESPHome entity discovery message but received ${frame.messageType}",
-                )
+
+                in ENTITY_DISCOVERY_MESSAGE_TYPES -> {
+                    entities += EspHomeEntityMapper.map(
+                        frame.messageType,
+                        frame.payload,
+                    )
+                }
+
+                else -> {
+                    throw EspHomeProtocolException(
+                        "Expected ESPHome entity discovery message but received ${frame.messageType}",
+                    )
+                }
             }
         }
     }
@@ -136,13 +145,21 @@ class EspHomeProtocolClient(
                         PingResponse.newBuilder().build().toByteArray()
                     }
                 }
+
                 EspHomeMessageType.DISCONNECT_REQUEST -> {
                     send(EspHomeMessageType.DISCONNECT_RESPONSE) {
                         DisconnectResponse.newBuilder().build().toByteArray()
                     }
                     return
                 }
-                in ENTITY_STATE_MESSAGE_TYPES -> handler.onState(EspHomeStateMapper.map(frame.messageType, frame.payload))
+
+                in ENTITY_STATE_MESSAGE_TYPES -> handler.onState(
+                    EspHomeStateMapper.map(
+                        frame.messageType,
+                        frame.payload
+                    )
+                )
+
                 else -> throw EspHomeProtocolException(
                     "Expected ESPHome state message but received ${frame.messageType}",
                 )
@@ -173,6 +190,7 @@ class EspHomeProtocolClient(
                         PingResponse.newBuilder().build().toByteArray()
                     }
                 }
+
                 else -> throw EspHomeProtocolException(
                     "Expected ESPHome message $messageType but received ${frame.messageType}",
                 )
