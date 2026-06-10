@@ -19,7 +19,16 @@ interface RecognizerConfig {
     }
 
     interface Camera {
+        fun source(): CameraSource
         fun snapshotUrl(): String
+        fun connectTimeout(): Duration
+        fun readTimeout(): Duration
+        fun nativeApi(): NativeApi
+    }
+
+    interface NativeApi {
+        fun host(): String
+        fun port(): Int
         fun connectTimeout(): Duration
         fun readTimeout(): Duration
     }
@@ -30,5 +39,10 @@ interface RecognizerConfig {
 
     interface Debug {
         fun manualTriggerEnabled(): Boolean
+    }
+
+    enum class CameraSource {
+        HTTP_SNAPSHOT,
+        NATIVE_API,
     }
 }

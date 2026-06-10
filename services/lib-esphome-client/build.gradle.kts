@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    id("com.google.protobuf") version "0.10.0"
+    alias(libs.plugins.protobuf)
 }
 
 group = "io.github.arhor.esphome.client"
@@ -20,13 +20,11 @@ kotlin {
 
 protobuf {
     protoc {
-        // Download the compiler artifact
-        artifact = "com.google.protobuf:protoc:4.35.0"
+        artifact = libs.protobuf.protoc.get().toString()
     }
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {
-                // Generates Kotlin extensions (DSL) for the Java classes
                 create("kotlin")
             }
         }
@@ -34,5 +32,12 @@ protobuf {
 }
 
 dependencies {
-    implementation("com.google.protobuf:protobuf-kotlin:4.35.0")
+    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.protobuf.kotlin)
+
+    testImplementation(libs.kotlin.test)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

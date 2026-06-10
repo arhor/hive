@@ -3,6 +3,8 @@
 [versions]
 kotlin = "2.3.21"
 opencv = "2.1.0"
+protobuf = "4.35.0"
+protobuf-plugin = "0.10.0"
 quarkus = "3.36.1"
 
 [libraries]
@@ -12,6 +14,8 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
+protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
+protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 quarkus-arc = { module = "io.quarkus:quarkus-arc" }
 quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
 quarkus-junit = { module = "io.quarkus:quarkus-junit" }
@@ -30,4 +34,5 @@ rest-assured = { module = "io.rest-assured:rest-assured" }
 kotlin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
 quarkus = { id = "io.quarkus", version.ref = "quarkus" }

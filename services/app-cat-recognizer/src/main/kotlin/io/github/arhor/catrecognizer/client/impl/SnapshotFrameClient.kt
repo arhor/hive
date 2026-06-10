@@ -15,6 +15,7 @@ import java.net.http.HttpResponse
 import java.time.Instant
 
 @ApplicationScoped
+@HttpSnapshotCameraClient
 class SnapshotFrameClient @Inject constructor(
     private val config: RecognizerConfig,
 ) : FrameClient {

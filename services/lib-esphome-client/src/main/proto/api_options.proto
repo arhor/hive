@@ -1,4 +1,8 @@
 syntax = "proto2";
+
+option java_package = "io.github.arhor.esphome.client.proto";
+option java_multiple_files = true;
+
 import "google/protobuf/descriptor.proto";
 
 
@@ -8,7 +12,7 @@ enum APISourceType {
     SOURCE_CLIENT = 2;
 }
 
-message void {}
+message Void {}
 
 extend google.protobuf.MethodOptions {
     optional bool needs_setup_connection = 1038 [default = true];

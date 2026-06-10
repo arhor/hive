@@ -23,5 +23,10 @@ class RecognizerConfigBindingTest {
         assertEquals(Duration.ofSeconds(2), config.camera().connectTimeout())
         assertEquals(Duration.ofSeconds(5), config.camera().readTimeout())
         assertEquals("http://esp32-cam.local/snapshot", config.camera().snapshotUrl())
+        assertEquals(RecognizerConfig.CameraSource.HTTP_SNAPSHOT, config.camera().source())
+        assertEquals("esp32-cam.local", config.camera().nativeApi().host())
+        assertEquals(6053, config.camera().nativeApi().port())
+        assertEquals(Duration.ofSeconds(2), config.camera().nativeApi().connectTimeout())
+        assertEquals(Duration.ofSeconds(5), config.camera().nativeApi().readTimeout())
     }
 }

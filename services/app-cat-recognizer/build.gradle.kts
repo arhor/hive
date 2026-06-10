@@ -29,6 +29,8 @@ allOpen {
 }
 
 dependencies {
+    implementation(project(":lib-esphome-client"))
+
     implementation(enforcedPlatform(libs.quarkus.platform))
 
     implementation(libs.quarkus.arc)

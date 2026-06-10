@@ -102,9 +102,16 @@ class SnapshotFrameClientTest {
             }
 
             override fun camera() = object : RecognizerConfig.Camera {
+                override fun source() = RecognizerConfig.CameraSource.HTTP_SNAPSHOT
                 override fun snapshotUrl() = snapshotUrl
                 override fun connectTimeout() = Duration.ofSeconds(2)
                 override fun readTimeout() = Duration.ofSeconds(5)
+                override fun nativeApi() = object : RecognizerConfig.NativeApi {
+                    override fun host() = "esp32-cam.local"
+                    override fun port() = 6053
+                    override fun connectTimeout() = Duration.ofSeconds(2)
+                    override fun readTimeout() = Duration.ofSeconds(5)
+                }
             }
 
             override fun state() = object : RecognizerConfig.State {
