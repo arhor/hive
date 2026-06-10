@@ -6,6 +6,7 @@ import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
 import java.net.InetSocketAddress
 import java.time.Duration
+import java.util.Optional
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -111,6 +112,10 @@ class SnapshotFrameClientTest {
                     override fun port() = 6053
                     override fun connectTimeout() = Duration.ofSeconds(2)
                     override fun readTimeout() = Duration.ofSeconds(5)
+                    override fun encryption() = object : RecognizerConfig.Encryption {
+                        override fun enabled() = false
+                        override fun key(): Optional<String> = Optional.empty()
+                    }
                 }
             }
 

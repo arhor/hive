@@ -9,11 +9,23 @@ data class EspHomeClientConfig(
     val connectTimeout: Duration = Duration.ofSeconds(2),
     val readTimeout: Duration = Duration.ofSeconds(5),
     val password: String? = null,
+    val encryption: EspHomeEncryptionConfig = EspHomeEncryptionConfig(),
 ) {
     init {
         require(host.isNotBlank()) { "host must not be blank" }
         require(port in 1..65535) { "port must be between 1 and 65535" }
         require(!connectTimeout.isNegative && !connectTimeout.isZero) { "connectTimeout must be positive" }
         require(!readTimeout.isNegative && !readTimeout.isZero) { "readTimeout must be positive" }
+    }
+}
+
+data class EspHomeEncryptionConfig(
+    val enabled: Boolean = false,
+    val key: String? = null,
+) {
+    init {
+        require(!enabled || !key.isNullOrBlank()) {
+            "key must be configured when encryption is enabled"
+        }
     }
 }

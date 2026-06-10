@@ -3,8 +3,11 @@ package io.github.arhor.esphome.client
 import io.github.arhor.esphome.client.internal.EspHomeFrame
 import io.github.arhor.esphome.client.internal.EspHomeMessageType
 import io.github.arhor.esphome.client.internal.EspHomeTransport
+import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.HelloResponse
+import java.util.Base64
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -28,6 +31,41 @@ class DefaultEspHomeClientTest {
         }
 
         assertTrue(transport.closed)
+    }
+
+    @Test
+    fun `uses encrypted transport factory when encryption is enabled`() {
+        val key = ByteArray(32) { index -> index.toByte() }
+        val transport = ClosingTransport(
+            EspHomeFrame(
+                EspHomeMessageType.HELLO_RESPONSE,
+                HelloResponse.newBuilder().setApiVersionMajor(1).build().toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.CONNECT_RESPONSE,
+                ConnectResponse.newBuilder().setInvalidPassword(false).build().toByteArray(),
+            ),
+        )
+        var encryptedFactoryUsed = false
+        val client = DefaultEspHomeClient(
+            config = EspHomeClientConfig(
+                host = "camera",
+                encryption = EspHomeEncryptionConfig(
+                    enabled = true,
+                    key = Base64.getEncoder().encodeToString(key),
+                ),
+            ),
+            transportFactory = { error("plaintext transport should not be used") },
+            encryptedTransportFactory = { _, decodedKey ->
+                encryptedFactoryUsed = true
+                assertContentEquals(key, decodedKey)
+                transport
+            },
+        )
+
+        client.connect()
+
+        assertTrue(encryptedFactoryUsed)
     }
 
     private class ClosingTransport(vararg frames: EspHomeFrame) : EspHomeTransport {

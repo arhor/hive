@@ -16,6 +16,7 @@ class EspHomeClientConfigTest {
         assertEquals(Duration.ofSeconds(2), config.connectTimeout)
         assertEquals(Duration.ofSeconds(5), config.readTimeout)
         assertEquals(null, config.password)
+        assertEquals(EspHomeEncryptionConfig(), config.encryption)
     }
 
     @Test
@@ -27,6 +28,16 @@ class EspHomeClientConfigTest {
         }
         assertFailsWith<IllegalArgumentException> {
             EspHomeClientConfig(host = "camera", readTimeout = Duration.ZERO)
+        }
+    }
+
+    @Test
+    fun `rejects enabled encryption without key`() {
+        assertFailsWith<IllegalArgumentException> {
+            EspHomeEncryptionConfig(enabled = true, key = null)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            EspHomeEncryptionConfig(enabled = true, key = " ")
         }
     }
 }

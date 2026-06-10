@@ -2,6 +2,7 @@ package io.github.arhor.catrecognizer.config
 
 import io.smallrye.config.ConfigMapping
 import java.time.Duration
+import java.util.Optional
 
 @ConfigMapping(prefix = "cat-recognizer")
 interface RecognizerConfig {
@@ -31,6 +32,12 @@ interface RecognizerConfig {
         fun port(): Int
         fun connectTimeout(): Duration
         fun readTimeout(): Duration
+        fun encryption(): Encryption
+    }
+
+    interface Encryption {
+        fun enabled(): Boolean
+        fun key(): Optional<String>
     }
 
     interface State {
