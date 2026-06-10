@@ -6,6 +6,8 @@ import io.github.arhor.catrecognizer.domain.FrameSourceError
 import io.github.arhor.esphome.client.EspHomeClientException
 import io.github.arhor.esphome.client.EspHomeClientConfig
 import io.github.arhor.esphome.client.EspHomeConnection
+import io.github.arhor.esphome.client.EspHomeEntity
+import io.github.arhor.esphome.client.EspHomeStateHandler
 import java.time.Duration
 import java.util.Optional
 import kotlin.test.Test
@@ -64,6 +66,8 @@ class EspHomeNativeFrameClientTest {
     private class FakeConnection(private val image: ByteArray) : EspHomeConnection {
         override fun deviceInfo() = error("not used")
         override fun fetchCameraImage(single: Boolean): ByteArray = image
+        override fun listEntities(): List<EspHomeEntity> = emptyList()
+        override fun subscribeStates(handler: EspHomeStateHandler) = Unit
         override fun close() = Unit
     }
 

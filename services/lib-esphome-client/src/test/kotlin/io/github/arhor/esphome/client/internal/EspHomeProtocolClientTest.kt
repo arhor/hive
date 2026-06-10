@@ -8,7 +8,12 @@ import io.github.arhor.esphome.client.proto.CameraImageResponse
 import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse
 import io.github.arhor.esphome.client.proto.HelloResponse
+import io.github.arhor.esphome.client.proto.ListEntitiesDoneResponse
+import io.github.arhor.esphome.client.proto.ListEntitiesSensorResponse
+import io.github.arhor.esphome.client.proto.ListEntitiesSwitchResponse
 import io.github.arhor.esphome.client.proto.PingRequest
+import io.github.arhor.esphome.client.proto.SensorStateResponse
+import io.github.arhor.esphome.client.proto.SwitchStateResponse
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
@@ -140,6 +145,170 @@ class EspHomeProtocolClientTest {
         }
 
         assertEquals("ESPHome camera response completed without image data", error.message)
+    }
+
+    @Test
+    fun `listEntities aggregates discovery responses until done`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.LIST_ENTITIES_SENSOR_RESPONSE,
+                ListEntitiesSensorResponse.newBuilder()
+                    .setKey(1)
+                    .setObjectId("temperature")
+                    .setName("Temperature")
+                    .build()
+                    .toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE,
+                ListEntitiesSwitchResponse.newBuilder()
+                    .setKey(2)
+                    .setObjectId("relay")
+                    .setName("Relay")
+                    .build()
+                    .toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE,
+                ListEntitiesDoneResponse.newBuilder().build().toByteArray(),
+            ),
+        )
+
+        val entities = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+
+        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent.single().messageType)
+        assertEquals(listOf("temperature", "relay"), entities.map { it.objectId })
+    }
+
+    @Test
+    fun `listEntities responds to ping while waiting for discovery done`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.PING_REQUEST,
+                PingRequest.newBuilder().build().toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE,
+                ListEntitiesDoneResponse.newBuilder().build().toByteArray(),
+            ),
+        )
+
+        val entities = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+
+        assertEquals(emptyList(), entities)
+        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent[0].messageType)
+        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].messageType)
+    }
+
+    @Test
+    fun `listEntities rejects unexpected messages`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.DEVICE_INFO_RESPONSE,
+                DeviceInfoResponse.newBuilder().build().toByteArray(),
+            ),
+        )
+
+        val error = assertFailsWith<EspHomeProtocolException> {
+            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+        }
+
+        assertEquals("Expected ESPHome entity discovery message but received 10", error.message)
+    }
+
+    @Test
+    fun `subscribeStates dispatches states in receive order`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.SENSOR_STATE_RESPONSE,
+                SensorStateResponse.newBuilder()
+                    .setKey(1)
+                    .setState(21.5f)
+                    .build()
+                    .toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.SWITCH_STATE_RESPONSE,
+                SwitchStateResponse.newBuilder()
+                    .setKey(2)
+                    .setState(true)
+                    .build()
+                    .toByteArray(),
+            ),
+        )
+        val received = mutableListOf<Int>()
+        val stop = RuntimeException("stop after two states")
+
+        val error = assertFailsWith<RuntimeException> {
+            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates { state ->
+                received += state.key
+                if (received.size == 2) throw stop
+            }
+        }
+
+        assertEquals(stop, error)
+        assertEquals(listOf(1, 2), received)
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent.single().messageType)
+    }
+
+    @Test
+    fun `subscribeStates responds to ping while waiting for states`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.PING_REQUEST,
+                PingRequest.newBuilder().build().toByteArray(),
+            ),
+            EspHomeFrame(
+                EspHomeMessageType.SWITCH_STATE_RESPONSE,
+                SwitchStateResponse.newBuilder()
+                    .setKey(2)
+                    .setState(true)
+                    .build()
+                    .toByteArray(),
+            ),
+        )
+        val stop = RuntimeException("stop after state")
+
+        val error = assertFailsWith<RuntimeException> {
+            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {
+                throw stop
+            }
+        }
+
+        assertEquals(stop, error)
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].messageType)
+        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].messageType)
+    }
+
+    @Test
+    fun `subscribeStates rejects unexpected messages`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.DEVICE_INFO_RESPONSE,
+                DeviceInfoResponse.newBuilder().build().toByteArray(),
+            ),
+        )
+
+        val error = assertFailsWith<EspHomeProtocolException> {
+            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
+        }
+
+        assertEquals("Expected ESPHome state message but received 10", error.message)
+    }
+
+    @Test
+    fun `subscribeStates acknowledges disconnect request before returning`() {
+        val transport = FakeTransport(
+            EspHomeFrame(
+                EspHomeMessageType.DISCONNECT_REQUEST,
+                ByteArray(0),
+            ),
+        )
+
+        EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
+
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].messageType)
+        assertEquals(EspHomeMessageType.DISCONNECT_RESPONSE, transport.sent[1].messageType)
     }
 
     private class FakeTransport(vararg frames: EspHomeFrame) : EspHomeTransport {

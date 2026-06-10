@@ -4,7 +4,9 @@ import io.github.arhor.esphome.client.EspHomeAuthenticationException
 import io.github.arhor.esphome.client.EspHomeClientConfig
 import io.github.arhor.esphome.client.EspHomeConnection
 import io.github.arhor.esphome.client.EspHomeDeviceInfo
+import io.github.arhor.esphome.client.EspHomeEntity
 import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.EspHomeStateHandler
 import io.github.arhor.esphome.client.proto.CameraImageRequest
 import io.github.arhor.esphome.client.proto.CameraImageResponse
 import io.github.arhor.esphome.client.proto.ConnectRequest
@@ -12,9 +14,12 @@ import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.DeviceInfoRequest
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse
 import io.github.arhor.esphome.client.proto.DisconnectRequest
+import io.github.arhor.esphome.client.proto.DisconnectResponse
 import io.github.arhor.esphome.client.proto.HelloRequest
 import io.github.arhor.esphome.client.proto.HelloResponse
+import io.github.arhor.esphome.client.proto.ListEntitiesRequest
 import io.github.arhor.esphome.client.proto.PingResponse
+import io.github.arhor.esphome.client.proto.SubscribeStatesRequest
 import java.io.ByteArrayOutputStream
 
 class EspHomeProtocolClient(
@@ -92,6 +97,59 @@ class EspHomeProtocolClient(
         }
     }
 
+    override fun listEntities(): List<EspHomeEntity> {
+        send(EspHomeMessageType.LIST_ENTITIES_REQUEST) {
+            ListEntitiesRequest.newBuilder().build().toByteArray()
+        }
+
+        val entities = mutableListOf<EspHomeEntity>()
+        while (true) {
+            val frame = transport.receive()
+            when (frame.messageType) {
+                EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE -> return entities
+                EspHomeMessageType.PING_REQUEST -> {
+                    send(EspHomeMessageType.PING_RESPONSE) {
+                        PingResponse.newBuilder().build().toByteArray()
+                    }
+                }
+                in ENTITY_DISCOVERY_MESSAGE_TYPES -> entities += EspHomeEntityMapper.map(
+                    frame.messageType,
+                    frame.payload,
+                )
+                else -> throw EspHomeProtocolException(
+                    "Expected ESPHome entity discovery message but received ${frame.messageType}",
+                )
+            }
+        }
+    }
+
+    override fun subscribeStates(handler: EspHomeStateHandler) {
+        send(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST) {
+            SubscribeStatesRequest.newBuilder().build().toByteArray()
+        }
+
+        while (true) {
+            val frame = transport.receive()
+            when (frame.messageType) {
+                EspHomeMessageType.PING_REQUEST -> {
+                    send(EspHomeMessageType.PING_RESPONSE) {
+                        PingResponse.newBuilder().build().toByteArray()
+                    }
+                }
+                EspHomeMessageType.DISCONNECT_REQUEST -> {
+                    send(EspHomeMessageType.DISCONNECT_RESPONSE) {
+                        DisconnectResponse.newBuilder().build().toByteArray()
+                    }
+                    return
+                }
+                in ENTITY_STATE_MESSAGE_TYPES -> handler.onState(EspHomeStateMapper.map(frame.messageType, frame.payload))
+                else -> throw EspHomeProtocolException(
+                    "Expected ESPHome state message but received ${frame.messageType}",
+                )
+            }
+        }
+    }
+
     override fun close() {
         runCatching {
             send(EspHomeMessageType.DISCONNECT_REQUEST) {
@@ -120,5 +178,58 @@ class EspHomeProtocolClient(
                 )
             }
         }
+    }
+
+    private companion object {
+        val ENTITY_DISCOVERY_MESSAGE_TYPES = setOf(
+            EspHomeMessageType.LIST_ENTITIES_BINARY_SENSOR_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_COVER_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_FAN_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_LIGHT_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_SENSOR_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_TEXT_SENSOR_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_SERVICES_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_CAMERA_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE,
+            EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE,
+        )
+
+        val ENTITY_STATE_MESSAGE_TYPES = setOf(
+            EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE,
+            EspHomeMessageType.COVER_STATE_RESPONSE,
+            EspHomeMessageType.FAN_STATE_RESPONSE,
+            EspHomeMessageType.LIGHT_STATE_RESPONSE,
+            EspHomeMessageType.SENSOR_STATE_RESPONSE,
+            EspHomeMessageType.SWITCH_STATE_RESPONSE,
+            EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE,
+            EspHomeMessageType.CLIMATE_STATE_RESPONSE,
+            EspHomeMessageType.NUMBER_STATE_RESPONSE,
+            EspHomeMessageType.SELECT_STATE_RESPONSE,
+            EspHomeMessageType.SIREN_STATE_RESPONSE,
+            EspHomeMessageType.LOCK_STATE_RESPONSE,
+            EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE,
+            EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE,
+            EspHomeMessageType.TEXT_STATE_RESPONSE,
+            EspHomeMessageType.DATE_STATE_RESPONSE,
+            EspHomeMessageType.TIME_STATE_RESPONSE,
+            EspHomeMessageType.EVENT_RESPONSE,
+            EspHomeMessageType.VALVE_STATE_RESPONSE,
+            EspHomeMessageType.DATETIME_STATE_RESPONSE,
+            EspHomeMessageType.UPDATE_STATE_RESPONSE,
+        )
     }
 }
