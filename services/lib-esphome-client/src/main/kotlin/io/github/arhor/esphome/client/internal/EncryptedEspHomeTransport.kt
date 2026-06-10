@@ -41,6 +41,7 @@ internal class EncryptedEspHomeTransport private constructor(
     }
 
     companion object {
+        @JvmStatic
         fun connect(config: EspHomeClientConfig, psk: ByteArray): EncryptedEspHomeTransport {
             val socket = Socket()
             try {

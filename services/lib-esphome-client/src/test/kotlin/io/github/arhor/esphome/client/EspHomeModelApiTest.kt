@@ -69,27 +69,24 @@ class EspHomeModelApiTest {
             .setState(true)
             .build()
 
-        val state: EspHomeState = EspHomeBinarySensorState(
-            key = raw.key,
+        val state: EspHomeState = EspHomeState.BinarySensor(
             raw = raw,
         )
 
         assertEquals(11, state.key)
-        assertSame(raw, (state as EspHomeBinarySensorState).raw)
+        assertSame(raw, (state as EspHomeState.BinarySensor).raw)
     }
 
     @Test
     fun `state models expose primary protobuf fields directly`() {
-        val binary = EspHomeBinarySensorState(
-            key = 1,
+        val binary = EspHomeState.BinarySensor(
             raw = BinarySensorStateResponse.newBuilder()
                 .setKey(1)
                 .setState(true)
                 .setMissingState(false)
                 .build(),
         )
-        val date = EspHomeDateState(
-            key = 2,
+        val date = EspHomeState.Date(
             raw = DateStateResponse.newBuilder()
                 .setKey(2)
                 .setYear(2026)
@@ -97,8 +94,7 @@ class EspHomeModelApiTest {
                 .setDay(10)
                 .build(),
         )
-        val update = EspHomeUpdateState(
-            key = 3,
+        val update = EspHomeState.Update(
             raw = UpdateStateResponse.newBuilder()
                 .setKey(3)
                 .setInProgress(true)
@@ -119,8 +115,7 @@ class EspHomeModelApiTest {
     fun `state handler is a functional interface`() {
         var observed: EspHomeState? = null
         val handler = EspHomeStateHandler { observed = it }
-        val state = EspHomeBinarySensorState(
-            key = 1,
+        val state = EspHomeState.BinarySensor(
             raw = BinarySensorStateResponse.newBuilder().setKey(1).build(),
         )
 

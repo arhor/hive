@@ -1,29 +1,8 @@
 package io.github.arhor.esphome.client.internal
 
 import com.google.protobuf.InvalidProtocolBufferException
-import io.github.arhor.esphome.client.EspHomeAlarmControlPanelState
-import io.github.arhor.esphome.client.EspHomeBinarySensorState
-import io.github.arhor.esphome.client.EspHomeClimateState
-import io.github.arhor.esphome.client.EspHomeCoverState
-import io.github.arhor.esphome.client.EspHomeDateState
-import io.github.arhor.esphome.client.EspHomeDateTimeState
-import io.github.arhor.esphome.client.EspHomeEventState
-import io.github.arhor.esphome.client.EspHomeFanState
-import io.github.arhor.esphome.client.EspHomeLightState
-import io.github.arhor.esphome.client.EspHomeLockState
-import io.github.arhor.esphome.client.EspHomeMediaPlayerState
-import io.github.arhor.esphome.client.EspHomeNumberState
 import io.github.arhor.esphome.client.EspHomeProtocolException
-import io.github.arhor.esphome.client.EspHomeSelectState
-import io.github.arhor.esphome.client.EspHomeSensorState
-import io.github.arhor.esphome.client.EspHomeSirenState
 import io.github.arhor.esphome.client.EspHomeState
-import io.github.arhor.esphome.client.EspHomeSwitchState
-import io.github.arhor.esphome.client.EspHomeTextSensorState
-import io.github.arhor.esphome.client.EspHomeTextState
-import io.github.arhor.esphome.client.EspHomeTimeState
-import io.github.arhor.esphome.client.EspHomeUpdateState
-import io.github.arhor.esphome.client.EspHomeValveState
 import io.github.arhor.esphome.client.proto.AlarmControlPanelStateResponse
 import io.github.arhor.esphome.client.proto.BinarySensorStateResponse
 import io.github.arhor.esphome.client.proto.ClimateStateResponse
@@ -52,49 +31,110 @@ internal object EspHomeStateMapper {
         try {
             when (messageType) {
                 EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE ->
-                    BinarySensorStateResponse.parseFrom(payload).let { EspHomeBinarySensorState(it.key, it) }
+                    BinarySensorStateResponse.parseFrom(payload).let {
+                        EspHomeState.BinarySensor(it)
+                    }
+
                 EspHomeMessageType.COVER_STATE_RESPONSE ->
-                    CoverStateResponse.parseFrom(payload).let { EspHomeCoverState(it.key, it) }
+                    CoverStateResponse.parseFrom(payload).let {
+                        EspHomeState.Cover(it)
+                    }
+
                 EspHomeMessageType.FAN_STATE_RESPONSE ->
-                    FanStateResponse.parseFrom(payload).let { EspHomeFanState(it.key, it) }
+                    FanStateResponse.parseFrom(payload).let {
+                        EspHomeState.Fan(it)
+                    }
+
                 EspHomeMessageType.LIGHT_STATE_RESPONSE ->
-                    LightStateResponse.parseFrom(payload).let { EspHomeLightState(it.key, it) }
+                    LightStateResponse.parseFrom(payload).let {
+                        EspHomeState.Light(it)
+                    }
+
                 EspHomeMessageType.SENSOR_STATE_RESPONSE ->
-                    SensorStateResponse.parseFrom(payload).let { EspHomeSensorState(it.key, it) }
+                    SensorStateResponse.parseFrom(payload).let {
+                        EspHomeState.Sensor(it)
+                    }
+
                 EspHomeMessageType.SWITCH_STATE_RESPONSE ->
-                    SwitchStateResponse.parseFrom(payload).let { EspHomeSwitchState(it.key, it) }
+                    SwitchStateResponse.parseFrom(payload).let {
+                        EspHomeState.Switch(it)
+                    }
+
                 EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE ->
-                    TextSensorStateResponse.parseFrom(payload).let { EspHomeTextSensorState(it.key, it) }
+                    TextSensorStateResponse.parseFrom(payload).let {
+                        EspHomeState.TextSensor(it)
+                    }
+
                 EspHomeMessageType.CLIMATE_STATE_RESPONSE ->
-                    ClimateStateResponse.parseFrom(payload).let { EspHomeClimateState(it.key, it) }
+                    ClimateStateResponse.parseFrom(payload).let {
+                        EspHomeState.Climate(it)
+                    }
+
                 EspHomeMessageType.NUMBER_STATE_RESPONSE ->
-                    NumberStateResponse.parseFrom(payload).let { EspHomeNumberState(it.key, it) }
+                    NumberStateResponse.parseFrom(payload).let {
+                        EspHomeState.Number(it)
+                    }
+
                 EspHomeMessageType.SELECT_STATE_RESPONSE ->
-                    SelectStateResponse.parseFrom(payload).let { EspHomeSelectState(it.key, it) }
+                    SelectStateResponse.parseFrom(payload).let {
+                        EspHomeState.Select(it)
+                    }
+
                 EspHomeMessageType.SIREN_STATE_RESPONSE ->
-                    SirenStateResponse.parseFrom(payload).let { EspHomeSirenState(it.key, it) }
+                    SirenStateResponse.parseFrom(payload).let {
+                        EspHomeState.Siren(it)
+                    }
+
                 EspHomeMessageType.LOCK_STATE_RESPONSE ->
-                    LockStateResponse.parseFrom(payload).let { EspHomeLockState(it.key, it) }
+                    LockStateResponse.parseFrom(payload).let {
+                        EspHomeState.Lock(it)
+                    }
+
                 EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE ->
-                    MediaPlayerStateResponse.parseFrom(payload).let { EspHomeMediaPlayerState(it.key, it) }
+                    MediaPlayerStateResponse.parseFrom(payload).let {
+                        EspHomeState.MediaPlayer(it)
+                    }
+
                 EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE ->
                     AlarmControlPanelStateResponse.parseFrom(payload).let {
-                        EspHomeAlarmControlPanelState(it.key, it)
+                        EspHomeState.AlarmControlPanel(it)
                     }
+
                 EspHomeMessageType.TEXT_STATE_RESPONSE ->
-                    TextStateResponse.parseFrom(payload).let { EspHomeTextState(it.key, it) }
+                    TextStateResponse.parseFrom(payload).let {
+                        EspHomeState.Text(it)
+                    }
+
                 EspHomeMessageType.DATE_STATE_RESPONSE ->
-                    DateStateResponse.parseFrom(payload).let { EspHomeDateState(it.key, it) }
+                    DateStateResponse.parseFrom(payload).let {
+                        EspHomeState.Date(it)
+                    }
+
                 EspHomeMessageType.TIME_STATE_RESPONSE ->
-                    TimeStateResponse.parseFrom(payload).let { EspHomeTimeState(it.key, it) }
+                    TimeStateResponse.parseFrom(payload).let {
+                        EspHomeState.Time(it)
+                    }
+
                 EspHomeMessageType.EVENT_RESPONSE ->
-                    EventResponse.parseFrom(payload).let { EspHomeEventState(it.key, it) }
+                    EventResponse.parseFrom(payload).let {
+                        EspHomeState.Event(it)
+                    }
+
                 EspHomeMessageType.VALVE_STATE_RESPONSE ->
-                    ValveStateResponse.parseFrom(payload).let { EspHomeValveState(it.key, it) }
+                    ValveStateResponse.parseFrom(payload).let {
+                        EspHomeState.Valve(it)
+                    }
+
                 EspHomeMessageType.DATETIME_STATE_RESPONSE ->
-                    DateTimeStateResponse.parseFrom(payload).let { EspHomeDateTimeState(it.key, it) }
+                    DateTimeStateResponse.parseFrom(payload).let {
+                        EspHomeState.DateTime(it)
+                    }
+
                 EspHomeMessageType.UPDATE_STATE_RESPONSE ->
-                    UpdateStateResponse.parseFrom(payload).let { EspHomeUpdateState(it.key, it) }
+                    UpdateStateResponse.parseFrom(payload).let {
+                        EspHomeState.Update(it)
+                    }
+
                 else -> throw EspHomeProtocolException("Unsupported ESPHome state message: $messageType")
             }
         } catch (exception: InvalidProtocolBufferException) {

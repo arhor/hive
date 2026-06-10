@@ -35,6 +35,7 @@ class PlaintextEspHomeTransport private constructor(
     }
 
     companion object {
+        @JvmStatic
         fun connect(config: EspHomeClientConfig): PlaintextEspHomeTransport {
             val socket = Socket()
             try {
