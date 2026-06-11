@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress CssUnusedSymbol -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,8 +18,29 @@
         }
         h1 { margin-bottom: 8px; font-size: 1.2rem; }
         h2 {
-            margin: 24px 0 8px;
+            margin: 8px 0;
             font-size: 1rem;
+        }
+
+        #view-switcher {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        #view-switcher button {
+            padding: 6px 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #222;
+            color: #eee;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        #view-switcher button.active {
+            background: #444;
+            border-color: #888;
         }
         #status-bar {
             margin-bottom: 12px;
@@ -52,7 +74,8 @@
             font-size: 0.8rem;
             color: #aaa;
         }
-        #upload-section {
+
+        .view-section {
             margin-top: 20px;
             width: min(90vw, 720px);
             text-align: center;
@@ -75,15 +98,23 @@
     </style>
 </head>
 <body>
-    <h1>Cat Detector Live View</h1>
+<h1>Cat Detector</h1>
+<div id="view-switcher">
+    <button id="upload-view-button" type="button">Upload test image</button>
+    <button id="live-view-button" type="button">Live view</button>
+</div>
+
+<section class="view-section" hidden id="live-section">
+    <h2>Live view</h2>
     <div id="status-bar" class="unknown">Waiting for data…</div>
     <div id="frame-container">
-        <img id="frame-img" alt="Latest frame" />
+        <img alt="Latest frame" id="frame-img"/>
         <canvas id="bbox-canvas"></canvas>
     </div>
     <div id="meta"></div>
+</section>
 
-    <section id="upload-section" hidden>
+<section class="view-section" hidden id="upload-section">
         <h2>Upload test image</h2>
         <form id="upload-form">
             <input id="upload-input" type="file" accept="image/*" required>
@@ -97,6 +128,10 @@
     </section>
 
     <script>
+        const liveSection = document.getElementById('live-section');
+        const liveViewButton = document.getElementById('live-view-button');
+        const uploadViewButton = document.getElementById('upload-view-button');
+
         const img       = document.getElementById('frame-img');
         const canvas    = document.getElementById('bbox-canvas');
         const ctx       = canvas.getContext('2d');
@@ -115,6 +150,30 @@
         let pendingBoxes = [];
         let uploadBoxes  = [];
         let uploadPreviewUrl = null;
+        let uploadEnabled = false;
+        let activeView = 'upload';
+        let livePollIntervalId = null;
+
+        function setActiveView(view) {
+            activeView = view === 'upload' && uploadEnabled ? 'upload' : 'live';
+
+            liveSection.hidden = activeView !== 'live';
+            uploadSection.hidden = !uploadEnabled || activeView !== 'upload';
+            liveViewButton.classList.toggle('active', activeView === 'live');
+            uploadViewButton.classList.toggle('active', activeView === 'upload');
+
+            if (activeView === 'live') {
+                startLivePolling();
+            } else {
+                stopLivePolling();
+            }
+
+            if (activeView === 'live' && img.complete && img.naturalWidth > 0) {
+                drawBoxes();
+            } else if (activeView === 'upload' && uploadImg.naturalWidth > 0) {
+                drawUploadBoxes();
+            }
+        }
 
         function drawBoxSet(targetImg, targetCanvas, targetCtx, boxes) {
             targetCanvas.width  = targetImg.naturalWidth;
@@ -171,19 +230,30 @@
         async function loadDebugConfig() {
             try {
                 const res = await fetch('/api/debug/config');
-                if (!res.ok) return;
+                if (!res.ok) {
+                    uploadViewButton.hidden = true;
+                    setActiveView('live');
+                    return;
+                }
 
                 const data = await res.json();
-                uploadSection.hidden = !data.uploadEnabled;
+                uploadEnabled = data.uploadEnabled === true;
+                uploadViewButton.hidden = !uploadEnabled;
+                setActiveView(uploadEnabled ? 'upload' : 'live');
             } catch (err) {
-                uploadSection.hidden = true;
+                uploadEnabled = false;
+                uploadViewButton.hidden = true;
+                setActiveView('live');
             }
         }
 
         async function poll() {
+            if (activeView !== 'live') return;
+
             try {
                 const res  = await fetch('/api/recognition/latest');
                 const data = await res.json();
+                if (activeView !== 'live') return;
 
                 pendingBoxes = data.boundingBoxes || [];
 
@@ -205,6 +275,20 @@
             }
         }
 
+        function startLivePolling() {
+            if (livePollIntervalId != null) return;
+
+            poll();
+            livePollIntervalId = setInterval(poll, 5000);
+        }
+
+        function stopLivePolling() {
+            if (livePollIntervalId == null) return;
+
+            clearInterval(livePollIntervalId);
+            livePollIntervalId = null;
+        }
+
         uploadInput.addEventListener('change', () => {
             uploadBoxes = [];
             uploadCtx.clearRect(0, 0, uploadCanvas.width, uploadCanvas.height);
@@ -220,6 +304,9 @@
             uploadStatus.textContent = 'Ready to test';
             uploadStatus.className = 'unknown';
         });
+
+        liveViewButton.addEventListener('click', () => setActiveView('live'));
+        uploadViewButton.addEventListener('click', () => setActiveView('upload'));
 
         uploadForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -259,8 +346,6 @@
         });
 
         loadDebugConfig();
-        poll();
-        setInterval(poll, 5000);
     </script>
 </body>
 </html>

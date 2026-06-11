@@ -7,8 +7,11 @@ import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.FrameSourceError
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
+import io.github.arhor.catrecognizer.util.debugK
+import io.github.arhor.catrecognizer.util.toDebugSummary
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
+import org.jboss.logging.Logger
 import java.time.Instant
 
 @ApplicationScoped
@@ -18,11 +21,17 @@ class CatRecognitionService @Inject constructor(
     private val state: LatestRecognitionState,
 ) {
 
+    private val logger: Logger = Logger.getLogger(CatRecognitionService::class.java)
+
     fun runRecognition(): RecognitionResult {
         var frame: FramePayload? = null
         return try {
             frame = frameClient.fetchFrame()
+            logger.debugK { "Fetched snapshot frame: ${frame.toDebugSummary()}" }
+
             val outcome = detector.detect(frame)
+            logger.debugK { "Snapshot detector outcome: ${outcome.toDebugSummary()}" }
+
             val result = when (outcome) {
                 is DetectionOutcome.Present -> RecognitionResult(
                     status = CatPresenceStatus.DETECTED,
@@ -60,6 +69,7 @@ class CatRecognitionService @Inject constructor(
 
             result
         } catch (error: FrameSourceError) {
+            logger.debugK(error) { "Snapshot frame fetch failed" }
             val result = RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = Instant.now(),
@@ -74,6 +84,10 @@ class CatRecognitionService @Inject constructor(
             state.recordFailure(result, frame?.bytes)
             result
         } catch (error: Exception) {
+            logger.debugK(error) {
+                val frameSummary = frame?.toDebugSummary() ?: "none"
+                "Snapshot detection failed: frame=$frameSummary"
+            }
             val result = RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = frame?.observedAt ?: Instant.now(),

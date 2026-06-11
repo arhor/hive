@@ -9,6 +9,8 @@ import io.github.arhor.catrecognizer.domain.RecognitionResult
 import io.github.arhor.catrecognizer.service.CatRecognitionService
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
 import io.github.arhor.catrecognizer.service.OpenCvCatDetector
+import io.github.arhor.catrecognizer.util.debugK
+import io.github.arhor.catrecognizer.util.toDebugSummary
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
@@ -17,6 +19,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import org.jboss.logging.Logger
 import org.jboss.resteasy.reactive.RestForm
 import org.jboss.resteasy.reactive.multipart.FileUpload
 import java.nio.file.Files
@@ -30,6 +33,8 @@ class RecognitionController @Inject constructor(
     private val config: RecognizerConfig,
     private val detector: OpenCvCatDetector,
 ) {
+
+    private val logger: Logger = Logger.getLogger(RecognitionController::class.java)
 
     @GET
     @Path("/latest")
@@ -70,7 +75,12 @@ class RecognitionController @Inject constructor(
         }
 
         if (image == null || image.size() <= 0) {
+            logger.debugK { "Rejected upload request: image part is missing or empty" }
             return Response.status(Response.Status.BAD_REQUEST).build()
+        }
+
+        logger.debugK {
+            "Received upload image: fileName=${image.fileName()}, contentType=${image.contentType()}, declaredSize=${image.size()}"
         }
 
         val frame = FramePayload(
@@ -79,12 +89,17 @@ class RecognitionController @Inject constructor(
             observedAt = Instant.now(),
         )
 
+        logger.debugK { "Prepared upload frame: ${frame.toDebugSummary()}" }
+
         return Response.ok(detectUpload(frame)).build()
     }
 
-    private fun detectUpload(frame: FramePayload): RecognitionResult =
+    private fun detectUpload(frame: FramePayload): RecognitionResult {
         try {
-            when (val outcome = detector.detect(frame)) {
+            val outcome = detector.detect(frame)
+            logger.debugK { "Upload detector outcome: ${outcome.toDebugSummary()}" }
+
+            return when (outcome) {
                 is DetectionOutcome.Present -> RecognitionResult(
                     status = CatPresenceStatus.DETECTED,
                     observedAt = frame.observedAt,
@@ -113,7 +128,8 @@ class RecognitionController @Inject constructor(
                 )
             }
         } catch (error: Exception) {
-            RecognitionResult(
+            logger.debugK(error) { "Upload detection failed: frame=${frame.toDebugSummary()}" }
+            return RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = frame.observedAt,
                 confidence = null,
@@ -125,4 +141,5 @@ class RecognitionController @Inject constructor(
                 ),
             )
         }
+    }
 }
