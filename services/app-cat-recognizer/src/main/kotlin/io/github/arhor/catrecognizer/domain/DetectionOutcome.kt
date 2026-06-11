@@ -8,6 +8,7 @@ sealed interface DetectionOutcome {
     @Serializable
     data class Present(
         val confidence: Double?,
+        val boundingBoxes: List<BoundingBox> = emptyList(),
     ) : DetectionOutcome
 
     @Serializable

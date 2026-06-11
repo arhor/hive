@@ -66,7 +66,10 @@ class CoreModelShapeTest {
 
     @Test
     fun `detection outcomes preserve nullable confidence through serialization`() {
-        val present = DetectionOutcome.Present(confidence = null)
+        val present = DetectionOutcome.Present(
+            confidence = null,
+            boundingBoxes = listOf(BoundingBox(x = 5, y = 10, width = 40, height = 50)),
+        )
         val absent = DetectionOutcome.Absent(confidence = null)
         val unknown = DetectionOutcome.Unknown(reason = "stub detector")
 
@@ -124,5 +127,23 @@ class CoreModelShapeTest {
 
         assertEquals(result, decoded)
         assertTrue(encoded.contains("\"source\":\"camera\""))
+    }
+
+    @Test
+    fun `recognition result with bounding boxes round trips through json`() {
+        val boxes = listOf(BoundingBox(x = 5, y = 10, width = 40, height = 50))
+        val result = RecognitionResult(
+            status = CatPresenceStatus.DETECTED,
+            observedAt = Instant.parse("2026-06-11T10:00:00Z"),
+            confidence = 0.87,
+            source = "snapshot",
+            boundingBoxes = boxes,
+        )
+
+        val encoded = json.encodeToString(result)
+        val decoded = json.decodeFromString<RecognitionResult>(encoded)
+
+        assertEquals(result, decoded)
+        assertTrue(encoded.contains("\"boundingBoxes\""))
     }
 }

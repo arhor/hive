@@ -11,4 +11,5 @@ data class RecognitionResult(
     val confidence: Double? = null,
     val source: String,
     val error: RecognitionError? = null,
+    val boundingBoxes: List<BoundingBox>? = null,
 )
