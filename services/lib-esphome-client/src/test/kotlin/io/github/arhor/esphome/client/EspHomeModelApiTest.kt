@@ -20,12 +20,7 @@ class EspHomeModelApiTest {
             .setName("Motion")
             .build()
 
-        val entity: EspHomeEntity = EspHomeEntity.BinarySensor(
-            key = raw.key,
-            objectId = raw.objectId,
-            name = raw.name,
-            raw = raw,
-        )
+        val entity: EspHomeEntity = EspHomeEntity.BinarySensor(raw)
 
         assertEquals(11, entity.key)
         assertEquals("motion", entity.objectId)
@@ -45,18 +40,8 @@ class EspHomeModelApiTest {
             .setName("play_rtttl")
             .build()
 
-        val camera: EspHomeEntity = EspHomeEntity.Camera(
-            key = cameraRaw.key,
-            objectId = cameraRaw.objectId,
-            name = cameraRaw.name,
-            raw = cameraRaw,
-        )
-        val service: EspHomeEntity = EspHomeEntity.Service(
-            key = serviceRaw.key,
-            objectId = serviceRaw.name,
-            name = serviceRaw.name,
-            raw = serviceRaw,
-        )
+        val camera: EspHomeEntity = EspHomeEntity.Camera(cameraRaw)
+        val service: EspHomeEntity = EspHomeEntity.Service(serviceRaw)
 
         assertEquals("front_camera", camera.objectId)
         assertEquals("play_rtttl", service.name)

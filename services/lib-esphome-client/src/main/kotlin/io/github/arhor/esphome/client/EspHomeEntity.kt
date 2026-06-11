@@ -30,171 +30,291 @@ sealed interface EspHomeEntity {
     val objectId: String
     val name: String
 
-    data class BinarySensor(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesBinarySensorResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class BinarySensor(val raw: ListEntitiesBinarySensorResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Cover(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesCoverResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Fan(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesFanResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class Light(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesLightResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Cover(val raw: ListEntitiesCoverResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Sensor(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesSensorResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Switch(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesSwitchResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class TextSensor(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesTextSensorResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Fan(val raw: ListEntitiesFanResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Service(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesServicesResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Camera(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesCameraResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class Climate(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesClimateResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Light(val raw: ListEntitiesLightResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Number(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesNumberResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Select(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesSelectResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class Siren(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesSirenResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Sensor(val raw: ListEntitiesSensorResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Lock(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesLockResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Button(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesButtonResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class MediaPlayer(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesMediaPlayerResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Switch(val raw: ListEntitiesSwitchResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class AlarmControlPanel(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesAlarmControlPanelResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Text(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesTextResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class Date(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesDateResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class TextSensor(val raw: ListEntitiesTextSensorResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class Time(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesTimeResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.objectId
 
-    data class Event(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesEventResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
 
-    data class Valve(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesValveResponse,
-    ) : EspHomeEntity
+    @JvmInline
+    value class Service(val raw: ListEntitiesServicesResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
 
-    data class DateTime(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesDateTimeResponse,
-    ) : EspHomeEntity
+        override val objectId: String
+            get() = raw.name
 
-    data class Update(
-        override val key: Int,
-        override val objectId: String,
-        override val name: String,
-        val raw: ListEntitiesUpdateResponse,
-    ) : EspHomeEntity
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Camera(val raw: ListEntitiesCameraResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Climate(val raw: ListEntitiesClimateResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Number(val raw: ListEntitiesNumberResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Select(val raw: ListEntitiesSelectResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Siren(val raw: ListEntitiesSirenResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Lock(val raw: ListEntitiesLockResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Button(val raw: ListEntitiesButtonResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class MediaPlayer(val raw: ListEntitiesMediaPlayerResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class AlarmControlPanel(val raw: ListEntitiesAlarmControlPanelResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Text(val raw: ListEntitiesTextResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Date(val raw: ListEntitiesDateResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Time(val raw: ListEntitiesTimeResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Event(val raw: ListEntitiesEventResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Valve(val raw: ListEntitiesValveResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class DateTime(val raw: ListEntitiesDateTimeResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
+
+    @JvmInline
+    value class Update(val raw: ListEntitiesUpdateResponse) : EspHomeEntity {
+        override val key: Int
+            get() = raw.key
+
+        override val objectId: String
+            get() = raw.objectId
+
+        override val name: String
+            get() = raw.name
+    }
 }

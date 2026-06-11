@@ -36,122 +36,122 @@ internal object EspHomeEntityMapper {
             when (messageType) {
                 EspHomeMessageType.LIST_ENTITIES_BINARY_SENSOR_RESPONSE ->
                     ListEntitiesBinarySensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.BinarySensor(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.BinarySensor(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_COVER_RESPONSE ->
                     ListEntitiesCoverResponse.parseFrom(payload).let {
-                        EspHomeEntity.Cover(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Cover(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_FAN_RESPONSE ->
                     ListEntitiesFanResponse.parseFrom(payload).let {
-                        EspHomeEntity.Fan(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Fan(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_LIGHT_RESPONSE ->
                     ListEntitiesLightResponse.parseFrom(payload).let {
-                        EspHomeEntity.Light(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Light(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_SENSOR_RESPONSE ->
                     ListEntitiesSensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.Sensor(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Sensor(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE ->
                     ListEntitiesSwitchResponse.parseFrom(payload).let {
-                        EspHomeEntity.Switch(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Switch(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_TEXT_SENSOR_RESPONSE ->
                     ListEntitiesTextSensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.TextSensor(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.TextSensor(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_SERVICES_RESPONSE ->
                     ListEntitiesServicesResponse.parseFrom(payload).let {
-                        EspHomeEntity.Service(it.key, it.name, it.name, it)
+                        EspHomeEntity.Service(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_CAMERA_RESPONSE ->
                     ListEntitiesCameraResponse.parseFrom(payload).let {
-                        EspHomeEntity.Camera(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Camera(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE ->
                     ListEntitiesClimateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Climate(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Climate(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE ->
                     ListEntitiesNumberResponse.parseFrom(payload).let {
-                        EspHomeEntity.Number(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Number(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE ->
                     ListEntitiesSelectResponse.parseFrom(payload).let {
-                        EspHomeEntity.Select(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Select(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE ->
                     ListEntitiesSirenResponse.parseFrom(payload).let {
-                        EspHomeEntity.Siren(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Siren(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE ->
                     ListEntitiesLockResponse.parseFrom(payload).let {
-                        EspHomeEntity.Lock(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Lock(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE ->
                     ListEntitiesButtonResponse.parseFrom(payload).let {
-                        EspHomeEntity.Button(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Button(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE ->
                     ListEntitiesMediaPlayerResponse.parseFrom(payload).let {
-                        EspHomeEntity.MediaPlayer(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.MediaPlayer(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE ->
                     ListEntitiesAlarmControlPanelResponse.parseFrom(payload).let {
-                        EspHomeEntity.AlarmControlPanel(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.AlarmControlPanel(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE ->
                     ListEntitiesTextResponse.parseFrom(payload).let {
-                        EspHomeEntity.Text(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Text(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE ->
                     ListEntitiesDateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Date(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Date(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE ->
                     ListEntitiesTimeResponse.parseFrom(payload).let {
-                        EspHomeEntity.Time(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Time(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE ->
                     ListEntitiesEventResponse.parseFrom(payload).let {
-                        EspHomeEntity.Event(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Event(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE ->
                     ListEntitiesValveResponse.parseFrom(payload).let {
-                        EspHomeEntity.Valve(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Valve(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE ->
                     ListEntitiesDateTimeResponse.parseFrom(payload).let {
-                        EspHomeEntity.DateTime(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.DateTime(it)
                     }
 
                 EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE ->
                     ListEntitiesUpdateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Update(it.key, it.objectId, it.name, it)
+                        EspHomeEntity.Update(it)
                     }
 
                 else -> throw EspHomeProtocolException("Unsupported ESPHome entity discovery message: $messageType")
