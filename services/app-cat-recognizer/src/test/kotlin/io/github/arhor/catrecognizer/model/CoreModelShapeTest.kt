@@ -1,6 +1,7 @@
 package io.github.arhor.catrecognizer.model
 
 import io.github.arhor.catrecognizer.client.model.FramePayload
+import io.github.arhor.catrecognizer.domain.BoundingBox
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.RecognitionError
@@ -90,6 +91,18 @@ class CoreModelShapeTest {
                 json.encodeToString(DetectionOutcome.serializer(), unknown),
             ),
         )
+    }
+
+    @Test
+    fun `bounding box round trips through json`() {
+        val box = BoundingBox(x = 10, y = 20, width = 50, height = 60)
+
+        val encoded = json.encodeToString(box)
+        val decoded = json.decodeFromString<BoundingBox>(encoded)
+
+        assertEquals(box, decoded)
+        assertTrue(encoded.contains("\"x\":10"))
+        assertTrue(encoded.contains("\"width\":50"))
     }
 
     @Test
