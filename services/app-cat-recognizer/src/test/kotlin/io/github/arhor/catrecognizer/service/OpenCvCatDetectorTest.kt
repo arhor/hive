@@ -12,6 +12,7 @@ import javax.imageio.ImageIO
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
 
 @QuarkusTest
 class OpenCvCatDetectorTest {
@@ -20,19 +21,15 @@ class OpenCvCatDetectorTest {
     lateinit var detector: OpenCvCatDetector
 
     @Test
-    fun `decodes jpeg bytes and returns placeholder unknown`() {
-        assertEquals(
-            DetectionOutcome.Unknown(reason = "opencv placeholder detector"),
-            detector.detect(frame(jpegBytes(), "image/jpeg")),
-        )
+    fun `returns absent for plain color jpeg with no cat`() {
+        val result = detector.detect(frame(solidColorJpeg(), "image/jpeg"))
+        assertIs<DetectionOutcome.Absent>(result)
     }
 
     @Test
-    fun `decodes png bytes and returns placeholder unknown`() {
-        assertEquals(
-            DetectionOutcome.Unknown(reason = "opencv placeholder detector"),
-            detector.detect(frame(pngBytes(), "image/png")),
-        )
+    fun `returns absent for plain color png with no cat`() {
+        val result = detector.detect(frame(solidColorPng(), "image/png"))
+        assertIs<DetectionOutcome.Absent>(result)
     }
 
     @Test
@@ -40,7 +37,6 @@ class OpenCvCatDetectorTest {
         val error = assertFailsWith<IllegalStateException> {
             detector.detect(frame("not-an-image".encodeToByteArray(), "image/jpeg"))
         }
-
         assertEquals("OpenCV failed to decode frame", error.message)
     }
 
@@ -48,21 +44,16 @@ class OpenCvCatDetectorTest {
         FramePayload(
             bytes = bytes,
             contentType = contentType,
-            observedAt = Instant.parse("2026-06-08T12:00:00Z"),
+            observedAt = Instant.parse("2026-06-11T10:00:00Z"),
         )
 
-    private fun jpegBytes(): ByteArray = encodedImage("jpg")
+    private fun solidColorJpeg(): ByteArray = encodedImage("jpg")
 
-    private fun pngBytes(): ByteArray = encodedImage("png")
+    private fun solidColorPng(): ByteArray = encodedImage("png")
 
     private fun encodedImage(format: String): ByteArray {
-        val image = BufferedImage(2, 2, BufferedImage.TYPE_INT_RGB)
-
-        image.setRGB(0, 0, Color.BLACK.rgb)
-        image.setRGB(1, 0, Color.WHITE.rgb)
-        image.setRGB(0, 1, Color.RED.rgb)
-        image.setRGB(1, 1, Color.BLUE.rgb)
-
+        val image = BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB)
+        for (x in 0 until 64) for (y in 0 until 64) image.setRGB(x, y, Color.GRAY.rgb)
         val output = ByteArrayOutputStream()
         check(ImageIO.write(image, format, output)) { "Unable to encode $format fixture" }
         return output.toByteArray()
