@@ -29,6 +29,7 @@ class CatRecognitionService @Inject constructor(
                     observedAt = frame.observedAt,
                     confidence = outcome.confidence,
                     source = "snapshot",
+                    boundingBoxes = outcome.boundingBoxes.ifEmpty { null },
                 )
 
                 is DetectionOutcome.Absent -> RecognitionResult(
@@ -52,9 +53,9 @@ class CatRecognitionService @Inject constructor(
             }
 
             if (result.error == null) {
-                state.recordSuccess(result)
+                state.recordSuccess(result, frame.bytes)
             } else {
-                state.recordFailure(result)
+                state.recordFailure(result, frame.bytes)
             }
 
             result
@@ -70,7 +71,7 @@ class CatRecognitionService @Inject constructor(
                     retriable = error.retriable,
                 ),
             )
-            state.recordFailure(result)
+            state.recordFailure(result, frame?.bytes)
             result
         } catch (error: Exception) {
             val result = RecognitionResult(
@@ -84,7 +85,7 @@ class CatRecognitionService @Inject constructor(
                     retriable = false,
                 ),
             )
-            state.recordFailure(result)
+            state.recordFailure(result, frame?.bytes)
             result
         }
     }
