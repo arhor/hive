@@ -46,6 +46,7 @@ interface RecognizerConfig {
 
     interface Debug {
         fun manualTriggerEnabled(): Boolean
+        fun uploadEnabled(): Boolean
     }
 
     enum class CameraSource {

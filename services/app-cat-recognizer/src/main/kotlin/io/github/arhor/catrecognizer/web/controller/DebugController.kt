@@ -21,5 +21,6 @@ class DebugController @Inject constructor(
             pollInterval = config.worker().pollInterval().toFriendlyString(),
             snapshotConfigured = config.camera().snapshotUrl().isNotBlank(),
             manualTriggerEnabled = config.debug().manualTriggerEnabled(),
+            uploadEnabled = config.debug().uploadEnabled(),
         )
 }

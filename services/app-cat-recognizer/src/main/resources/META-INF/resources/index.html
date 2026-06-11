@@ -16,6 +16,10 @@
             margin: 0;
         }
         h1 { margin-bottom: 8px; font-size: 1.2rem; }
+        h2 {
+            margin: 24px 0 8px;
+            font-size: 1rem;
+        }
         #status-bar {
             margin-bottom: 12px;
             padding: 6px 16px;
@@ -26,15 +30,18 @@
         #status-bar.detected { background: #8b0000; }
         #status-bar.absent   { background: #1a4a1a; }
         #status-bar.unknown  { background: #333; }
-        #frame-container {
+        #frame-container,
+        #upload-frame-container {
             position: relative;
             display: inline-block;
         }
-        #frame-img {
+        #frame-img,
+        #upload-img {
             display: block;
             max-width: 90vw;
         }
-        #bbox-canvas {
+        #bbox-canvas,
+        #upload-bbox-canvas {
             position: absolute;
             top: 0;
             left: 0;
@@ -44,6 +51,26 @@
             margin-top: 10px;
             font-size: 0.8rem;
             color: #aaa;
+        }
+        #upload-section {
+            margin-top: 20px;
+            width: min(90vw, 720px);
+            text-align: center;
+        }
+        #upload-form {
+            margin-bottom: 12px;
+        }
+        #upload-status {
+            margin-bottom: 12px;
+            padding: 6px 16px;
+            border-radius: 4px;
+            background: #333;
+        }
+        #upload-status.detected { background: #8b0000; }
+        #upload-status.absent   { background: #1a4a1a; }
+        #upload-status.unknown  { background: #333; }
+        #upload-img:not([src]) {
+            display: none;
         }
     </style>
 </head>
@@ -56,6 +83,19 @@
     </div>
     <div id="meta"></div>
 
+    <section id="upload-section" hidden>
+        <h2>Upload test image</h2>
+        <form id="upload-form">
+            <input id="upload-input" type="file" accept="image/*" required>
+            <button id="upload-button" type="submit">Detect cat</button>
+        </form>
+        <div id="upload-status" class="unknown">Choose an image to test</div>
+        <div id="upload-frame-container">
+            <img id="upload-img" alt="Uploaded test image preview">
+            <canvas id="upload-bbox-canvas"></canvas>
+        </div>
+    </section>
+
     <script>
         const img       = document.getElementById('frame-img');
         const canvas    = document.getElementById('bbox-canvas');
@@ -63,26 +103,82 @@
         const statusBar = document.getElementById('status-bar');
         const meta      = document.getElementById('meta');
 
+        const uploadSection = document.getElementById('upload-section');
+        const uploadForm    = document.getElementById('upload-form');
+        const uploadInput   = document.getElementById('upload-input');
+        const uploadButton  = document.getElementById('upload-button');
+        const uploadImg     = document.getElementById('upload-img');
+        const uploadCanvas  = document.getElementById('upload-bbox-canvas');
+        const uploadCtx     = uploadCanvas.getContext('2d');
+        const uploadStatus  = document.getElementById('upload-status');
+
         let pendingBoxes = [];
+        let uploadBoxes  = [];
+        let uploadPreviewUrl = null;
+
+        function drawBoxSet(targetImg, targetCanvas, targetCtx, boxes) {
+            targetCanvas.width  = targetImg.naturalWidth;
+            targetCanvas.height = targetImg.naturalHeight;
+            targetCanvas.style.width  = targetImg.width  + 'px';
+            targetCanvas.style.height = targetImg.height + 'px';
+
+            targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+
+            targetCtx.strokeStyle = 'red';
+            targetCtx.lineWidth   = 3;
+
+            for (const box of boxes) {
+                targetCtx.strokeRect(box.x, box.y, box.width, box.height);
+            }
+        }
 
         function drawBoxes() {
-            canvas.width  = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            canvas.style.width  = img.width  + 'px';
-            canvas.style.height = img.height + 'px';
+            drawBoxSet(img, canvas, ctx, pendingBoxes);
+        }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function drawUploadBoxes() {
+            drawBoxSet(uploadImg, uploadCanvas, uploadCtx, uploadBoxes);
+        }
 
-            ctx.strokeStyle = 'red';
-            ctx.lineWidth   = 3;
-
-            for (const box of pendingBoxes) {
-                ctx.strokeRect(box.x, box.y, box.width, box.height);
+        function renderStatus(target, data) {
+            switch (data.status) {
+                case 'DETECTED':
+                    target.textContent = 'Cat detected' +
+                        (data.confidence != null
+                            ? ' (' + (data.confidence * 100).toFixed(0) + '%)'
+                            : '');
+                    target.className = 'detected';
+                    break;
+                case 'NOT_DETECTED':
+                    target.textContent = 'No cat detected';
+                    target.className = 'absent';
+                    break;
+                default:
+                    target.textContent = data.error
+                        ? 'Unknown (' + data.error.code + ')'
+                        : 'Unknown';
+                    target.className = 'unknown';
             }
         }
 
         img.addEventListener('load', drawBoxes);
-        window.addEventListener('resize', drawBoxes);
+        uploadImg.addEventListener('load', drawUploadBoxes);
+        window.addEventListener('resize', () => {
+            drawBoxes();
+            if (uploadImg.naturalWidth > 0) drawUploadBoxes();
+        });
+
+        async function loadDebugConfig() {
+            try {
+                const res = await fetch('/api/debug/config');
+                if (!res.ok) return;
+
+                const data = await res.json();
+                uploadSection.hidden = !data.uploadEnabled;
+            } catch (err) {
+                uploadSection.hidden = true;
+            }
+        }
 
         async function poll() {
             try {
@@ -95,24 +191,7 @@
                     ? new Date(data.observedAt).toLocaleTimeString()
                     : '—';
 
-                switch (data.status) {
-                    case 'DETECTED':
-                        statusBar.textContent = 'Cat detected' +
-                            (data.confidence != null
-                                ? ' (' + (data.confidence * 100).toFixed(0) + '%)'
-                                : '');
-                        statusBar.className = 'detected';
-                        break;
-                    case 'NOT_DETECTED':
-                        statusBar.textContent = 'No cat detected';
-                        statusBar.className = 'absent';
-                        break;
-                    default:
-                        statusBar.textContent = data.error
-                            ? 'Unknown (' + data.error.code + ')'
-                            : 'Unknown';
-                        statusBar.className = 'unknown';
-                }
+                renderStatus(statusBar, data);
 
                 meta.textContent = 'Last updated: ' + ts +
                     ' | Failures: ' + (data.worker ? data.worker.consecutiveFailures : '—');
@@ -126,6 +205,60 @@
             }
         }
 
+        uploadInput.addEventListener('change', () => {
+            uploadBoxes = [];
+            uploadCtx.clearRect(0, 0, uploadCanvas.width, uploadCanvas.height);
+
+            const file = uploadInput.files[0];
+            if (!file) return;
+
+            if (uploadPreviewUrl != null) {
+                URL.revokeObjectURL(uploadPreviewUrl);
+            }
+            uploadPreviewUrl = URL.createObjectURL(file);
+            uploadImg.src = uploadPreviewUrl;
+            uploadStatus.textContent = 'Ready to test';
+            uploadStatus.className = 'unknown';
+        });
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const file = uploadInput.files[0];
+            if (!file) return;
+
+            uploadButton.disabled = true;
+            uploadStatus.textContent = 'Detecting...';
+            uploadStatus.className = 'unknown';
+
+            try {
+                const body = new FormData();
+                body.append('image', file);
+
+                const res = await fetch('/api/recognition/upload', {
+                    method: 'POST',
+                    body,
+                });
+
+                if (!res.ok) {
+                    uploadStatus.textContent = 'Upload failed (' + res.status + ')';
+                    uploadStatus.className = 'unknown';
+                    return;
+                }
+
+                const data = await res.json();
+                uploadBoxes = data.boundingBoxes || [];
+                renderStatus(uploadStatus, data);
+                drawUploadBoxes();
+            } catch (err) {
+                uploadStatus.textContent = 'Upload failed';
+                uploadStatus.className = 'unknown';
+            } finally {
+                uploadButton.disabled = false;
+            }
+        });
+
+        loadDebugConfig();
         poll();
         setInterval(poll, 5000);
     </script>

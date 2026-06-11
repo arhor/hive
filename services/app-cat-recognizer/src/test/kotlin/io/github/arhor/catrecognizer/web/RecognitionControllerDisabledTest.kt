@@ -29,9 +29,19 @@ class RecognitionControllerDisabledTest {
             .statusCode(403)
     }
 
+    @Test
+    fun `POST upload returns forbidden when upload testing is disabled`() {
+        given()
+            .multiPart("image", "frame.jpg", "uploaded-frame".encodeToByteArray(), "image/jpeg")
+            .post("/recognition/upload")
+            .then()
+            .statusCode(403)
+    }
+
     class Profile : QuarkusTestProfile {
         override fun getConfigOverrides(): Map<String, String> = mapOf(
             "cat-recognizer.debug.manual-trigger-enabled" to "false",
+            "cat-recognizer.debug.upload-enabled" to "false",
         )
     }
 }

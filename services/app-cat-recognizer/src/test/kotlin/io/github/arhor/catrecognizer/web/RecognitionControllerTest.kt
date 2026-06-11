@@ -24,6 +24,7 @@ import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.nio.file.Files
 import java.time.Instant
 
 @QuarkusTest
@@ -120,6 +121,53 @@ class RecognitionControllerTest {
     }
 
     @Test
+    fun `POST upload returns recognition result when upload testing is enabled`() {
+        val image = Files.createTempFile("cat-recognizer-upload", ".jpg").toFile()
+        image.writeBytes("uploaded-frame".encodeToByteArray())
+
+        try {
+            given()
+                .multiPart("image", image, "image/jpeg")
+                .post("/recognition/upload")
+                .then()
+                .statusCode(200)
+                .body("status", `is`("DETECTED"))
+                .body("observedAt", not(nullValue()))
+                .body("confidence", `is`(0.91f))
+                .body("source", `is`("upload"))
+                .body("error", nullValue())
+                .body("boundingBoxes[0].x", `is`(10))
+                .body("boundingBoxes[0].y", `is`(20))
+                .body("boundingBoxes[0].width", `is`(80))
+                .body("boundingBoxes[0].height", `is`(100))
+        } finally {
+            image.delete()
+        }
+    }
+
+    @Test
+    fun `POST upload returns unknown result when detector rejects image bytes`() {
+        QuarkusMock.installMockForType(
+            object : OpenCvCatDetector() {
+                override fun detect(frame: FramePayload): DetectionOutcome =
+                    throw IllegalStateException("OpenCV failed to decode frame")
+            },
+            OpenCvCatDetector::class.java,
+        )
+
+        given()
+            .multiPart("image", "invalid.jpg", "not-an-image".encodeToByteArray(), "image/jpeg")
+            .post("/recognition/upload")
+            .then()
+            .statusCode(200)
+            .body("status", `is`("UNKNOWN"))
+            .body("source", `is`("upload"))
+            .body("error.code", `is`("DETECTOR_FAILED"))
+            .body("error.message", `is`("OpenCV failed to decode frame"))
+            .body("error.retriable", `is`(false))
+    }
+
+    @Test
     fun `GET debug config returns safe runtime summary`() {
         given()
             .get("/debug/config")
@@ -128,6 +176,7 @@ class RecognitionControllerTest {
             .body("pollInterval", `is`("500ms"))
             .body("snapshotConfigured", `is`(true))
             .body("manualTriggerEnabled", `is`(true))
+            .body("uploadEnabled", `is`(true))
     }
 
     @Test
@@ -142,6 +191,7 @@ class RecognitionControllerTest {
         override fun getConfigOverrides(): Map<String, String> = mapOf(
             "cat-recognizer.worker.poll-interval" to "500ms",
             "cat-recognizer.debug.manual-trigger-enabled" to "true",
+            "cat-recognizer.debug.upload-enabled" to "true",
             "cat-recognizer.camera.snapshot-url" to "http://example.test/snapshot",
         )
     }

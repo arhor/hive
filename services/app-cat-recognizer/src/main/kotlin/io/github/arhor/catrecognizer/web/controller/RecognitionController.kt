@@ -1,15 +1,26 @@
 package io.github.arhor.catrecognizer.web
 
+import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
+import io.github.arhor.catrecognizer.domain.CatPresenceStatus
+import io.github.arhor.catrecognizer.domain.DetectionOutcome
+import io.github.arhor.catrecognizer.domain.RecognitionError
+import io.github.arhor.catrecognizer.domain.RecognitionResult
 import io.github.arhor.catrecognizer.service.CatRecognitionService
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
+import io.github.arhor.catrecognizer.service.OpenCvCatDetector
 import jakarta.inject.Inject
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import org.jboss.resteasy.reactive.RestForm
+import org.jboss.resteasy.reactive.multipart.FileUpload
+import java.nio.file.Files
+import java.time.Instant
 
 @Path("/recognition")
 @Produces(MediaType.APPLICATION_JSON)
@@ -17,6 +28,7 @@ class RecognitionController @Inject constructor(
     private val recognitionService: CatRecognitionService,
     private val state: LatestRecognitionState,
     private val config: RecognizerConfig,
+    private val detector: OpenCvCatDetector,
 ) {
 
     @GET
@@ -48,4 +60,69 @@ class RecognitionController @Inject constructor(
 
         return Response.ok(recognitionService.runRecognition()).build()
     }
+
+    @POST
+    @Path("/upload")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    fun upload(@RestForm("image") image: FileUpload?): Response {
+        if (!config.debug().uploadEnabled()) {
+            return Response.status(Response.Status.FORBIDDEN).build()
+        }
+
+        if (image == null || image.size() <= 0) {
+            return Response.status(Response.Status.BAD_REQUEST).build()
+        }
+
+        val frame = FramePayload(
+            bytes = Files.readAllBytes(image.uploadedFile()),
+            contentType = image.contentType(),
+            observedAt = Instant.now(),
+        )
+
+        return Response.ok(detectUpload(frame)).build()
+    }
+
+    private fun detectUpload(frame: FramePayload): RecognitionResult =
+        try {
+            when (val outcome = detector.detect(frame)) {
+                is DetectionOutcome.Present -> RecognitionResult(
+                    status = CatPresenceStatus.DETECTED,
+                    observedAt = frame.observedAt,
+                    confidence = outcome.confidence,
+                    source = "upload",
+                    boundingBoxes = outcome.boundingBoxes.ifEmpty { null },
+                )
+
+                is DetectionOutcome.Absent -> RecognitionResult(
+                    status = CatPresenceStatus.NOT_DETECTED,
+                    observedAt = frame.observedAt,
+                    confidence = outcome.confidence,
+                    source = "upload",
+                )
+
+                is DetectionOutcome.Unknown -> RecognitionResult(
+                    status = CatPresenceStatus.UNKNOWN,
+                    observedAt = frame.observedAt,
+                    confidence = null,
+                    source = "upload",
+                    error = RecognitionError(
+                        code = "DETECTOR_UNKNOWN",
+                        message = outcome.reason,
+                        retriable = false,
+                    ),
+                )
+            }
+        } catch (error: Exception) {
+            RecognitionResult(
+                status = CatPresenceStatus.UNKNOWN,
+                observedAt = frame.observedAt,
+                confidence = null,
+                source = "upload",
+                error = RecognitionError(
+                    code = "DETECTOR_FAILED",
+                    message = error.message ?: "Detector execution failed",
+                    retriable = false,
+                ),
+            )
+        }
 }

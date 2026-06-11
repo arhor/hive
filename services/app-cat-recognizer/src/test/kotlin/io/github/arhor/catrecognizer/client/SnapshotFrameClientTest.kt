@@ -125,6 +125,7 @@ class SnapshotFrameClientTest {
 
             override fun debug() = object : RecognizerConfig.Debug {
                 override fun manualTriggerEnabled() = true
+                override fun uploadEnabled() = false
             }
         }
 }

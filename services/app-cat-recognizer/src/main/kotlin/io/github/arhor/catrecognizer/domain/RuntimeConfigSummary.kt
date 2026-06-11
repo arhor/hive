@@ -7,4 +7,5 @@ data class RuntimeConfigSummary(
     val pollInterval: String,
     val snapshotConfigured: Boolean,
     val manualTriggerEnabled: Boolean,
+    val uploadEnabled: Boolean,
 )
