@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Detector</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            margin: 0;
+        }
+        h1 { margin-bottom: 8px; font-size: 1.2rem; }
+        #status-bar {
+            margin-bottom: 12px;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: #333;
+        }
+        #status-bar.detected { background: #8b0000; }
+        #status-bar.absent   { background: #1a4a1a; }
+        #status-bar.unknown  { background: #333; }
+        #frame-container {
+            position: relative;
+            display: inline-block;
+        }
+        #frame-img {
+            display: block;
+            max-width: 90vw;
+        }
+        #bbox-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        #meta {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cat Detector Live View</h1>
+    <div id="status-bar" class="unknown">Waiting for data…</div>
+    <div id="frame-container">
+        <img id="frame-img" alt="Latest frame" />
+        <canvas id="bbox-canvas"></canvas>
+    </div>
+    <div id="meta"></div>
+
+    <script>
+        const img       = document.getElementById('frame-img');
+        const canvas    = document.getElementById('bbox-canvas');
+        const ctx       = canvas.getContext('2d');
+        const statusBar = document.getElementById('status-bar');
+        const meta      = document.getElementById('meta');
+
+        let pendingBoxes = [];
+
+        function drawBoxes() {
+            canvas.width  = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            canvas.style.width  = img.width  + 'px';
+            canvas.style.height = img.height + 'px';
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth   = 3;
+
+            for (const box of pendingBoxes) {
+                ctx.strokeRect(box.x, box.y, box.width, box.height);
+            }
+        }
+
+        img.addEventListener('load', drawBoxes);
+        window.addEventListener('resize', drawBoxes);
+
+        async function poll() {
+            try {
+                const res  = await fetch('/api/recognition/latest');
+                const data = await res.json();
+
+                pendingBoxes = data.boundingBoxes || [];
+
+                const ts = data.observedAt
+                    ? new Date(data.observedAt).toLocaleTimeString()
+                    : '—';
+
+                switch (data.status) {
+                    case 'DETECTED':
+                        statusBar.textContent = 'Cat detected' +
+                            (data.confidence != null
+                                ? ' (' + (data.confidence * 100).toFixed(0) + '%)'
+                                : '');
+                        statusBar.className = 'detected';
+                        break;
+                    case 'NOT_DETECTED':
+                        statusBar.textContent = 'No cat detected';
+                        statusBar.className = 'absent';
+                        break;
+                    default:
+                        statusBar.textContent = data.error
+                            ? 'Unknown (' + data.error.code + ')'
+                            : 'Unknown';
+                        statusBar.className = 'unknown';
+                }
+
+                meta.textContent = 'Last updated: ' + ts +
+                    ' | Failures: ' + (data.worker ? data.worker.consecutiveFailures : '—');
+
+                img.src = '/api/frame/latest?t=' + Date.now();
+                if (img.complete && img.naturalWidth > 0) drawBoxes();
+
+            } catch (err) {
+                statusBar.textContent = 'Connection error';
+                statusBar.className = 'unknown';
+            }
+        }
+
+        poll();
+        setInterval(poll, 5000);
+    </script>
+</body>
+</html>
