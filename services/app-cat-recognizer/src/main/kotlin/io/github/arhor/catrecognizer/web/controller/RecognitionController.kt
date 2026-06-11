@@ -35,6 +35,7 @@ class RecognitionController @Inject constructor(
                 consecutiveFailures = snapshot.consecutiveFailures,
                 lastErrorCode = snapshot.lastError?.code,
             ),
+            boundingBoxes = result?.boundingBoxes,
         )
     }
 

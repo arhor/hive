@@ -4,6 +4,7 @@ import io.github.arhor.catrecognizer.client.FrameClient
 import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
 import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
+import io.github.arhor.catrecognizer.domain.BoundingBox
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.RecognitionError
@@ -44,6 +45,7 @@ class RecognitionControllerTest {
                 observedAt = Instant.parse("2026-06-05T12:00:00Z"),
                 confidence = 0.91,
                 source = "snapshot",
+                boundingBoxes = listOf(BoundingBox(x = 10, y = 20, width = 80, height = 100)),
             ),
         )
     }
@@ -61,6 +63,10 @@ class RecognitionControllerTest {
             .body("$", not(hasKey("detectorMode")))
             .body("source", `is`("snapshot"))
             .body("error", nullValue())
+            .body("boundingBoxes[0].x", `is`(10))
+            .body("boundingBoxes[0].y", `is`(20))
+            .body("boundingBoxes[0].width", `is`(80))
+            .body("boundingBoxes[0].height", `is`(100))
             .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
             .body("worker.consecutiveFailures", `is`(0))
             .body("worker.lastErrorCode", nullValue())
@@ -158,6 +164,7 @@ internal fun installRecognitionMocks(config: RecognizerConfig) {
             override fun detect(frame: FramePayload): DetectionOutcome =
                 DetectionOutcome.Present(
                     confidence = 0.91,
+                    boundingBoxes = listOf(BoundingBox(x = 10, y = 20, width = 80, height = 100)),
                 )
         },
         OpenCvCatDetector::class.java,

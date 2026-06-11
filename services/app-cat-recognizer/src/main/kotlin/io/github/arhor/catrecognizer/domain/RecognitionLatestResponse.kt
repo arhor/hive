@@ -1,5 +1,6 @@
 package io.github.arhor.catrecognizer.web
 
+import io.github.arhor.catrecognizer.domain.BoundingBox
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.InstantIso8601Serializer
 import io.github.arhor.catrecognizer.domain.RecognitionError
@@ -15,4 +16,5 @@ data class RecognitionLatestResponse(
     val source: String?,
     val error: RecognitionError?,
     val worker: WorkerSummary,
+    val boundingBoxes: List<BoundingBox>?,
 )

@@ -7,6 +7,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class LatestRecognitionStateTest {
 
@@ -60,6 +61,43 @@ class LatestRecognitionStateTest {
         assertEquals(second, snapshot.latestResult)
         assertEquals("DETECTOR_FAILED", snapshot.lastError?.code)
         assertEquals(2, snapshot.consecutiveFailures)
+    }
+
+    @Test
+    fun `frame bytes are stored alongside success result`() {
+        val state = LatestRecognitionState()
+        val result = RecognitionResult(
+            status = CatPresenceStatus.DETECTED,
+            observedAt = Instant.parse("2026-06-11T10:00:00Z"),
+            confidence = 0.9,
+            source = "snapshot",
+        )
+        val frameBytes = "fake-jpeg".encodeToByteArray()
+
+        state.recordSuccess(result, frameBytes)
+
+        assertTrue(state.snapshot().frameBytes!!.contentEquals(frameBytes))
+    }
+
+    @Test
+    fun `frame bytes are stored alongside failure result`() {
+        val state = LatestRecognitionState()
+        val result = RecognitionResult(
+            status = CatPresenceStatus.UNKNOWN,
+            observedAt = Instant.parse("2026-06-11T10:00:00Z"),
+            source = "snapshot",
+            error = RecognitionError("FRAME_FETCH_FAILED", "camera down", true),
+        )
+        val frameBytes = "fake-jpeg".encodeToByteArray()
+
+        state.recordFailure(result, frameBytes)
+
+        assertTrue(state.snapshot().frameBytes!!.contentEquals(frameBytes))
+    }
+
+    @Test
+    fun `frame bytes are null when no frame has been stored`() {
+        assertNull(LatestRecognitionState().snapshot().frameBytes)
     }
 
     private fun failure(code: String, observedAt: Instant): RecognitionResult =
