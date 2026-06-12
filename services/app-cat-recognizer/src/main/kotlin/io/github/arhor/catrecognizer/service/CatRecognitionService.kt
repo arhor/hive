@@ -17,7 +17,7 @@ import java.time.Instant
 @ApplicationScoped
 class CatRecognitionService @Inject constructor(
     private val frameClient: FrameClient,
-    private val detector: OpenCvCatDetector,
+    private val detector: CatDetector,
     private val state: LatestRecognitionState,
 ) {
 

@@ -60,7 +60,7 @@ class CatRecognitionServiceTest {
         val state = LatestRecognitionState()
         val service = CatRecognitionService(
             frameClient = FrameClient { sampleFrame },
-            detector = object : OpenCvCatDetector() {
+            detector = object : CatDetector {
                 override fun detect(frame: FramePayload): DetectionOutcome =
                     error("detector crashed")
             },
@@ -111,8 +111,8 @@ class CatRecognitionServiceTest {
         assertEquals(0, state.snapshot().consecutiveFailures)
     }
 
-    private fun detectorStub(outcome: DetectionOutcome): OpenCvCatDetector =
-        object : OpenCvCatDetector() {
+    private fun detectorStub(outcome: DetectionOutcome): CatDetector =
+        object : CatDetector {
             override fun detect(frame: FramePayload): DetectionOutcome = outcome
         }
 }

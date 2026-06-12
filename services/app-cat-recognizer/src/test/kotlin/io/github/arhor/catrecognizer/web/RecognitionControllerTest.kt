@@ -9,13 +9,15 @@ import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
+import io.github.arhor.catrecognizer.service.CatDetector
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
-import io.github.arhor.catrecognizer.service.OpenCvCatDetector
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.QuarkusTestProfile
 import io.quarkus.test.junit.TestProfile
 import io.restassured.RestAssured.given
+import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.inject.Alternative
 import jakarta.inject.Inject
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.Matchers.hasKey
@@ -147,13 +149,9 @@ class RecognitionControllerTest {
 
     @Test
     fun `POST upload returns unknown result when detector rejects image bytes`() {
-        QuarkusMock.installMockForType(
-            object : OpenCvCatDetector() {
-                override fun detect(frame: FramePayload): DetectionOutcome =
-                    throw IllegalStateException("OpenCV failed to decode frame")
-            },
-            OpenCvCatDetector::class.java,
-        )
+        TestCatDetector.detect = {
+            throw IllegalStateException("OpenCV failed to decode frame")
+        }
 
         given()
             .multiPart("image", "invalid.jpg", "not-an-image".encodeToByteArray(), "image/jpeg")
@@ -194,6 +192,9 @@ class RecognitionControllerTest {
             "cat-recognizer.debug.upload-enabled" to "true",
             "cat-recognizer.camera.snapshot-url" to "http://example.test/snapshot",
         )
+
+        override fun getEnabledAlternatives(): Set<Class<*>> =
+            setOf(TestCatDetector::class.java)
     }
 }
 
@@ -209,14 +210,23 @@ internal fun installRecognitionMocks(config: RecognizerConfig) {
         },
         FrameClient::class.java,
     )
-    QuarkusMock.installMockForType(
-        object : OpenCvCatDetector() {
-            override fun detect(frame: FramePayload): DetectionOutcome =
-                DetectionOutcome.Present(
-                    confidence = 0.91,
-                    boundingBoxes = listOf(BoundingBox(x = 10, y = 20, width = 80, height = 100)),
-                )
-        },
-        OpenCvCatDetector::class.java,
-    )
+    TestCatDetector.detect = {
+        DetectionOutcome.Present(
+            confidence = 0.91,
+            boundingBoxes = listOf(BoundingBox(x = 10, y = 20, width = 80, height = 100)),
+        )
+    }
+}
+
+@Alternative
+@ApplicationScoped
+class TestCatDetector : CatDetector {
+
+    override fun detect(frame: FramePayload): DetectionOutcome = detect.invoke(frame)
+
+    companion object {
+        var detect: (FramePayload) -> DetectionOutcome = {
+            DetectionOutcome.Absent(confidence = null)
+        }
+    }
 }

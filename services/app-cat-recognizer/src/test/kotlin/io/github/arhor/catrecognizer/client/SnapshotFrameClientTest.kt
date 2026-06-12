@@ -127,5 +127,13 @@ class SnapshotFrameClientTest {
                 override fun manualTriggerEnabled() = true
                 override fun uploadEnabled() = false
             }
+
+            override fun detector() = object : RecognizerConfig.Detector {
+                override fun modelPath() = "classpath:/models/yolo11n.onnx"
+                override fun imageSize() = 640
+                override fun confidenceThreshold() = 0.50
+                override fun iouThreshold() = 0.45
+                override fun className() = "cat"
+            }
         }
 }

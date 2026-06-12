@@ -1,0 +1,5 @@
+.models/
+.gradle/
+build/tmp/
+build/reports/
+build/test-results/

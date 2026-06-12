@@ -32,5 +32,11 @@ class RecognizerConfigBindingTest {
         assertEquals(Duration.ofSeconds(5), config.camera().nativeApi().readTimeout())
         assertFalse(config.camera().nativeApi().encryption().enabled())
         assertFalse(config.camera().nativeApi().encryption().key().isPresent)
+
+        assertEquals("classpath:/models/yolo11n.onnx", config.detector().modelPath())
+        assertEquals(640, config.detector().imageSize())
+        assertEquals(0.50, config.detector().confidenceThreshold())
+        assertEquals(0.45, config.detector().iouThreshold())
+        assertEquals("cat", config.detector().className())
     }
 }

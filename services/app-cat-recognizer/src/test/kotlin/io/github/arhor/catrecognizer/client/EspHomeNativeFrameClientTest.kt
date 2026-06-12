@@ -95,5 +95,12 @@ class EspHomeNativeFrameClientTest {
             }
             override fun state() = error("not used")
             override fun debug() = error("not used")
+            override fun detector() = object : RecognizerConfig.Detector {
+                override fun modelPath() = "classpath:/models/yolo11n.onnx"
+                override fun imageSize() = 640
+                override fun confidenceThreshold() = 0.50
+                override fun iouThreshold() = 0.45
+                override fun className() = "cat"
+            }
         }
 }

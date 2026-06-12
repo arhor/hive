@@ -15,6 +15,8 @@ interface RecognizerConfig {
 
     fun debug(): Debug
 
+    fun detector(): Detector
+
     interface Worker {
         fun pollInterval(): Duration
     }
@@ -47,6 +49,14 @@ interface RecognizerConfig {
     interface Debug {
         fun manualTriggerEnabled(): Boolean
         fun uploadEnabled(): Boolean
+    }
+
+    interface Detector {
+        fun modelPath(): String
+        fun imageSize(): Int
+        fun confidenceThreshold(): Double
+        fun iouThreshold(): Double
+        fun className(): String
     }
 
     enum class CameraSource {

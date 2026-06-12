@@ -32,3 +32,6 @@ homeassistant/config/*.tar
 .gradle/
 build/
 **/build/
+
+# Generated ML model artifacts
+services/app-cat-recognizer/.models/

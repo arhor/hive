@@ -2,6 +2,7 @@
 # See https://docs.gradle.org/current/userguide/platforms.html for more information
 [versions]
 kotlin = "2.3.21"
+onnxruntime = "1.21.1"
 opencv = "2.1.0"
 protobuf = "4.35.0"
 protobuf-plugin = "0.10.0"
@@ -14,6 +15,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
+onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime" }
 protobuf-kotlin = { module = "com.google.protobuf:protobuf-kotlin", version.ref = "protobuf" }
 protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
 quarkus-arc = { module = "io.quarkus:quarkus-arc" }

@@ -6,9 +6,9 @@ import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
+import io.github.arhor.catrecognizer.service.CatDetector
 import io.github.arhor.catrecognizer.service.CatRecognitionService
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
-import io.github.arhor.catrecognizer.service.OpenCvCatDetector
 import io.github.arhor.catrecognizer.util.debugK
 import io.github.arhor.catrecognizer.util.toDebugSummary
 import jakarta.inject.Inject
@@ -31,7 +31,7 @@ class RecognitionController @Inject constructor(
     private val recognitionService: CatRecognitionService,
     private val state: LatestRecognitionState,
     private val config: RecognizerConfig,
-    private val detector: OpenCvCatDetector,
+    private val detector: CatDetector,
 ) {
 
     private val logger: Logger = Logger.getLogger(RecognitionController::class.java)
