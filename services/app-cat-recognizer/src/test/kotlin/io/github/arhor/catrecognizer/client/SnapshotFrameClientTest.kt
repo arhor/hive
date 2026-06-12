@@ -4,21 +4,21 @@ import com.sun.net.httpserver.HttpServer
 import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.types.shouldBeInstanceOf
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.net.InetSocketAddress
 import java.time.Duration
 import java.util.Optional
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class SnapshotFrameClientTest {
 
     private var server: HttpServer? = null
 
-    @AfterTest
+    @AfterEach
     fun tearDown() {
         server?.stop(0)
     }
@@ -38,20 +38,20 @@ class SnapshotFrameClientTest {
         val frameClient = SnapshotFrameClient(config("http://127.0.0.1:${server!!.address.port}/snapshot"))
         val frame = frameClient.fetchFrame()
 
-        assertContentEquals(byteArrayOf(1, 2, 3), frame.bytes)
-        assertEquals("image/jpeg", frame.contentType)
+        frame.bytes shouldBe byteArrayOf(1, 2, 3)
+        frame.contentType shouldBe "image/jpeg"
     }
 
     @Test
     fun `maps camera failures to frame source errors`() {
         val frameClient = SnapshotFrameClient(config("http://127.0.0.1:1/snapshot"))
 
-        val error = assertFailsWith<FrameSourceError> {
+        val error = shouldThrow<FrameSourceError> {
             frameClient.fetchFrame()
         }
 
-        assertEquals("FRAME_FETCH_FAILED", error.code)
-        assertEquals(true, error.retriable)
+        error.code shouldBe "FRAME_FETCH_FAILED"
+        error.retriable shouldBe true
     }
 
     @Test
@@ -66,13 +66,13 @@ class SnapshotFrameClientTest {
 
         val frameClient = SnapshotFrameClient(config("http://127.0.0.1:${server!!.address.port}/snapshot"))
 
-        val error = assertFailsWith<FrameSourceError> {
+        val error = shouldThrow<FrameSourceError> {
             frameClient.fetchFrame()
         }
 
-        assertEquals("FRAME_FETCH_FAILED", error.code)
-        assertEquals(true, error.retriable)
-        assertTrue(error.message.contains("HTTP 404"))
+        error.code shouldBe "FRAME_FETCH_FAILED"
+        error.retriable shouldBe true
+        error.message shouldContain "HTTP 404"
     }
 
     @Test
@@ -82,15 +82,15 @@ class SnapshotFrameClientTest {
         try {
             Thread.currentThread().interrupt()
 
-            val error = assertFailsWith<FrameSourceError> {
+            val error = shouldThrow<FrameSourceError> {
                 frameClient.fetchFrame()
             }
 
-            assertEquals("FRAME_FETCH_FAILED", error.code)
-            assertEquals(true, error.retriable)
-            assertTrue(error.message.contains("127.0.0.1:1/snapshot"))
-            assertTrue(Thread.currentThread().isInterrupted)
-            assertTrue(error.cause is InterruptedException)
+            error.code shouldBe "FRAME_FETCH_FAILED"
+            error.retriable shouldBe true
+            error.message shouldContain "127.0.0.1:1/snapshot"
+            Thread.currentThread().isInterrupted shouldBe true
+            error.cause.shouldBeInstanceOf<InterruptedException>()
         } finally {
             Thread.interrupted()
         }

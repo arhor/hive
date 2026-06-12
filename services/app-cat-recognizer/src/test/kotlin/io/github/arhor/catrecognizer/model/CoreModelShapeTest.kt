@@ -6,12 +6,12 @@ import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldContain
 import kotlinx.serialization.json.Json
+import org.junit.jupiter.api.Test
 import java.time.Instant
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 class CoreModelShapeTest {
 
@@ -35,9 +35,9 @@ class CoreModelShapeTest {
             observedAt = Instant.parse("2026-06-05T12:00:00Z"),
         )
 
-        assertEquals(left, right)
-        assertEquals(left.hashCode(), right.hashCode())
-        assertNotEquals(left, differentBytes)
+        left shouldBe right
+        left.hashCode() shouldBe right.hashCode()
+        left shouldNotBe differentBytes
     }
 
     @Test
@@ -49,7 +49,7 @@ class CoreModelShapeTest {
         )
         val withContentType = base.copy(contentType = "image/jpeg")
 
-        assertNotEquals(base, withContentType)
+        base shouldNotBe withContentType
     }
 
     @Test
@@ -61,7 +61,7 @@ class CoreModelShapeTest {
         )
         val observedLater = base.copy(observedAt = Instant.parse("2026-06-05T12:00:01Z"))
 
-        assertNotEquals(base, observedLater)
+        base shouldNotBe observedLater
     }
 
     @Test
@@ -73,27 +73,20 @@ class CoreModelShapeTest {
         val absent = DetectionOutcome.Absent(confidence = null)
         val unknown = DetectionOutcome.Unknown(reason = "stub detector")
 
-        assertEquals(
-            present,
-            json.decodeFromString(
-                DetectionOutcome.serializer(),
-                json.encodeToString(DetectionOutcome.serializer(), present),
-            ),
-        )
-        assertEquals(
-            absent,
-            json.decodeFromString(
-                DetectionOutcome.serializer(),
-                json.encodeToString(DetectionOutcome.serializer(), absent),
-            ),
-        )
-        assertEquals(
-            unknown,
-            json.decodeFromString(
-                DetectionOutcome.serializer(),
-                json.encodeToString(DetectionOutcome.serializer(), unknown),
-            ),
-        )
+        json.decodeFromString(
+            DetectionOutcome.serializer(),
+            json.encodeToString(DetectionOutcome.serializer(), present),
+        ) shouldBe present
+
+        json.decodeFromString(
+            DetectionOutcome.serializer(),
+            json.encodeToString(DetectionOutcome.serializer(), absent),
+        ) shouldBe absent
+
+        json.decodeFromString(
+            DetectionOutcome.serializer(),
+            json.encodeToString(DetectionOutcome.serializer(), unknown),
+        ) shouldBe unknown
     }
 
     @Test
@@ -103,9 +96,9 @@ class CoreModelShapeTest {
         val encoded = json.encodeToString(box)
         val decoded = json.decodeFromString<BoundingBox>(encoded)
 
-        assertEquals(box, decoded)
-        assertTrue(encoded.contains("\"x\":10"))
-        assertTrue(encoded.contains("\"width\":50"))
+        decoded shouldBe box
+        encoded shouldContain "\"x\":10"
+        encoded shouldContain "\"width\":50"
     }
 
     @Test
@@ -125,8 +118,8 @@ class CoreModelShapeTest {
         val encoded = json.encodeToString(result)
         val decoded = json.decodeFromString<RecognitionResult>(encoded)
 
-        assertEquals(result, decoded)
-        assertTrue(encoded.contains("\"source\":\"camera\""))
+        decoded shouldBe result
+        encoded shouldContain "\"source\":\"camera\""
     }
 
     @Test
@@ -143,7 +136,7 @@ class CoreModelShapeTest {
         val encoded = json.encodeToString(result)
         val decoded = json.decodeFromString<RecognitionResult>(encoded)
 
-        assertEquals(result, decoded)
-        assertTrue(encoded.contains("\"boundingBoxes\""))
+        decoded shouldBe result
+        encoded shouldContain "\"boundingBoxes\""
     }
 }

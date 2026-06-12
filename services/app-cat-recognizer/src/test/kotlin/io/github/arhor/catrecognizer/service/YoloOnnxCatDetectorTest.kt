@@ -2,17 +2,17 @@ package io.github.arhor.catrecognizer.service
 
 import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import io.quarkus.test.junit.QuarkusTest
 import jakarta.inject.Inject
+import org.junit.jupiter.api.Test
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.time.Instant
 import javax.imageio.ImageIO
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertIs
 
 @QuarkusTest
 class YoloOnnxCatDetectorTest {
@@ -22,17 +22,17 @@ class YoloOnnxCatDetectorTest {
 
     @Test
     fun `returns absent for plain color jpeg with no cat`() {
-        assertIs<YoloOnnxCatDetector>(detector)
+        detector.shouldBeInstanceOf<YoloOnnxCatDetector>()
         val result = detector.detect(frame(solidColorJpeg(), "image/jpeg"))
-        assertIs<DetectionOutcome.Absent>(result)
+        result.shouldBeInstanceOf<DetectionOutcome.Absent>()
     }
 
     @Test
     fun `rejects invalid image bytes with a safe message`() {
-        val error = assertFailsWith<IllegalStateException> {
+        val error = shouldThrow<IllegalStateException> {
             detector.detect(frame("not-an-image".encodeToByteArray(), "image/jpeg"))
         }
-        assertEquals("OpenCV failed to decode frame", error.message)
+        error.message shouldBe "OpenCV failed to decode frame"
     }
 
     private fun frame(bytes: ByteArray, contentType: String): FramePayload =

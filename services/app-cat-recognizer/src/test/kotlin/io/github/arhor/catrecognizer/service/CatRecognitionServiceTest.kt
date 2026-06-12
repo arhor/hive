@@ -6,11 +6,11 @@ import io.github.arhor.catrecognizer.domain.BoundingBox
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.DetectionOutcome
 import io.github.arhor.catrecognizer.domain.FrameSourceError
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.time.Instant
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class CatRecognitionServiceTest {
 
@@ -31,9 +31,9 @@ class CatRecognitionServiceTest {
 
         val result = service.runRecognition()
 
-        assertEquals(CatPresenceStatus.UNKNOWN, result.status)
-        assertNull(result.confidence)
-        assertEquals("DETECTOR_UNKNOWN", result.error?.code)
+        result.status shouldBe CatPresenceStatus.UNKNOWN
+        result.confidence shouldBe null
+        result.error?.code shouldBe "DETECTOR_UNKNOWN"
         assertEquals(1, state.snapshot().consecutiveFailures)
     }
 
@@ -50,9 +50,9 @@ class CatRecognitionServiceTest {
 
         val result = service.runRecognition()
 
-        assertEquals(CatPresenceStatus.UNKNOWN, result.status)
-        assertEquals("FRAME_FETCH_FAILED", result.error?.code)
-        assertEquals(1, state.snapshot().consecutiveFailures)
+        result.status shouldBe CatPresenceStatus.UNKNOWN
+        result.error?.code shouldBe "FRAME_FETCH_FAILED"
+        state.snapshot().consecutiveFailures shouldBe 1
     }
 
     @Test
@@ -69,10 +69,10 @@ class CatRecognitionServiceTest {
 
         val result = service.runRecognition()
 
-        assertEquals(CatPresenceStatus.UNKNOWN, result.status)
-        assertEquals("DETECTOR_FAILED", result.error?.code)
-        assertEquals("detector crashed", result.error?.message)
-        assertEquals(1, state.snapshot().consecutiveFailures)
+        result.status shouldBe CatPresenceStatus.UNKNOWN
+        result.error?.code shouldBe "DETECTOR_FAILED"
+        result.error?.message shouldBe "detector crashed"
+        state.snapshot().consecutiveFailures shouldBe 1
     }
 
     @Test
@@ -87,9 +87,9 @@ class CatRecognitionServiceTest {
 
         val result = service.runRecognition()
 
-        assertEquals(CatPresenceStatus.DETECTED, result.status)
-        assertEquals(0.87, result.confidence)
-        assertEquals(boxes, result.boundingBoxes)
+        result.status shouldBe CatPresenceStatus.DETECTED
+        result.confidence shouldBe 0.87
+        result.boundingBoxes shouldBe boxes
         assertEquals(0, state.snapshot().consecutiveFailures)
         assertTrue(state.snapshot().frameBytes!!.contentEquals(sampleFrame.bytes))
     }
@@ -105,9 +105,9 @@ class CatRecognitionServiceTest {
 
         val result = service.runRecognition()
 
-        assertEquals(CatPresenceStatus.NOT_DETECTED, result.status)
-        assertEquals(0.95, result.confidence)
-        assertNull(result.boundingBoxes)
+        result.status shouldBe CatPresenceStatus.NOT_DETECTED
+        result.confidence shouldBe 0.95
+        result.boundingBoxes shouldBe null
         assertEquals(0, state.snapshot().consecutiveFailures)
     }
 

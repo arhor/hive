@@ -5,17 +5,13 @@ plugins {
 
 group = "io.github.arhor.esphome.client"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
-}
-
 kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
         javaParameters = true
     }
-    jvmToolchain(25)
 }
 
 protobuf {

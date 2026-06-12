@@ -11,6 +11,7 @@ import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
 import io.github.arhor.catrecognizer.service.CatDetector
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
+import io.kotest.matchers.shouldBe
 import io.quarkus.test.junit.QuarkusMock
 import io.quarkus.test.junit.QuarkusTest
 import io.quarkus.test.junit.QuarkusTestProfile
@@ -19,11 +20,10 @@ import io.restassured.RestAssured.given
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Alternative
 import jakarta.inject.Inject
-import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.not
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.Matchers.hasKey
-import org.hamcrest.Matchers.not
-import org.hamcrest.Matchers.nullValue
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -60,18 +60,18 @@ class RecognitionControllerTest {
             .then()
             .statusCode(200)
             .body("$", not(hasKey("result")))
-            .body("status", `is`("DETECTED"))
-            .body("observedAt", `is`("2026-06-05T12:00:00Z"))
-            .body("confidence", `is`(0.91f))
+            .body("status", equalTo("DETECTED"))
+            .body("observedAt", equalTo("2026-06-05T12:00:00Z"))
+            .body("confidence", equalTo(0.91f))
             .body("$", not(hasKey("detectorMode")))
-            .body("source", `is`("snapshot"))
+            .body("source", equalTo("snapshot"))
             .body("error", nullValue())
-            .body("boundingBoxes[0].x", `is`(10))
-            .body("boundingBoxes[0].y", `is`(20))
-            .body("boundingBoxes[0].width", `is`(80))
-            .body("boundingBoxes[0].height", `is`(100))
-            .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
-            .body("worker.consecutiveFailures", `is`(0))
+            .body("boundingBoxes[0].x", equalTo(10))
+            .body("boundingBoxes[0].y", equalTo(20))
+            .body("boundingBoxes[0].width", equalTo(80))
+            .body("boundingBoxes[0].height", equalTo(100))
+            .body("worker.lastSuccessAt", equalTo("2026-06-05T12:00:00Z"))
+            .body("worker.consecutiveFailures", equalTo(0))
             .body("worker.lastErrorCode", nullValue())
     }
 
@@ -95,17 +95,17 @@ class RecognitionControllerTest {
             .get("/recognition/latest")
             .then()
             .statusCode(200)
-            .body("status", `is`("UNKNOWN"))
-            .body("observedAt", `is`("2026-06-05T12:01:00Z"))
+            .body("status", equalTo("UNKNOWN"))
+            .body("observedAt", equalTo("2026-06-05T12:01:00Z"))
             .body("confidence", nullValue())
             .body("$", not(hasKey("detectorMode")))
-            .body("source", `is`("snapshot"))
-            .body("error.code", `is`("FRAME_FETCH_FAILED"))
-            .body("error.message", `is`("camera unavailable"))
-            .body("error.retriable", `is`(true))
-            .body("worker.lastSuccessAt", `is`("2026-06-05T12:00:00Z"))
-            .body("worker.consecutiveFailures", `is`(1))
-            .body("worker.lastErrorCode", `is`("FRAME_FETCH_FAILED"))
+            .body("source", equalTo("snapshot"))
+            .body("error.code", equalTo("FRAME_FETCH_FAILED"))
+            .body("error.message", equalTo("camera unavailable"))
+            .body("error.retriable", equalTo(true))
+            .body("worker.lastSuccessAt", equalTo("2026-06-05T12:00:00Z"))
+            .body("worker.consecutiveFailures", equalTo(1))
+            .body("worker.lastErrorCode", equalTo("FRAME_FETCH_FAILED"))
     }
 
     @Test
@@ -114,11 +114,11 @@ class RecognitionControllerTest {
             .post("/recognition/run")
             .then()
             .statusCode(200)
-            .body("status", `is`("DETECTED"))
-            .body("observedAt", `is`("2026-06-05T12:00:00Z"))
-            .body("confidence", `is`(0.91f))
+            .body("status", equalTo("DETECTED"))
+            .body("observedAt", equalTo("2026-06-05T12:00:00Z"))
+            .body("confidence", equalTo(0.91f))
             .body("$", not(hasKey("detectorMode")))
-            .body("source", `is`("snapshot"))
+            .body("source", equalTo("snapshot"))
             .body("error", nullValue())
     }
 
@@ -133,15 +133,15 @@ class RecognitionControllerTest {
                 .post("/recognition/upload")
                 .then()
                 .statusCode(200)
-                .body("status", `is`("DETECTED"))
+                .body("status", equalTo("DETECTED"))
                 .body("observedAt", not(nullValue()))
-                .body("confidence", `is`(0.91f))
-                .body("source", `is`("upload"))
+                .body("confidence", equalTo(0.91f))
+                .body("source", equalTo("upload"))
                 .body("error", nullValue())
-                .body("boundingBoxes[0].x", `is`(10))
-                .body("boundingBoxes[0].y", `is`(20))
-                .body("boundingBoxes[0].width", `is`(80))
-                .body("boundingBoxes[0].height", `is`(100))
+                .body("boundingBoxes[0].x", equalTo(10))
+                .body("boundingBoxes[0].y", equalTo(20))
+                .body("boundingBoxes[0].width", equalTo(80))
+                .body("boundingBoxes[0].height", equalTo(100))
         } finally {
             image.delete()
         }
@@ -158,11 +158,11 @@ class RecognitionControllerTest {
             .post("/recognition/upload")
             .then()
             .statusCode(200)
-            .body("status", `is`("UNKNOWN"))
-            .body("source", `is`("upload"))
-            .body("error.code", `is`("DETECTOR_FAILED"))
-            .body("error.message", `is`("OpenCV failed to decode frame"))
-            .body("error.retriable", `is`(false))
+            .body("status", equalTo("UNKNOWN"))
+            .body("source", equalTo("upload"))
+            .body("error.code", equalTo("DETECTOR_FAILED"))
+            .body("error.message", equalTo("OpenCV failed to decode frame"))
+            .body("error.retriable", equalTo(false))
     }
 
     @Test
@@ -171,18 +171,15 @@ class RecognitionControllerTest {
             .get("/debug/config")
             .then()
             .statusCode(200)
-            .body("pollInterval", `is`("500ms"))
-            .body("snapshotConfigured", `is`(true))
-            .body("manualTriggerEnabled", `is`(true))
-            .body("uploadEnabled", `is`(true))
+            .body("pollInterval", equalTo("500ms"))
+            .body("snapshotConfigured", equalTo(true))
+            .body("manualTriggerEnabled", equalTo(true))
+            .body("uploadEnabled", equalTo(true))
     }
 
     @Test
     fun `camera snapshot URL is configurable through Quarkus config`() {
-        assertEquals(
-            "http://example.test/snapshot",
-            config.camera().snapshotUrl(),
-        )
+        config.camera().snapshotUrl() shouldBe "http://example.test/snapshot"
     }
 
     class Profile : QuarkusTestProfile {

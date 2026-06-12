@@ -1,4 +1,4 @@
-package io.github.arhor.catrecognizer.web
+package io.github.arhor.catrecognizer.web.controller
 
 import io.github.arhor.catrecognizer.service.LatestRecognitionState
 import jakarta.inject.Inject

@@ -7,17 +7,13 @@ plugins {
 
 group = "io.github.arhor.catrecognizer"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
-}
-
 kotlin {
+    jvmToolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
     compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25
         javaParameters = true
     }
-    jvmToolchain(25)
 }
 
 allOpen {
@@ -50,7 +46,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.onnxruntime)
 
-    testImplementation(libs.kotlin.test)
+    testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.quarkus.junit)
     testImplementation(libs.rest.assured)

@@ -1,10 +1,10 @@
 package io.github.arhor.catrecognizer.client
 
 import io.github.arhor.catrecognizer.client.impl.SnapshotFrameClient
+import io.kotest.matchers.shouldNotBe
 import org.eclipse.microprofile.faulttolerance.Retry
 import org.eclipse.microprofile.faulttolerance.Timeout
-import kotlin.test.Test
-import kotlin.test.assertNotNull
+import org.junit.jupiter.api.Test
 
 class SnapshotFrameClientFaultToleranceTest {
 
@@ -12,7 +12,7 @@ class SnapshotFrameClientFaultToleranceTest {
     fun `fetchFrame is annotated with retry and timeout`() {
         val method = SnapshotFrameClient::class.java.getMethod("fetchFrame")
 
-        assertNotNull(method.getAnnotation(Retry::class.java))
-        assertNotNull(method.getAnnotation(Timeout::class.java))
+        method.getAnnotation(Retry::class.java) shouldNotBe null
+        method.getAnnotation(Timeout::class.java) shouldNotBe null
     }
 }

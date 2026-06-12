@@ -3,11 +3,11 @@ package io.github.arhor.catrecognizer.service
 import io.github.arhor.catrecognizer.domain.CatPresenceStatus
 import io.github.arhor.catrecognizer.domain.RecognitionError
 import io.github.arhor.catrecognizer.domain.RecognitionResult
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNull
 import java.time.Instant
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class LatestRecognitionStateTest {
 

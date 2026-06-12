@@ -87,7 +87,9 @@ class YoloOnnxCatDetector(
         } catch (error: IllegalStateException) {
             throw error
         } catch (error: Exception) {
-            logger.debugK(error) { "YOLO ONNX processing failed after decoding frame: ${frame.toDebugSummary()}" }
+            logger.debugK {
+                "YOLO ONNX processing failed after decoding frame: ${frame.toDebugSummary()}. Error: ${error.message}"
+            }
             throw IllegalStateException("YOLO ONNX processing failed")
         } finally {
             decoded.release()
@@ -100,9 +102,12 @@ class YoloOnnxCatDetector(
         if (::session.isInitialized) {
             session.close()
         }
-        temporaryModelPath?.let { path ->
-            runCatching { Files.deleteIfExists(path) }
-                .onFailure { logger.debugK(it) { "Failed to delete temporary YOLO ONNX model: $path" } }
+        temporaryModelPath?.let {
+            try {
+                Files.deleteIfExists(it)
+            } catch (error: Exception) {
+                logger.debugK { "Failed to delete temporary YOLO ONNX model: $it. Error: ${error.message}" }
+            }
         }
     }
 

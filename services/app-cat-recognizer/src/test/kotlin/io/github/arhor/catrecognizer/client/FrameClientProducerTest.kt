@@ -2,11 +2,11 @@ package io.github.arhor.catrecognizer.client
 
 import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
+import io.kotest.matchers.types.shouldBeSameInstanceAs
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.Optional
-import kotlin.test.Test
-import kotlin.test.assertSame
 
 class FrameClientProducerTest {
 
@@ -21,7 +21,7 @@ class FrameClientProducerTest {
     fun `selects native client when source is native api`() {
         val producer = FrameClientProducer(config(RecognizerConfig.CameraSource.NATIVE_API), httpClient, nativeClient)
 
-        assertSame(nativeClient, producer.frameClient())
+        producer.frameClient() shouldBeSameInstanceAs nativeClient
     }
 
     @Test
@@ -29,7 +29,7 @@ class FrameClientProducerTest {
         val producer =
             FrameClientProducer(config(RecognizerConfig.CameraSource.HTTP_SNAPSHOT), httpClient, nativeClient)
 
-        assertSame(httpClient, producer.frameClient())
+        producer.frameClient() shouldBeSameInstanceAs httpClient
     }
 
     private fun config(source: RecognizerConfig.CameraSource): RecognizerConfig =

@@ -1,9 +1,9 @@
 package io.github.arhor.catrecognizer.job
 
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.quarkus.scheduler.Scheduled
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import org.junit.jupiter.api.Test
 
 class CatRecognitionJobTest {
 
@@ -12,8 +12,8 @@ class CatRecognitionJobTest {
         val method = CatRecognitionJob::class.java.getMethod("detect")
         val scheduled = method.getAnnotation(Scheduled::class.java)
 
-        assertNotNull(scheduled)
-        assertEquals("{cat-recognizer.worker.poll-interval}", scheduled.every)
-        assertEquals(Scheduled.ConcurrentExecution.SKIP, scheduled.concurrentExecution)
+        scheduled shouldNotBe null
+        scheduled.every shouldBe "{cat-recognizer.worker.poll-interval}"
+        scheduled.concurrentExecution shouldBe Scheduled.ConcurrentExecution.SKIP
     }
 }

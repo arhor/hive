@@ -69,7 +69,7 @@ class CatRecognitionService @Inject constructor(
 
             result
         } catch (error: FrameSourceError) {
-            logger.debugK(error) { "Snapshot frame fetch failed" }
+            logger.debugK { "Snapshot frame fetch failed: ${error.message}" }
             val result = RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = Instant.now(),
@@ -84,9 +84,9 @@ class CatRecognitionService @Inject constructor(
             state.recordFailure(result, frame?.bytes)
             result
         } catch (error: Exception) {
-            logger.debugK(error) {
+            logger.debugK {
                 val frameSummary = frame?.toDebugSummary() ?: "none"
-                "Snapshot detection failed: frame=$frameSummary"
+                "Snapshot detection failed: frame=$frameSummary. Error: ${error.message}"
             }
             val result = RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,

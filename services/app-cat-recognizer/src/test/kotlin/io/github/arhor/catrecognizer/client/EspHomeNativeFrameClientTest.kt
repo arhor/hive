@@ -3,18 +3,16 @@ package io.github.arhor.catrecognizer.client
 import io.github.arhor.catrecognizer.client.impl.EspHomeNativeFrameClient
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
-import io.github.arhor.esphome.client.EspHomeClientException
 import io.github.arhor.esphome.client.EspHomeClientConfig
+import io.github.arhor.esphome.client.EspHomeClientException
 import io.github.arhor.esphome.client.EspHomeConnection
 import io.github.arhor.esphome.client.EspHomeEntity
 import io.github.arhor.esphome.client.EspHomeStateHandler
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.shouldBe
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.Optional
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class EspHomeNativeFrameClientTest {
 
@@ -24,8 +22,8 @@ class EspHomeNativeFrameClientTest {
 
         val payload = frameClient.fetchFrame()
 
-        assertContentEquals(byteArrayOf(1, 2, 3), payload.bytes)
-        assertEquals("image/jpeg", payload.contentType)
+        payload.bytes shouldBe byteArrayOf(1, 2, 3)
+        payload.contentType shouldBe "image/jpeg"
     }
 
     @Test
@@ -35,13 +33,13 @@ class EspHomeNativeFrameClientTest {
             factory = { throw EspHomeClientException("native failure") },
         )
 
-        val error = assertFailsWith<FrameSourceError> {
+        val error = shouldThrow<FrameSourceError> {
             frameClient.fetchFrame()
         }
 
-        assertEquals("FRAME_FETCH_FAILED", error.code)
-        assertEquals(true, error.retriable)
-        assertEquals("Failed to fetch ESPHome camera frame from esp32-cam.local:6053", error.message)
+        error.code shouldBe "FRAME_FETCH_FAILED"
+        error.retriable shouldBe true
+        error.message shouldBe "Failed to fetch ESPHome camera frame from esp32-cam.local:6053"
     }
 
     @Test
@@ -59,8 +57,8 @@ class EspHomeNativeFrameClientTest {
         frameClient.fetchFrame()
 
         val config = capturedConfig ?: error("ESPHome client config was not captured")
-        assertTrue(config.encryption.enabled)
-        assertEquals(key, config.encryption.key)
+        config.encryption.enabled shouldBe true
+        config.encryption.key shouldBe key
     }
 
     private class FakeConnection(private val image: ByteArray) : EspHomeConnection {

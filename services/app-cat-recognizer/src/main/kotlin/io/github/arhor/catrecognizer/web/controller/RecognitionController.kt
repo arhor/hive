@@ -128,7 +128,7 @@ class RecognitionController @Inject constructor(
                 )
             }
         } catch (error: Exception) {
-            logger.debugK(error) { "Upload detection failed: frame=${frame.toDebugSummary()}" }
+            logger.debugK { "Upload detection failed: frame=${frame.toDebugSummary()}. Error: ${error.message}" }
             return RecognitionResult(
                 status = CatPresenceStatus.UNKNOWN,
                 observedAt = frame.observedAt,

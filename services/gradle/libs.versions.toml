@@ -1,6 +1,7 @@
 # Catalog of libraries/plugins and their versions for the build to use
 # See https://docs.gradle.org/current/userguide/platforms.html for more information
 [versions]
+kotest = "6.1.11"
 kotlin = "2.3.21"
 onnxruntime = "1.21.1"
 opencv = "2.1.0"
@@ -9,6 +10,7 @@ protobuf-plugin = "0.10.0"
 quarkus = "3.36.1"
 
 [libraries]
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core" }
