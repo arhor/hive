@@ -1,6 +1,7 @@
-package io.github.arhor.catrecognizer.client.impl
+package io.github.arhor.catrecognizer.client
 
-import io.github.arhor.catrecognizer.client.FrameClient
+import io.github.arhor.catrecognizer.client.impl.HttpSnapshotCameraClient
+import io.github.arhor.catrecognizer.client.impl.NativeApiCameraClient
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.enterprise.inject.Produces
