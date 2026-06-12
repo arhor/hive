@@ -29,13 +29,11 @@ class WorkerReadinessCheck(
         }
 
         val lastSuccessAt = snapshot.lastSuccessAt
-        if (lastSuccessAt == null) {
-            return HealthCheckResponse.named(NAME)
+            ?: return HealthCheckResponse.named(NAME)
                 .up()
                 .withData("state", "warming-up")
                 .withData("consecutiveFailures", snapshot.consecutiveFailures.toLong())
                 .build()
-        }
 
         val isFresh = Duration.between(lastSuccessAt, Instant.now()) <= config.state().staleAfter()
         return if (isFresh) {
