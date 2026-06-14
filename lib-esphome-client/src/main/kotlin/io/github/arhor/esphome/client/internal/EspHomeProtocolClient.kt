@@ -1,5 +1,6 @@
 package io.github.arhor.esphome.client.internal
 
+import com.google.protobuf.MessageLite
 import io.github.arhor.esphome.client.EspHomeConnection
 import io.github.arhor.esphome.client.EspHomeStateHandler
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
@@ -7,19 +8,19 @@ import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import io.github.arhor.esphome.client.model.EspHomeDeviceInfo
 import io.github.arhor.esphome.client.model.EspHomeEntity
-import io.github.arhor.esphome.client.proto.CameraImageRequest
 import io.github.arhor.esphome.client.proto.CameraImageResponse
-import io.github.arhor.esphome.client.proto.ConnectRequest
 import io.github.arhor.esphome.client.proto.ConnectResponse
-import io.github.arhor.esphome.client.proto.DeviceInfoRequest
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse
-import io.github.arhor.esphome.client.proto.DisconnectRequest
-import io.github.arhor.esphome.client.proto.DisconnectResponse
-import io.github.arhor.esphome.client.proto.HelloRequest
 import io.github.arhor.esphome.client.proto.HelloResponse
-import io.github.arhor.esphome.client.proto.ListEntitiesRequest
-import io.github.arhor.esphome.client.proto.PingResponse
-import io.github.arhor.esphome.client.proto.SubscribeStatesRequest
+import io.github.arhor.esphome.client.proto.cameraImageRequest
+import io.github.arhor.esphome.client.proto.connectRequest
+import io.github.arhor.esphome.client.proto.deviceInfoRequest
+import io.github.arhor.esphome.client.proto.disconnectRequest
+import io.github.arhor.esphome.client.proto.disconnectResponse
+import io.github.arhor.esphome.client.proto.helloRequest
+import io.github.arhor.esphome.client.proto.listEntitiesRequest
+import io.github.arhor.esphome.client.proto.pingResponse
+import io.github.arhor.esphome.client.proto.subscribeStatesRequest
 import java.io.ByteArrayOutputStream
 
 class EspHomeProtocolClient(
@@ -28,14 +29,12 @@ class EspHomeProtocolClient(
 ) : EspHomeConnection {
 
     fun connect() {
-        send(EspHomeMessageType.HELLO_REQUEST) {
-            HelloRequest.newBuilder()
-                .setClientInfo(config.clientName)
-                .setApiVersionMajor(1)
-                .setApiVersionMinor(10)
-                .build()
-                .toByteArray()
-        }
+        send(EspHomeMessageType.HELLO_REQUEST, helloRequest {
+            clientInfo = config.clientName
+            apiVersionMajor = 1
+            apiVersionMinor = 10
+        })
+
         val hello = expect(EspHomeMessageType.HELLO_RESPONSE) {
             HelloResponse.parseFrom(it)
         }
@@ -43,12 +42,9 @@ class EspHomeProtocolClient(
             throw EspHomeProtocolException("Unsupported ESPHome API major version: ${hello.apiVersionMajor}")
         }
 
-        send(EspHomeMessageType.CONNECT_REQUEST) {
-            ConnectRequest.newBuilder()
-                .setPassword(config.password.orEmpty())
-                .build()
-                .toByteArray()
-        }
+        send(EspHomeMessageType.CONNECT_REQUEST, connectRequest {
+            password = config.password.orEmpty()
+        })
         val connect = expect(EspHomeMessageType.CONNECT_RESPONSE) {
             ConnectResponse.parseFrom(it)
         }
@@ -58,9 +54,7 @@ class EspHomeProtocolClient(
     }
 
     override fun deviceInfo(): EspHomeDeviceInfo {
-        send(EspHomeMessageType.DEVICE_INFO_REQUEST) {
-            DeviceInfoRequest.newBuilder().build().toByteArray()
-        }
+        send(EspHomeMessageType.DEVICE_INFO_REQUEST, deviceInfoRequest { })
         val response = expect(EspHomeMessageType.DEVICE_INFO_RESPONSE) {
             DeviceInfoResponse.parseFrom(it)
         }
@@ -73,13 +67,10 @@ class EspHomeProtocolClient(
     }
 
     override fun fetchCameraImage(single: Boolean): ByteArray {
-        send(EspHomeMessageType.CAMERA_IMAGE_REQUEST) {
-            CameraImageRequest.newBuilder()
-                .setSingle(single)
-                .setStream(!single)
-                .build()
-                .toByteArray()
-        }
+        send(EspHomeMessageType.CAMERA_IMAGE_REQUEST, cameraImageRequest {
+            this.single = single
+            this.stream = !single
+        })
 
         val output = ByteArrayOutputStream()
         while (true) {
@@ -98,9 +89,7 @@ class EspHomeProtocolClient(
     }
 
     override fun listEntities(): List<EspHomeEntity> {
-        send(EspHomeMessageType.LIST_ENTITIES_REQUEST) {
-            ListEntitiesRequest.newBuilder().build().toByteArray()
-        }
+        send(EspHomeMessageType.LIST_ENTITIES_REQUEST, listEntitiesRequest { })
         val entities = mutableListOf<EspHomeEntity>()
 
         while (true) {
@@ -111,9 +100,7 @@ class EspHomeProtocolClient(
                 }
 
                 EspHomeMessageType.PING_REQUEST -> {
-                    send(EspHomeMessageType.PING_RESPONSE) {
-                        PingResponse.newBuilder().build().toByteArray()
-                    }
+                    send(EspHomeMessageType.PING_RESPONSE, pingResponse { })
                 }
 
                 in ENTITY_DISCOVERY_MESSAGE_TYPES -> {
@@ -133,23 +120,17 @@ class EspHomeProtocolClient(
     }
 
     override fun subscribeStates(handler: EspHomeStateHandler) {
-        send(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST) {
-            SubscribeStatesRequest.newBuilder().build().toByteArray()
-        }
+        send(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, subscribeStatesRequest { })
 
         while (true) {
             val frame = transport.receive()
             when (frame.messageType) {
                 EspHomeMessageType.PING_REQUEST -> {
-                    send(EspHomeMessageType.PING_RESPONSE) {
-                        PingResponse.newBuilder().build().toByteArray()
-                    }
+                    send(EspHomeMessageType.PING_RESPONSE, pingResponse { })
                 }
 
                 EspHomeMessageType.DISCONNECT_REQUEST -> {
-                    send(EspHomeMessageType.DISCONNECT_RESPONSE) {
-                        DisconnectResponse.newBuilder().build().toByteArray()
-                    }
+                    send(EspHomeMessageType.DISCONNECT_RESPONSE, disconnectResponse { })
                     return
                 }
 
@@ -169,15 +150,13 @@ class EspHomeProtocolClient(
 
     override fun close() {
         runCatching {
-            send(EspHomeMessageType.DISCONNECT_REQUEST) {
-                DisconnectRequest.newBuilder().build().toByteArray()
-            }
+            send(EspHomeMessageType.DISCONNECT_REQUEST, disconnectRequest { })
         }
         transport.close()
     }
 
-    private fun send(messageType: Int, payload: () -> ByteArray) {
-        transport.send(EspHomeFrame(messageType, payload()))
+    private fun send(messageType: Int, payload: MessageLite) {
+        transport.send(EspHomeFrame(messageType, payload.toByteArray()))
     }
 
     private fun <T> expect(messageType: Int, parser: (ByteArray) -> T): T {
@@ -186,9 +165,7 @@ class EspHomeProtocolClient(
             when (frame.messageType) {
                 messageType -> return parser(frame.payload)
                 EspHomeMessageType.PING_REQUEST -> {
-                    send(EspHomeMessageType.PING_RESPONSE) {
-                        PingResponse.newBuilder().build().toByteArray()
-                    }
+                    send(EspHomeMessageType.PING_RESPONSE, pingResponse { })
                 }
 
                 else -> throw EspHomeProtocolException(

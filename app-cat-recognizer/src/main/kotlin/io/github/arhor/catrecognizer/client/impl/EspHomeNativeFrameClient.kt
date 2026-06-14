@@ -12,17 +12,19 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import java.time.Instant
 
+private typealias EspHomeConnectionFactory = (EspHomeClientConfig) -> EspHomeConnection
+
 @ApplicationScoped
 @NativeApiCameraClient
 class EspHomeNativeFrameClient @Inject constructor(
     private val config: RecognizerConfig,
 ) : FrameClient {
 
-    private var factory: (EspHomeClientConfig) -> EspHomeConnection = { DefaultEspHomeClient(it).connect() }
+    private var factory: EspHomeConnectionFactory = { DefaultEspHomeClient(it).connect() }
 
     internal constructor(
         config: RecognizerConfig,
-        factory: (EspHomeClientConfig) -> EspHomeConnection,
+        factory: EspHomeConnectionFactory,
     ) : this(config) {
         this.factory = factory
     }
@@ -48,12 +50,12 @@ class EspHomeNativeFrameClient @Inject constructor(
                     observedAt = Instant.now(),
                 )
             }
-        } catch (exception: Exception) {
+        } catch (ex: Exception) {
             throw FrameSourceError(
                 code = "FRAME_FETCH_FAILED",
                 message = "Failed to fetch ESPHome camera frame from ${nativeApi.host()}:${nativeApi.port()}",
                 retriable = true,
-                cause = exception,
+                cause = ex,
             )
         }
     }

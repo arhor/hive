@@ -20,8 +20,9 @@ class CatRecognitionService @Inject constructor(
     private val detector: CatDetector,
     private val state: LatestRecognitionState,
 ) {
-
-    private val logger: Logger = Logger.getLogger(CatRecognitionService::class.java)
+    companion object {
+        private val logger = Logger.getLogger(CatRecognitionService::class.java)
+    }
 
     fun runRecognition(): RecognitionResult {
         var frame: FramePayload? = null
