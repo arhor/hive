@@ -1,5 +1,9 @@
 package io.github.arhor.esphome.client
 
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.DefaultEspHomeClient
 import io.github.arhor.esphome.client.internal.EspHomeFrame
 import io.github.arhor.esphome.client.internal.EspHomeMessageType
 import io.github.arhor.esphome.client.internal.EspHomeTransport

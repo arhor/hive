@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 

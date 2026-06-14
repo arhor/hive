@@ -1,12 +1,12 @@
 package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.EspHomeAuthenticationException
-import io.github.arhor.esphome.client.EspHomeClientConfig
 import io.github.arhor.esphome.client.EspHomeConnection
-import io.github.arhor.esphome.client.EspHomeDeviceInfo
-import io.github.arhor.esphome.client.EspHomeEntity
-import io.github.arhor.esphome.client.EspHomeProtocolException
 import io.github.arhor.esphome.client.EspHomeStateHandler
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.model.EspHomeDeviceInfo
+import io.github.arhor.esphome.client.model.EspHomeEntity
 import io.github.arhor.esphome.client.proto.CameraImageRequest
 import io.github.arhor.esphome.client.proto.CameraImageResponse
 import io.github.arhor.esphome.client.proto.ConnectRequest

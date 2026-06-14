@@ -1,9 +1,9 @@
 package io.github.arhor.esphome.client.internal
 
 import com.google.protobuf.ByteString
-import io.github.arhor.esphome.client.EspHomeAuthenticationException
-import io.github.arhor.esphome.client.EspHomeClientConfig
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import io.github.arhor.esphome.client.proto.CameraImageResponse
 import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse

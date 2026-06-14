@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.internal.noise
 
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import java.util.Base64
 
 internal object NoiseKeyMaterial {

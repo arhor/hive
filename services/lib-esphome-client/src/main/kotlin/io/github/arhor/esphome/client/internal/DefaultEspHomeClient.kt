@@ -1,9 +1,8 @@
-package io.github.arhor.esphome.client
+package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.internal.EncryptedEspHomeTransport
-import io.github.arhor.esphome.client.internal.EspHomeProtocolClient
-import io.github.arhor.esphome.client.internal.EspHomeTransport
-import io.github.arhor.esphome.client.internal.PlaintextEspHomeTransport
+import io.github.arhor.esphome.client.EspHomeClient
+import io.github.arhor.esphome.client.EspHomeConnection
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.internal.noise.NoiseKeyMaterial
 
 typealias EspHomeTransportFactory = (EspHomeClientConfig) -> EspHomeTransport

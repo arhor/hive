@@ -1,5 +1,7 @@
 package io.github.arhor.esphome.client
 
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals

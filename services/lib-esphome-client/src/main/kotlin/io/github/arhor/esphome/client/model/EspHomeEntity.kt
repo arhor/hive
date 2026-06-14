@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client
+package io.github.arhor.esphome.client.model
 
 import io.github.arhor.esphome.client.proto.ListEntitiesAlarmControlPanelResponse
 import io.github.arhor.esphome.client.proto.ListEntitiesBinarySensorResponse

@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.EspHomeClientConfig
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.internal.noise.NoiseHandshakeState
 import java.net.InetAddress
 import java.net.ServerSocket

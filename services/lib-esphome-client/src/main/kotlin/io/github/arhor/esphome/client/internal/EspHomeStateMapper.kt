@@ -1,8 +1,8 @@
 package io.github.arhor.esphome.client.internal
 
 import com.google.protobuf.InvalidProtocolBufferException
-import io.github.arhor.esphome.client.EspHomeProtocolException
-import io.github.arhor.esphome.client.EspHomeState
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.model.EspHomeState
 import io.github.arhor.esphome.client.proto.AlarmControlPanelStateResponse
 import io.github.arhor.esphome.client.proto.BinarySensorStateResponse
 import io.github.arhor.esphome.client.proto.ClimateStateResponse

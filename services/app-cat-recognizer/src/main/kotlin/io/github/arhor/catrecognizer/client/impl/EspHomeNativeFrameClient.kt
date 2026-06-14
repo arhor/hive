@@ -4,10 +4,10 @@ import io.github.arhor.catrecognizer.client.FrameClient
 import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
-import io.github.arhor.esphome.client.DefaultEspHomeClient
-import io.github.arhor.esphome.client.EspHomeClientConfig
 import io.github.arhor.esphome.client.EspHomeConnection
-import io.github.arhor.esphome.client.EspHomeEncryptionConfig
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
+import io.github.arhor.esphome.client.internal.DefaultEspHomeClient
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import java.time.Instant

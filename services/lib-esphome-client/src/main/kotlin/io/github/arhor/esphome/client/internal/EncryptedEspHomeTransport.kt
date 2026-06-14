@@ -1,9 +1,9 @@
 package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.EspHomeClientConfig
-import io.github.arhor.esphome.client.EspHomeClientException
-import io.github.arhor.esphome.client.EspHomeProtocolException
-import io.github.arhor.esphome.client.EspHomeTransportException
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.exception.EspHomeClientException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeTransportException
 import io.github.arhor.esphome.client.internal.noise.NoiseCipherState
 import io.github.arhor.esphome.client.internal.noise.NoiseHandshakeState
 import java.net.InetSocketAddress

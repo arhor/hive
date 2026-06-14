@@ -1,5 +1,7 @@
 package io.github.arhor.esphome.client
 
+import io.github.arhor.esphome.client.model.EspHomeEntity
+import io.github.arhor.esphome.client.model.EspHomeState
 import io.github.arhor.esphome.client.proto.BinarySensorStateResponse
 import io.github.arhor.esphome.client.proto.DateStateResponse
 import io.github.arhor.esphome.client.proto.ListEntitiesBinarySensorResponse

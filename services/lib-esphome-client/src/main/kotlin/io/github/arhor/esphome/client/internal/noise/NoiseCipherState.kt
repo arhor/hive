@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.internal.noise
 
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import java.security.GeneralSecurityException
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec

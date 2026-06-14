@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.internal.noise
 
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.KeyPairGenerator

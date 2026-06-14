@@ -3,11 +3,11 @@ package io.github.arhor.catrecognizer.client
 import io.github.arhor.catrecognizer.client.impl.EspHomeNativeFrameClient
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
-import io.github.arhor.esphome.client.EspHomeClientConfig
-import io.github.arhor.esphome.client.EspHomeClientException
 import io.github.arhor.esphome.client.EspHomeConnection
-import io.github.arhor.esphome.client.EspHomeEntity
 import io.github.arhor.esphome.client.EspHomeStateHandler
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.exception.EspHomeClientException
+import io.github.arhor.esphome.client.model.EspHomeEntity
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class EspHomeNativeFrameClientTest {
     fun `maps esphome failures to frame source errors`() {
         val frameClient = EspHomeNativeFrameClient(
             config(),
-            factory = { throw EspHomeClientException("native failure") },
+            factory = { throw object : EspHomeClientException("native failure") {} },
         )
 
         val error = shouldThrow<FrameSourceError> {
@@ -91,6 +91,7 @@ class EspHomeNativeFrameClientTest {
                     }
                 }
             }
+
             override fun state() = error("not used")
             override fun debug() = error("not used")
             override fun detector() = object : RecognizerConfig.Detector {

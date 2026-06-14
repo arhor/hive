@@ -1,10 +1,10 @@
 package io.github.arhor.esphome.client.internal.noise
 
-import io.github.arhor.esphome.client.EspHomeProtocolException
+import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 class NoiseCipherStateTest {
 

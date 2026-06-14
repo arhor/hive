@@ -1,6 +1,4 @@
-@file:Suppress("unused")
-
-package io.github.arhor.esphome.client
+package io.github.arhor.esphome.client.model
 
 import io.github.arhor.esphome.client.proto.AlarmControlPanelState
 import io.github.arhor.esphome.client.proto.AlarmControlPanelStateResponse

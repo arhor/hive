@@ -1,7 +1,7 @@
 package io.github.arhor.esphome.client.internal
 
-import io.github.arhor.esphome.client.EspHomeClientConfig
-import io.github.arhor.esphome.client.EspHomeTransportException
+import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.exception.EspHomeTransportException
 import java.net.InetSocketAddress
 import java.net.Socket
 
