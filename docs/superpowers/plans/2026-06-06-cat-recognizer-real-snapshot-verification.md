@@ -2,7 +2,9 @@
 
 > **For agentic workers:** Implement this plan task-by-task using checkbox (`- [ ]`) syntax for progress tracking. Keep real-device verification manual; CI must not depend on a camera being online.
 
-**Goal:** Make it easy and reliable to run the existing `services/app-cat-recognizer` service against a real ESP32-CAM snapshot URL and verify config loading, snapshot HTTP fetch, manual recognition, latest-state reporting, health/readiness, and debug config behavior end-to-end.
+**Goal:** Make it easy and reliable to run the existing `app-cat-recognizer` service against a real ESP32-CAM snapshot
+URL and verify config loading, snapshot HTTP fetch, manual recognition, latest-state reporting, health/readiness, and
+debug config behavior end-to-end.
 
 **Scope guardrails:** Real CV/ML, OpenCV, ONNX, TensorFlow, Python/model files, Home Assistant integration, MQTT, service redesign, stream ingestion, and automated real-camera tests are explicitly out of scope.
 
@@ -19,7 +21,7 @@
 
 ### Application/Test Files
 
-- [ ] Inspect: `services/app-cat-recognizer/src/main/resources/application.properties`
+- [ ] Inspect: `app-cat-recognizer/src/main/resources/application.properties`
 - [ ] Update tests only if no existing test proves the camera snapshot URL is configurable.
 - [ ] Do not add tests that require a real ESP32-CAM.
 - [ ] Avoid production code changes unless inspection finds a real blocker for runtime configuration or manual verification.
@@ -28,7 +30,8 @@
 
 ## Tasks
 
-- [ ] Inspect `README.md`, `AGENTS.md`, `docker-compose.yml`, `services/app-cat-recognizer`, and existing `docs/superpowers/` files before changing anything.
+- [ ] Inspect `README.md`, `AGENTS.md`, `docker-compose.yml`, `app-cat-recognizer`, and existing `docs/superpowers/`
+  files before changing anything.
 - [ ] Confirm the existing application is snapshot-first and uses `SnapshotFrameSource` plus `cat-recognizer.camera.snapshot-url`.
 - [ ] Confirm `cat-recognizer.camera.snapshot-url` can be overridden at runtime through Quarkus environment-variable mapping as `CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL`.
 - [ ] Confirm the detector remains stub-only and supports deterministic `ALWAYS_PRESENT` and `ALWAYS_ABSENT` modes for plumbing verification.
@@ -39,14 +42,14 @@
 - [ ] Include a JVM/Quarkus system-property example for `quarkusDev`.
 - [ ] Keep example URLs as placeholders such as `http://esp32-cam.local/snapshot`; do not commit private device URLs, credentials, Wi-Fi details, or tokens.
 - [ ] Add a minimal config override test only if existing tests do not prove the snapshot URL can be configured.
-- [ ] Run automated verification from `services/`.
+- [ ] Run automated verification.
 - [ ] Perform manual verification against a real ESP32-CAM snapshot URL only if one is available in the operator environment.
 - [ ] Document any manual verification blocker, observed error, and likely next fix.
 - [ ] Commit focused changes with a Conventional Commit-style subject.
 
 ---
 
-## Run Commands From `services/`
+## Run Commands
 
 ### Environment Variable Override
 
@@ -111,7 +114,7 @@ Expected behavior:
 
 ## Automated Verification
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test

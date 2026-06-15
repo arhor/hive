@@ -16,24 +16,21 @@ behavior or remove the HTTP client.
 
 ## File Structure
 
-- Modify `services/app-cat-recognizer/src/main/resources/application.properties`: change the default camera source to
+- Modify `app-cat-recognizer/src/main/resources/application.properties`: change the default camera source to
   `NATIVE_API`, leaving HTTP snapshot properties available.
-- Modify
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`:
+- Modify `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`:
   expect native API as the default source while retaining assertions for HTTP snapshot settings.
-- Create `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/FrameClientProducerTest.kt`:
-  verify exact source-based client selection with no fallback.
-- Optionally modify
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`: if
-  diagnostics are updated to expose the camera source, assert the new field.
+- Create `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/FrameClientProducerTest.kt`: verify
+  exact source-based client selection with no fallback.
+- Optionally modify `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`:
+  if diagnostics are updated to expose the camera source, assert the new field.
 
 ### Task 1: Pin The Native API Default
 
 **Files:**
 
-- Modify:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
+- Modify: `app-cat-recognizer/src/main/resources/application.properties`
 
 - [ ] **Step 1: Write the failing config binding assertion**
 
@@ -101,8 +98,8 @@ Expected: PASS.
 
 **Files:**
 
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/FrameClientProducerTest.kt`
-- Read: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/FrameClientProducerTest.kt`
+- Read: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
 
 - [ ] **Step 1: Write failing producer tests**
 
@@ -207,10 +204,10 @@ Expected: PASS.
 
 **Files:**
 
-- Read: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt`
-- Read: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt`
+- Read: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt`
+- Read: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt`
 - Modify only if needed:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
+  `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
 
 - [ ] **Step 1: Decide whether diagnostics need code changes**
 
@@ -248,7 +245,9 @@ Expected: PASS.
 Run:
 
 ```bash
-git diff -- services/app-cat-recognizer/src/main/resources/application.properties services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client
+git diff -- app-cat-recognizer/src/main/resources/application.properties \
+            app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt \
+            app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client
 ```
 
 Expected: diff shows only the native default config change and focused tests. Existing unrelated user changes in

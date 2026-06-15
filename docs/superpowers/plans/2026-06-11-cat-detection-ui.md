@@ -21,14 +21,13 @@ framework)
 
 **New files:**
 
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt` — serializable
-  bounding-box value type
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt` — serves
-  latest raw frame bytes at `GET /frame/latest`
-- `services/app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml` — OpenCV cat-face Haar
-  cascade
-- `services/app-cat-recognizer/src/main/resources/META-INF/resources/index.html` — the live viewer page
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt`
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt` — serializable bounding-box
+  value type
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt` — serves latest
+  raw frame bytes at `GET /frame/latest`
+- `app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml` — OpenCV cat-face Haar cascade
+- `app-cat-recognizer/src/main/resources/META-INF/resources/index.html` — the live viewer page
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt`
 
 **Modified files:**
 
@@ -51,8 +50,8 @@ framework)
 
 **Files:**
 
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -109,8 +108,8 @@ Expected: PASS
 - [ ] **Step 5: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/BoundingBox.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt
 git commit -m "feat: add BoundingBox domain type"
 ```
 
@@ -120,9 +119,9 @@ git commit -m "feat: add BoundingBox domain type"
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/DetectionOutcome.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionResult.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/DetectionOutcome.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionResult.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -252,9 +251,9 @@ Expected: PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/DetectionOutcome.kt \
-        services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionResult.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/DetectionOutcome.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionResult.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/model/CoreModelShapeTest.kt
 git commit -m "feat: add bounding boxes to DetectionOutcome.Present and RecognitionResult"
 ```
 
@@ -264,11 +263,10 @@ git commit -m "feat: add bounding boxes to DetectionOutcome.Present and Recognit
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionLatestResponse.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionState.kt`
-- Modify:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionStateTest.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionLatestResponse.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionState.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionStateTest.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
 
 - [ ] **Step 1: Write the failing test for frame bytes in state**
 
@@ -502,11 +500,11 @@ Expected: PASS (all tests green)
 - [ ] **Step 8: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionLatestResponse.kt \
-        services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionState.kt \
-        services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionStateTest.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RecognitionLatestResponse.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionState.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/LatestRecognitionStateTest.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt
 git commit -m "feat: expose bounding boxes in recognition API and persist frame bytes in state"
 ```
 
@@ -516,9 +514,8 @@ git commit -m "feat: expose bounding boxes in recognition API and persist frame 
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionService.kt`
-- Modify:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionServiceTest.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionService.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionServiceTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -701,8 +698,8 @@ Expected: PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionService.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionServiceTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionService.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/CatRecognitionServiceTest.kt
 git commit -m "feat: propagate bounding boxes through recognition service and store frames in state"
 ```
 
@@ -712,8 +709,8 @@ git commit -m "feat: propagate bounding boxes through recognition service and st
 
 **Files:**
 
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt`
 
 - [ ] **Step 1: Write the failing test**
 
@@ -834,8 +831,8 @@ Expected: PASS
 - [ ] **Step 6: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/FrameController.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/FrameControllerTest.kt
 git commit -m "feat: add /frame/latest endpoint to serve latest camera frame"
 ```
 
@@ -845,18 +842,17 @@ git commit -m "feat: add /frame/latest endpoint to serve latest camera frame"
 
 **Files:**
 
-- Create: `services/app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml` (download from
-  OpenCV)
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetector.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetectorTest.kt`
+- Create: `app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml` (download from OpenCV)
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetector.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetectorTest.kt`
 
 - [ ] **Step 1: Download the Haar cascade XML**
 
 ```bash
-mkdir -p services/app-cat-recognizer/src/main/resources/cascades
+mkdir -p app-cat-recognizer/src/main/resources/cascades
 curl -L "https://raw.githubusercontent.com/opencv/opencv/4.x/data/haarcascades/haarcascade_frontalcatface.xml" \
-    -o services/app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml
-wc -l services/app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml
+    -o app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml
+wc -l app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml
 ```
 
 Expected: file written, line count > 1000
@@ -1056,9 +1052,9 @@ Expected: PASS (all tests green)
 - [ ] **Step 8: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml \
-        services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetector.kt \
-        services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetectorTest.kt
+git add app-cat-recognizer/src/main/resources/cascades/haarcascade_frontalcatface.xml \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetector.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/service/OpenCvCatDetectorTest.kt
 git commit -m "feat: implement real cat detection with Haar cascade"
 ```
 
@@ -1068,7 +1064,7 @@ git commit -m "feat: implement real cat detection with Haar cascade"
 
 **Files:**
 
-- Create: `services/app-cat-recognizer/src/main/resources/META-INF/resources/index.html`
+- Create: `app-cat-recognizer/src/main/resources/META-INF/resources/index.html`
 
 > Note: Quarkus serves static files from `src/main/resources/META-INF/resources/` at the root path `/`. With
 `quarkus.http.root-path=/api`, the API lives at `/api/…` and static files are served at `/`. So the page is at
@@ -1230,7 +1226,7 @@ Kill the dev server with `kill %1` when done.
 - [ ] **Step 3: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/resources/META-INF/resources/index.html
+git add app-cat-recognizer/src/main/resources/META-INF/resources/index.html
 git commit -m "feat: add HTML live viewer for cat detection"
 ```
 

@@ -2,7 +2,8 @@
 
 > **For agentic workers:** Implement this plan task-by-task using checkbox (`- [ ]`) syntax for progress tracking. Keep the work limited to root Compose integration for the existing snapshot-first cat recognizer service.
 
-**Goal:** Add `services/app-cat-recognizer` to the root Docker Compose stack so it can be configured through `.env`, built from the existing Quarkus native runner, started with the root stack, and reached from the host network.
+**Goal:** Add `app-cat-recognizer` to the root Docker Compose stack so it can be configured through `.env`, built from
+the existing Quarkus native runner, started with the root stack, and reached from the host network.
 
 **Scope guardrails:** Real CV/ML, OpenCV, ONNX, TensorFlow, Python/model files, MQTT publishing, Home Assistant entities/automations/dashboards, ESPHome changes, detector implementation changes, architecture redesign, and camera stream support are explicitly out of scope.
 
@@ -23,10 +24,10 @@
 
 ### Application packaging/configuration
 
-- Inspect/update only if needed: `services/app-cat-recognizer/build.gradle.kts`
-- Inspect/update only if needed: `services/app-cat-recognizer/src/main/resources/application.properties`
-- Inspect/reuse: `services/app-cat-recognizer/src/main/docker/Dockerfile.native`
-- Inspect only: `services/app-cat-recognizer/src/main/docker/Dockerfile.jvm`
+- Inspect/update only if needed: `app-cat-recognizer/build.gradle.kts`
+- Inspect/update only if needed: `app-cat-recognizer/src/main/resources/application.properties`
+- Inspect/reuse: `app-cat-recognizer/src/main/docker/Dockerfile.native`
+- Inspect only: `app-cat-recognizer/src/main/docker/Dockerfile.jvm`
 
 ### Repository documentation
 
@@ -39,9 +40,11 @@
 - [ ] Inspect existing `docs/superpowers/` specs and plans to match naming, date, and section style.
 - [ ] Add the Compose-integration spec describing motivation, configuration, runtime behavior, verification endpoints, out-of-scope work, and acceptance criteria.
 - [ ] Add this implementation plan with small executable tasks, file list, scope guardrails, and exact verification commands.
-- [ ] Inspect `services/app-cat-recognizer/build.gradle.kts` for Quarkus container-image and packaging behavior.
-- [ ] Inspect `services/app-cat-recognizer/src/main/resources/application.properties` for runtime defaults and env-var-mappable config keys.
-- [ ] Inspect Dockerfiles under `services/app-cat-recognizer/src/main/docker/` and choose the native runtime Dockerfile for Docker/Compose usage.
+- [ ] Inspect `app-cat-recognizer/build.gradle.kts` for Quarkus container-image and packaging behavior.
+- [ ] Inspect `app-cat-recognizer/src/main/resources/application.properties` for runtime defaults and env-var-mappable
+  config keys.
+- [ ] Inspect Dockerfiles under `app-cat-recognizer/src/main/docker/` and choose the native runtime Dockerfile for
+  Docker/Compose usage.
 - [ ] Update `docker-compose.yml` with a `cat-recognizer` service using `container_name: cat-recognizer`, `restart: unless-stopped`, host networking, and declarative environment configuration.
 - [ ] Ensure the Compose service does not hard-code real camera URLs, local IPs, secrets, MQTT settings, or Home Assistant integration.
 - [ ] Update `.env.example` with safe placeholders/defaults for `CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL`, `CAT_RECOGNIZER_DETECTION_MODE`, `CAT_RECOGNIZER_WORKER_ENABLED`, and `CAT_RECOGNIZER_DEBUG_MANUAL_TRIGGER_ENABLED`.
@@ -50,8 +53,8 @@
 - [ ] Update `README.md` with the new service list entry, `.env` setup, access URLs/endpoints, and basic verification commands.
 - [ ] Confirm `.gitignore` already ignores `.env` and generated build artifacts, or update it narrowly if needed.
 - [ ] Run `docker compose config` from the repository root.
-- [ ] Run `./gradlew :app-cat-recognizer:test` from `services/`.
-- [ ] Run `./gradlew :app-cat-recognizer:build` from `services/`.
+- [ ] Run `./gradlew :app-cat-recognizer:test`.
+- [ ] Run `./gradlew :app-cat-recognizer:build`.
 - [ ] If possible, run `docker compose build cat-recognizer` from the repository root.
 - [ ] If possible, run `docker compose up -d cat-recognizer` from the repository root.
 - [ ] If the container starts, verify `curl http://localhost:8080/q/health/live` from the repository root.
@@ -73,7 +76,7 @@ curl http://localhost:8080/q/health/live
 curl http://localhost:8080/api/recognition/latest
 ```
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test

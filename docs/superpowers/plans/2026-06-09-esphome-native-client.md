@@ -6,7 +6,7 @@
 **Goal:** Build a JVM-native plaintext ESPHome client library and wire `app-cat-recognizer` so it can fetch ESP32-CAM
 frames through the native API.
 
-**Architecture:** Keep ESPHome protocol logic in `services/lib-esphome-client`, split into codec, transport, protocol
+**Architecture:** Keep ESPHome protocol logic in `lib-esphome-client`, split into codec, transport, protocol
 client, public models, and exceptions. Keep `app-cat-recognizer` behind its existing `FrameClient` abstraction and
 select HTTP snapshot or native API through config.
 
@@ -19,74 +19,64 @@ the app module.
 
 Create or modify these files:
 
-- Modify: `services/gradle/libs.versions.toml` - add protobuf plugin/library aliases and JUnit platform test
-  dependencies if needed.
-- Modify: `services/lib-esphome-client/build.gradle.kts` - use catalog aliases, configure tests, and remove the
-  generated `Main.kt` app entry point from the design surface.
-- Delete: `services/lib-esphome-client/src/main/kotlin/Main.kt` - generated IDE sample code.
-- Modify: `services/lib-esphome-client/src/main/proto/api.proto` - add JVM package generation options.
-- Modify: `services/lib-esphome-client/src/main/proto/api_options.proto` - add matching JVM package generation options.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt` - public
-  config model.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt` - public client
-  and connection interfaces plus default factory.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeDeviceInfo.kt` - device
-  info model.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientException.kt` - typed
+- Modify: `gradle/libs.versions.toml` - add protobuf plugin/library aliases and JUnit platform test dependencies if
+  needed.
+- Modify: `lib-esphome-client/build.gradle.kts` - use catalog aliases, configure tests, and remove the generated
+  `Main.kt` app entry point from the design surface.
+- Delete: `lib-esphome-client/src/main/kotlin/Main.kt` - generated IDE sample code.
+- Modify: `lib-esphome-client/src/main/proto/api.proto` - add JVM package generation options.
+- Modify: `lib-esphome-client/src/main/proto/api_options.proto` - add matching JVM package generation options.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt` - public config
+  model.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt` - public client and
+  connection interfaces plus default factory.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeDeviceInfo.kt` - device info model.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientException.kt` - typed
   exception hierarchy.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt` -
-  message IDs used in this slice.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrame.kt` -
-  message type plus payload bytes.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodec.kt` -
-  plaintext frame encode/decode and varint logic.
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeTransport.kt` -
-  transport interface.
-- Create:
-  `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/PlaintextEspHomeTransport.kt` -
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt` - message
+  IDs used in this slice.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrame.kt` - message type
+  plus payload bytes.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodec.kt` - plaintext
+  frame encode/decode and varint logic.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeTransport.kt` - transport
+  interface.
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/PlaintextEspHomeTransport.kt` -
   socket transport implementation.
-- Create:
-  `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt` -
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt` -
   hello/connect, device info, camera image, disconnect.
-- Create: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodecTest.kt`
-- Create:
-  `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
-- Modify: `services/app-cat-recognizer/build.gradle.kts` - add dependency on `:lib-esphome-client`.
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` - add
-  camera source and native API config.
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties` - add default native API values and
-  keep HTTP snapshot as default source.
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/HttpSnapshotCameraClient.kt` -
+- Create: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodecTest.kt`
+- Create: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
+- Modify: `app-cat-recognizer/build.gradle.kts` - add dependency on `:lib-esphome-client`.
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` - add camera
+  source and native API config.
+- Modify: `app-cat-recognizer/src/main/resources/application.properties` - add default native API values and keep HTTP
+  snapshot as default source.
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/HttpSnapshotCameraClient.kt` -
   CDI qualifier for the HTTP snapshot implementation.
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/NativeApiCameraClient.kt` - CDI
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/NativeApiCameraClient.kt` - CDI
   qualifier for the ESPHome native implementation.
-- Modify:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/SnapshotFrameClient.kt` - add
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/SnapshotFrameClient.kt` - add
   HTTP qualifier while keeping it a CDI bean.
-- Modify:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
-- Create:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
 - Modify tests that directly inject `FrameClient` only if CDI selection makes them ambiguous.
 
 ## Task 1: Build Setup And Generated Sample Removal
 
 **Files:**
 
-- Modify: `services/gradle/libs.versions.toml`
-- Modify: `services/lib-esphome-client/build.gradle.kts`
-- Delete: `services/lib-esphome-client/src/main/kotlin/Main.kt`
-- Modify: `services/lib-esphome-client/src/main/proto/api.proto`
-- Modify: `services/lib-esphome-client/src/main/proto/api_options.proto`
+- Modify: `gradle/libs.versions.toml`
+- Modify: `lib-esphome-client/build.gradle.kts`
+- Delete: `lib-esphome-client/src/main/kotlin/Main.kt`
+- Modify: `lib-esphome-client/src/main/proto/api.proto`
+- Modify: `lib-esphome-client/src/main/proto/api_options.proto`
 
 - [ ] **Step 1: Add catalog entries**
 
-Add protobuf aliases to `services/gradle/libs.versions.toml`:
+Add protobuf aliases to `gradle/libs.versions.toml`:
 
 ```toml
 [versions]
@@ -105,7 +95,7 @@ Keep existing entries and sort consistently with the current file.
 
 - [ ] **Step 2: Update library build file**
 
-Replace hard-coded protobuf coordinates in `services/lib-esphome-client/build.gradle.kts`:
+Replace hard-coded protobuf coordinates in `lib-esphome-client/build.gradle.kts`:
 
 ```kotlin
 plugins {
@@ -155,18 +145,18 @@ tasks.test {
 
 - [ ] **Step 3: Delete generated sample**
 
-Delete `services/lib-esphome-client/src/main/kotlin/Main.kt`.
+Delete `lib-esphome-client/src/main/kotlin/Main.kt`.
 
 - [ ] **Step 4: Add generated protobuf package options**
 
-In `services/lib-esphome-client/src/main/proto/api.proto`, immediately after `syntax = "proto3";`, add:
+In `lib-esphome-client/src/main/proto/api.proto`, immediately after `syntax = "proto3";`, add:
 
 ```proto
 option java_package = "io.github.arhor.esphome.client.proto";
 option java_multiple_files = true;
 ```
 
-In `services/lib-esphome-client/src/main/proto/api_options.proto`, immediately after `syntax = "proto2";`, add:
+In `lib-esphome-client/src/main/proto/api_options.proto`, immediately after `syntax = "proto2";`, add:
 
 ```proto
 option java_package = "io.github.arhor.esphome.client.proto";
@@ -190,7 +180,11 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add services/gradle/libs.versions.toml services/lib-esphome-client/build.gradle.kts services/lib-esphome-client/src/main/kotlin/Main.kt services/lib-esphome-client/src/main/proto/api.proto services/lib-esphome-client/src/main/proto/api_options.proto
+git add gradle/libs.versions.toml \
+        lib-esphome-client/build.gradle.kts \
+        lib-esphome-client/src/main/kotlin/Main.kt \
+        lib-esphome-client/src/main/proto/api.proto \
+        lib-esphome-client/src/main/proto/api_options.proto
 git commit -m "chore: prepare esphome client module"
 ```
 
@@ -198,10 +192,10 @@ git commit -m "chore: prepare esphome client module"
 
 **Files:**
 
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientException.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrame.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodec.kt`
-- Create: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodecTest.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientException.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrame.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodec.kt`
+- Create: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeFrameCodecTest.kt`
 
 - [ ] **Step 1: Write failing codec tests**
 
@@ -407,7 +401,8 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client
+git add lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client \
+        lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client
 git commit -m "feat: add esphome plaintext frame codec"
 ```
 
@@ -415,10 +410,9 @@ git commit -m "feat: add esphome plaintext frame codec"
 
 **Files:**
 
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeTransport.kt`
-- Create:
-  `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/PlaintextEspHomeTransport.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeTransport.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/PlaintextEspHomeTransport.kt`
 
 - [ ] **Step 1: Add config model**
 
@@ -537,7 +531,7 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client
+git add lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client
 git commit -m "feat: add esphome plaintext transport"
 ```
 
@@ -545,12 +539,11 @@ git commit -m "feat: add esphome plaintext transport"
 
 **Files:**
 
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeDeviceInfo.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
-- Create:
-  `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeDeviceInfo.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
+- Create: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
 
 - [ ] **Step 1: Write failing protocol tests**
 
@@ -899,7 +892,8 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client
+git add lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client \
+        lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client
 git commit -m "feat: add esphome protocol client"
 ```
 
@@ -907,11 +901,10 @@ git commit -m "feat: add esphome protocol client"
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/build.gradle.kts`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties`
-- Modify:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
+- Modify: `app-cat-recognizer/build.gradle.kts`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
+- Modify: `app-cat-recognizer/src/main/resources/application.properties`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
 
 - [ ] **Step 1: Write failing config test**
 
@@ -938,7 +931,7 @@ Expected: compile failure because `source()` and `nativeApi()` do not exist.
 
 - [ ] **Step 3: Add module dependency**
 
-In `services/app-cat-recognizer/build.gradle.kts`, add:
+In `app-cat-recognizer/build.gradle.kts`, add:
 
 ```kotlin
 implementation(project(":lib-esphome-client"))
@@ -998,7 +991,10 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add services/app-cat-recognizer/build.gradle.kts services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt services/app-cat-recognizer/src/main/resources/application.properties services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt
+git add app-cat-recognizer/build.gradle.kts \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt \
+        app-cat-recognizer/src/main/resources/application.properties \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt
 git commit -m "feat: add esphome camera config"
 ```
 
@@ -1006,16 +1002,12 @@ git commit -m "feat: add esphome camera config"
 
 **Files:**
 
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/HttpSnapshotCameraClient.kt`
-- Create:
-  `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/NativeApiCameraClient.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/SnapshotFrameClient.kt`
-- Create:
-  `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/FrameClientProducer.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/HttpSnapshotCameraClient.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/NativeApiCameraClient.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/SnapshotFrameClient.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
 
 - [ ] **Step 1: Write failing native frame client tests**
 
@@ -1270,7 +1262,8 @@ Expected: `BUILD SUCCESSFUL`.
 - [ ] **Step 9: Commit**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client
 git commit -m "feat: add esphome native frame client"
 ```
 

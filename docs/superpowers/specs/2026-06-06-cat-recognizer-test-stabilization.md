@@ -4,7 +4,8 @@
 
 ## Goal
 
-Stabilize the existing `services/app-cat-recognizer` skeleton with focused tests before adding real computer-vision or machine-learning behavior.
+Stabilize the existing `app-cat-recognizer` skeleton with focused tests before adding real computer-vision or
+machine-learning behavior.
 
 The current service already has the planned snapshot-first shape: typed configuration, frame acquisition, stub detection modes, recognition orchestration, in-memory latest state, worker lifecycle, REST/debug resources, and health checks. The next step is to lock those seams down with deterministic tests so later CV/ML work can replace the detector implementation without changing the surrounding service contract.
 
@@ -48,7 +49,7 @@ This stabilization does not include:
 
 ## Verification Commands
 
-Run commands from `services/`:
+Run commands:
 
 ```bash
 ./gradlew :app-cat-recognizer:test
@@ -61,6 +62,6 @@ Run commands from `services/`:
 - Documentation exists for this test-stabilization slice under `docs/superpowers/`.
 - Tests exist for detector, state, orchestrator, worker lifecycle, REST API, health endpoints, and native/integration smoke behavior.
 - Starter `GreetingResourceTest` / `GreetingResourceIT` files are absent if their endpoints are no longer present.
-- The verification commands above pass from `services/`.
+- The verification commands above pass.
 - Production changes, if any, are minimal and directly justified by failing tests.
 - No real CV/ML dependencies, model artifacts, or Docker Compose integration are introduced.

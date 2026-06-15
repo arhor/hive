@@ -12,17 +12,27 @@
 
 ## File Structure
 
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseConstants.kt` for protocol constants.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseKeyMaterial.kt` for base64 key decoding.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseCipherState.kt` for ChaCha20-Poly1305 state.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseHandshakeState.kt` for NNpsk0 handshake state.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EncryptedEspHomeFrameCodec.kt` for encrypted frame wrapping.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EncryptedEspHomeTransport.kt` for socket transport.
-- Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt` to add encryption config.
-- Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt` to choose encrypted transport when enabled.
-- Modify `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` to add native API encryption config.
-- Modify `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt` to pass encryption settings through.
-- Modify `services/app-cat-recognizer/src/main/resources/application.properties` to set encryption disabled by default.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseConstants.kt` for
+  protocol constants.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseKeyMaterial.kt` for
+  base64 key decoding.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseCipherState.kt` for
+  ChaCha20-Poly1305 state.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/noise/NoiseHandshakeState.kt` for
+  NNpsk0 handshake state.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EncryptedEspHomeFrameCodec.kt` for
+  encrypted frame wrapping.
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EncryptedEspHomeTransport.kt` for
+  socket transport.
+- Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClientConfig.kt` to add encryption
+  config.
+- Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt` to choose encrypted
+  transport when enabled.
+- Modify `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` to add native API
+  encryption config.
+- Modify `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/client/impl/EspHomeNativeFrameClient.kt` to
+  pass encryption settings through.
+- Modify `app-cat-recognizer/src/main/resources/application.properties` to set encryption disabled by default.
 
 ## Task 1: Noise Key And Cipher
 

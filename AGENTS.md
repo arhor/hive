@@ -4,7 +4,7 @@
 
 This repository has two active layers. Root-level infrastructure lives in `docker-compose.yml`, `homeassistant/config/`,
 `esphome/config/`, and `.env.example`. Application code lives under `services/`, currently with one Gradle module:
-`services/app-cat-recognizer/`. Kotlin sources are in `src/main/kotlin`, config in `src/main/resources`, JVM tests in
+`app-cat-recognizer/`. Kotlin sources are in `src/main/kotlin`, config in `src/main/resources`, JVM tests in
 `src/test/kotlin`, and Quarkus integration/native tests in `src/native-test/kotlin`. Design and plan notes belong in
 `docs/superpowers/`.
 

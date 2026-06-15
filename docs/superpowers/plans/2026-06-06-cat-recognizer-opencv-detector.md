@@ -14,26 +14,26 @@
 
 ### Files To Modify
 
-- `services/app-cat-recognizer/build.gradle.kts`
+- `app-cat-recognizer/build.gradle.kts`
   Adds the `quarkus-opencv` dependency.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
   Adds the `OPENCV` enum value.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
   Narrows the stub detector so it only handles the three existing non-OpenCV modes.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
   Keeps coverage for `STUB`, `ALWAYS_PRESENT`, and `ALWAYS_ABSENT` after the mode expansion.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
   Proves default config remains `STUB` and that `OPENCV` binds when overridden.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
   Adds an `OPENCV`-mode failure-mapping test without coupling the orchestrator test to OpenCV internals.
 
 ### Files To Create
 
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt`
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt`
   Decodes bytes into a `Mat`, runs the grayscale placeholder, and returns `DetectionOutcome.Unknown("opencv placeholder detector")`.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt`
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt`
   Selects the active detector bean for the configured mode and exposes a single injected `CatDetector`.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt`
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt`
   JVM tests for JPEG decode, PNG decode, deterministic placeholder execution, and invalid-image failure handling.
 
 ## Tasks
@@ -41,9 +41,10 @@
 ### Task 1: Add The OpenCV Dependency And Mode Coverage
 
 **Files:**
-- Modify: `services/app-cat-recognizer/build.gradle.kts`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
+
+- Modify: `app-cat-recognizer/build.gradle.kts`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt`
 
 - [ ] **Step 1: Write the failing config-binding test for `OPENCV`**
 
@@ -65,7 +66,7 @@ class OpenCvProfile : QuarkusTestProfile {
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.config.RecognizerConfigBindingTest
 ```
 
@@ -137,7 +138,7 @@ class RecognizerConfigBindingOpenCvTest {
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.config.RecognizerConfigBindingTest --tests io.github.arhor.catrecognizer.config.RecognizerConfigBindingOpenCvTest
 ```
 
@@ -147,18 +148,19 @@ Expected: PASS.
 
 ```bash
 git -C /home/arhor/Projects/hive add \
-  services/app-cat-recognizer/build.gradle.kts \
-  services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt \
-  services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt
+  app-cat-recognizer/build.gradle.kts \
+  app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt \
+  app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfigBindingTest.kt
 git -C /home/arhor/Projects/hive commit -m "feat: add opencv detection mode"
 ```
 
 ### Task 2: Split Detector Responsibilities And Add CDI Selection
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
 
 - [ ] **Step 1: Write the failing stub-detector test that proves legacy modes still work after the new enum arrives**
 
@@ -181,7 +183,7 @@ Add a second assertion that `ALWAYS_PRESENT` and `ALWAYS_ABSENT` still behave as
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.detection.StubCatDetectorTest
 ```
 
@@ -234,7 +236,7 @@ class CatDetectorProducer @Inject constructor(
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.detection.StubCatDetectorTest
 ```
 
@@ -244,17 +246,18 @@ Expected: PASS.
 
 ```bash
 git -C /home/arhor/Projects/hive add \
-  services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt \
-  services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt \
-  services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt
+  app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetectorProducer.kt \
+  app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt \
+  app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt
 git -C /home/arhor/Projects/hive commit -m "refactor: select detectors by mode"
 ```
 
 ### Task 3: Implement The OpenCV Detector With JVM-Focused TDD
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt`
 
 - [ ] **Step 1: Write the failing JPEG/PNG decode tests and the invalid-bytes failure test**
 
@@ -300,7 +303,7 @@ Use in-test helpers that generate tiny PNG and JPEG byte arrays with `BufferedIm
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.detection.OpenCvCatDetectorTest
 ```
 
@@ -361,7 +364,7 @@ If `fromArray(*bytes.toTypedArray())` is too noisy or allocates more than needed
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.detection.OpenCvCatDetectorTest
 ```
 
@@ -371,15 +374,16 @@ Expected: PASS.
 
 ```bash
 git -C /home/arhor/Projects/hive add \
-  services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt \
-  services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt
+  app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetector.kt \
+  app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/OpenCvCatDetectorTest.kt
 git -C /home/arhor/Projects/hive commit -m "feat: add opencv detector placeholder"
 ```
 
 ### Task 4: Prove Existing Recognition Failure Mapping Still Holds
 
 **Files:**
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
 
 - [ ] **Step 1: Write the failing orchestrator regression test for `OPENCV` mode**
 
@@ -410,7 +414,7 @@ fun `maps opencv detector failure through existing detector failed behavior`() {
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.recognition.RecognitionOrchestratorTest
 ```
 
@@ -432,7 +436,7 @@ If any test helpers hardcode legacy modes, update only those helpers.
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test --tests io.github.arhor.catrecognizer.recognition.RecognitionOrchestratorTest
 ```
 
@@ -442,22 +446,23 @@ Expected: PASS, with no production changes to `RecognitionOrchestrator` unless a
 
 ```bash
 git -C /home/arhor/Projects/hive add \
-  services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt
+  app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt
 git -C /home/arhor/Projects/hive commit -m "test: cover opencv detector failure mapping"
 ```
 
 ### Task 5: Run Full Verification And Clean Up Any Integration Breakage
 
 **Files:**
-- Review: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
-- Review if needed: `services/app-cat-recognizer/src/main/resources/application.properties`
+
+- Review: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
+- Review if needed: `app-cat-recognizer/src/main/resources/application.properties`
 
 - [ ] **Step 1: Run the full JVM test suite**
 
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test
 ```
 
@@ -468,7 +473,7 @@ Expected: PASS.
 Run:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:build
 ```
 
@@ -490,7 +495,7 @@ Keep fixes narrow. Do not broaden the feature into real classification or API ch
 Run whichever command failed in Step 1 or Step 2, then re-run both:
 
 ```bash
-cd /home/arhor/Projects/hive/services
+cd /home/arhor/Projects/hive
 ./gradlew :app-cat-recognizer:test
 ./gradlew :app-cat-recognizer:build
 ```
@@ -500,7 +505,7 @@ Expected: PASS on both commands.
 - [ ] **Step 5: Commit the final integration adjustments**
 
 ```bash
-git -C /home/arhor/Projects/hive add services/app-cat-recognizer
+git -C /home/arhor/Projects/hive add app-cat-recognizer
 git -C /home/arhor/Projects/hive commit -m "fix: integrate opencv detector mode"
 ```
 

@@ -4,7 +4,8 @@
 
 ## Goal
 
-Design the initial architecture for `services/app-cat-recognizer` as a Quarkus/Kotlin service that polls an ESP32-CAM near a cat feeder and determines whether a cat is present.
+Design the initial architecture for `app-cat-recognizer` as a Quarkus/Kotlin service that polls an ESP32-CAM near a cat
+feeder and determines whether a cat is present.
 
 The first implementation goal is intentionally narrow:
 
@@ -41,7 +42,7 @@ This design does not cover:
 ## Constraints
 
 - The service is a Quarkus + Kotlin application
-- The module lives in `services/app-cat-recognizer`
+- The module lives in `app-cat-recognizer`
 - The service should behave mainly as a background worker
 - HTTP support is for health, debug, and manual triggering, not as the primary purpose
 - Existing Quarkus health support should be reused
@@ -93,7 +94,7 @@ Stream ingestion should be considered a later extension, not a co-equal design t
 
 ## Package Structure
 
-Recommended structure under `services/app-cat-recognizer/src/main/kotlin`:
+Recommended structure under `app-cat-recognizer/src/main/kotlin`:
 
 ```text
 io/github/arhor/catrecognizer/

@@ -2,7 +2,9 @@
 
 > **For agentic workers:** Implement this plan task-by-task using checkbox (`- [ ]`) syntax for progress tracking. Keep production edits minimal and test-driven.
 
-**Goal:** Stabilize the existing `services/app-cat-recognizer` skeleton with deterministic tests around the current stub detector, recognition state, orchestration, worker lifecycle, REST API, health checks, and integration smoke surface before any real CV/ML work.
+**Goal:** Stabilize the existing `app-cat-recognizer` skeleton with deterministic tests around the current stub
+detector, recognition state, orchestration, worker lifecycle, REST API, health checks, and integration smoke surface
+before any real CV/ML work.
 
 **Scope guardrails:** Real cat recognition, OpenCV, ONNX, TensorFlow, Python/model files, Docker Compose integration, MQTT/Home Assistant publishing, and architecture redesign are explicitly out of scope.
 
@@ -17,13 +19,14 @@
 
 ### Test files
 
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
-- Create/update: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
-- Create/update: `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
+- Create/update: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
+- Create/update: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
+- Create/update:
+  `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+- Create/update: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
+- Create/update: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
+- Create/update: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
+- Create/update: `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
 
 ### Production files
 
@@ -44,9 +47,9 @@
 - [ ] Add Quarkus health endpoint tests that assert readiness is reachable and includes `worker-readiness` plus `frame-source` checks without depending on check ordering.
 - [ ] Add or update a minimal native/integration smoke test for the packaged recognition API and health surface if the module still expects `quarkusIntTest` coverage.
 - [ ] Remove leftover starter `GreetingResourceTest` / `GreetingResourceIT` files if they still exist and reference deleted starter endpoints.
-- [ ] Run `./gradlew :app-cat-recognizer:test` from `services/`.
-- [ ] Run `./gradlew :app-cat-recognizer:quarkusIntTest` from `services/`.
-- [ ] Run `./gradlew :app-cat-recognizer:build` from `services/`.
+- [ ] Run `./gradlew :app-cat-recognizer:test`.
+- [ ] Run `./gradlew :app-cat-recognizer:quarkusIntTest`.
+- [ ] Run `./gradlew :app-cat-recognizer:build`.
 - [ ] Commit focused changes. Suggested commits:
   - `docs: add cat recognizer test stabilization plan`
   - `test: stabilize cat recognizer skeleton`
@@ -55,7 +58,7 @@
 
 ## Verification
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test

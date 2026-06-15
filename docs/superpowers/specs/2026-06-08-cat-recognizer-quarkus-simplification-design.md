@@ -4,7 +4,7 @@
 
 ## Goal
 
-Simplify `services/app-cat-recognizer` into a small, tiered Quarkus service that uses:
+Simplify `app-cat-recognizer` into a small, tiered Quarkus service that uses:
 
 - `client` for camera snapshot HTTP access
 - `service` for one-pass recognition and state updates
@@ -275,7 +275,7 @@ Remove or rewrite tests for deleted concepts:
 
 ### Verification Commands
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test

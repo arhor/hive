@@ -14,14 +14,21 @@
 
 **Modified files:**
 
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` — add `uploadEnabled()` to debug config.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt` — expose safe upload flag to the UI.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt` — include `uploadEnabled`.
-- `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt` — add gated multipart upload endpoint and detector-result mapping.
-- `services/app-cat-recognizer/src/main/resources/application.properties` — default upload disabled, dev profile enabled.
-- `services/app-cat-recognizer/src/main/resources/META-INF/resources/index.html` — add upload controls, local preview, upload result rendering, and bounding-box overlay.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt` — cover enabled upload and debug config flag.
-- `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerDisabledTest.kt` — cover disabled upload.
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt` — add `uploadEnabled()`
+  to debug config.
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt` — expose safe upload
+  flag to the UI.
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt` — include
+  `uploadEnabled`.
+- `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt` — add gated
+  multipart upload endpoint and detector-result mapping.
+- `app-cat-recognizer/src/main/resources/application.properties` — default upload disabled, dev profile enabled.
+- `app-cat-recognizer/src/main/resources/META-INF/resources/index.html` — add upload controls, local preview, upload
+  result rendering, and bounding-box overlay.
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt` — cover enabled
+  upload and debug config flag.
+- `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerDisabledTest.kt` — cover
+  disabled upload.
 
 No new production files are needed.
 
@@ -31,11 +38,11 @@ No new production files are needed.
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt`
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt`
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/domain/RuntimeConfigSummary.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/DebugController.kt`
+- Modify: `app-cat-recognizer/src/main/resources/application.properties`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
 
 - [ ] **Step 1: Write the failing debug config assertion**
 
@@ -128,9 +135,9 @@ Expected: pass.
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerDisabledTest.kt`
+- Modify: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/controller/RecognitionController.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerDisabledTest.kt`
 
 - [ ] **Step 1: Write the enabled upload test**
 
@@ -316,7 +323,7 @@ Expected: pass.
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
+- Modify: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionControllerTest.kt`
 
 - [ ] **Step 1: Write the invalid upload test**
 
@@ -362,7 +369,7 @@ Expected: pass after Task 2 implementation.
 
 **Files:**
 
-- Modify: `services/app-cat-recognizer/src/main/resources/META-INF/resources/index.html`
+- Modify: `app-cat-recognizer/src/main/resources/META-INF/resources/index.html`
 
 - [ ] **Step 1: Add upload markup**
 

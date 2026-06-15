@@ -6,46 +6,48 @@
 
 **Architecture:** Keep the existing transport boundary unchanged. Add public typed model families, internal mappers from message IDs plus protobuf payloads to those models, then extend `EspHomeProtocolClient` with synchronous `listEntities()` and blocking `subscribeStates(handler)` operations.
 
-**Tech Stack:** Kotlin/JVM, Gradle, generated Java protobuf classes from `services/lib-esphome-client/src/main/proto/api.proto`, Kotlin test.
+**Tech Stack:** Kotlin/JVM, Gradle, generated Java protobuf classes from `lib-esphome-client/src/main/proto/api.proto`,
+Kotlin test.
 
 ---
 
 ## File Structure
 
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`
   - Public sealed entity models and common `EspHomeEntity` interface.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`
   - Public sealed state models and `EspHomeStateHandler`.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`
   - Internal mapping from discovery message IDs and payloads to typed entities.
-- Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`
+- Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`
   - Internal mapping from state message IDs and payloads to typed states.
-- Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
+- Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
   - Add `listEntities()` and `subscribeStates(handler)` to `EspHomeConnection`.
-- Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
+- Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
   - Add all discovery and entity state message IDs used by this slice.
-- Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
+- Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
   - Implement discovery aggregation and state subscription loop.
-- Modify `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
+- Modify `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
   - Add protocol-level tests for discovery, subscription, ping, and unexpected messages.
-- Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`
+- Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`
   - Verify message ID constants against `api.proto`.
-- Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`
+- Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`
   - Verify every discovery message family maps to the expected public model.
-- Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`
+- Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`
   - Verify every entity state message family maps to the expected public model.
 
 ## Task 1: Public API And Model Surface
 
 **Files:**
-- Modify: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/EspHomeModelApiTest.kt`
+
+- Modify: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/EspHomeModelApiTest.kt`
 
 - [ ] **Step 1: Write the failing public API test**
 
-Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/EspHomeModelApiTest.kt`:
+Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/EspHomeModelApiTest.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client
@@ -144,7 +146,7 @@ class EspHomeModelApiTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.EspHomeModelApiTest'
@@ -154,7 +156,7 @@ Expected: FAIL to compile because `EspHomeEntity`, `EspHomeState`, entity models
 
 - [ ] **Step 3: Add public API and models**
 
-Modify `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`:
+Modify `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeClient.kt`:
 
 ```kotlin
 interface EspHomeConnection : AutoCloseable {
@@ -165,7 +167,7 @@ interface EspHomeConnection : AutoCloseable {
 }
 ```
 
-Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`:
+Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeEntity.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client
@@ -227,7 +229,7 @@ data class EspHomeDateTimeEntity(override val key: Int, override val objectId: S
 data class EspHomeUpdateEntity(override val key: Int, override val objectId: String, override val name: String, val raw: ListEntitiesUpdateResponse) : EspHomeEntity
 ```
 
-Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`:
+Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/EspHomeState.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client
@@ -307,7 +309,7 @@ import io.github.arhor.esphome.client.EspHomeStateHandler
 
 - [ ] **Step 5: Run test to verify it passes**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.EspHomeModelApiTest'
@@ -318,12 +320,13 @@ Expected: PASS.
 ## Task 2: Message Type Constants
 
 **Files:**
-- Modify: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`
+
+- Modify: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageType.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`
 
 - [ ] **Step 1: Write the failing message ID test**
 
-Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`:
+Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeMessageTypeTest.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client.internal
@@ -393,7 +396,7 @@ class EspHomeMessageTypeTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeMessageTypeTest'
@@ -474,7 +477,7 @@ object EspHomeMessageType {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeMessageTypeTest'
@@ -485,12 +488,13 @@ Expected: PASS.
 ## Task 3: Entity Discovery Mapper
 
 **Files:**
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`
+
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`
 
 - [ ] **Step 1: Write the failing entity mapper test**
 
-Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`:
+Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapperTest.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client.internal
@@ -703,7 +707,7 @@ class EspHomeEntityMapperTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeEntityMapperTest'
@@ -713,7 +717,7 @@ Expected: FAIL to compile because `EspHomeEntityMapper` does not exist.
 
 - [ ] **Step 3: Implement the mapper**
 
-Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`:
+Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeEntityMapper.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client.internal
@@ -836,7 +840,7 @@ internal object EspHomeEntityMapper {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeEntityMapperTest'
@@ -847,12 +851,13 @@ Expected: PASS.
 ## Task 4: State Mapper
 
 **Files:**
-- Create: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`
+
+- Create: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`
 
 - [ ] **Step 1: Write the failing state mapper test**
 
-Create `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`:
+Create `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapperTest.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client.internal
@@ -945,7 +950,7 @@ class EspHomeStateMapperTest {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeStateMapperTest'
@@ -955,7 +960,7 @@ Expected: FAIL to compile because `EspHomeStateMapper` does not exist.
 
 - [ ] **Step 3: Implement the mapper**
 
-Create `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`:
+Create `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeStateMapper.kt`:
 
 ```kotlin
 package io.github.arhor.esphome.client.internal
@@ -1024,7 +1029,7 @@ internal object EspHomeStateMapper {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeStateMapperTest'
@@ -1035,8 +1040,9 @@ Expected: PASS.
 ## Task 5: `listEntities()` Protocol Flow
 
 **Files:**
-- Modify: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
+
+- Modify: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
 
 - [ ] **Step 1: Write failing discovery aggregation tests**
 
@@ -1123,7 +1129,7 @@ import io.github.arhor.esphome.client.proto.ListEntitiesSwitchResponse
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeProtocolClientTest.listEntities*'
@@ -1202,7 +1208,7 @@ private companion object {
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeProtocolClientTest.listEntities*'
@@ -1213,8 +1219,9 @@ Expected: PASS.
 ## Task 6: `subscribeStates(handler)` Protocol Flow
 
 **Files:**
-- Modify: `services/lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
-- Test: `services/lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
+
+- Modify: `lib-esphome-client/src/main/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClient.kt`
+- Test: `lib-esphome-client/src/test/kotlin/io/github/arhor/esphome/client/internal/EspHomeProtocolClientTest.kt`
 
 - [ ] **Step 1: Write failing subscription tests**
 
@@ -1310,7 +1317,7 @@ import io.github.arhor.esphome.client.proto.SwitchStateResponse
 
 - [ ] **Step 2: Run tests to verify they fail**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeProtocolClientTest.subscribeStates*'
@@ -1383,7 +1390,7 @@ val ENTITY_STATE_MESSAGE_TYPES = setOf(
 
 - [ ] **Step 4: Run tests to verify they pass**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test --tests 'io.github.arhor.esphome.client.internal.EspHomeProtocolClientTest.subscribeStates*'
@@ -1394,11 +1401,12 @@ Expected: PASS.
 ## Task 7: Full Library Regression
 
 **Files:**
-- Existing tests under `services/lib-esphome-client/src/test/kotlin`
+
+- Existing tests under `lib-esphome-client/src/test/kotlin`
 
 - [ ] **Step 1: Run the full library test suite**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test
@@ -1425,7 +1433,7 @@ import io.github.arhor.esphome.client.EspHomeStateHandler
 
 - [ ] **Step 3: Re-run the full library test suite**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :lib-esphome-client:test
@@ -1436,11 +1444,13 @@ Expected: PASS.
 ## Task 8: App Compatibility And Build Verification
 
 **Files:**
-- Modify only if compile requires fake connection updates: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
+
+- Modify only if compile requires fake connection updates:
+  `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/client/EspHomeNativeFrameClientTest.kt`
 
 - [ ] **Step 1: Run app tests**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test
@@ -1466,7 +1476,7 @@ import io.github.arhor.esphome.client.EspHomeStateHandler
 
 - [ ] **Step 3: Run app tests again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test
@@ -1476,7 +1486,7 @@ Expected: PASS.
 
 - [ ] **Step 4: Run full app build**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:build

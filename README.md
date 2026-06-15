@@ -6,7 +6,7 @@ Docker-based smart home foundation with one folder per service and a root-level 
 
 - Home Assistant
 - ESPHome
-- Cat Recognizer (`services/app-cat-recognizer`)
+- Cat Recognizer (`app-cat-recognizer`)
 
 ## Repository Layout
 
@@ -19,8 +19,7 @@ Docker-based smart home foundation with one folder per service and a root-level 
 │   └── config/
 ├── esphome/
 │   └── config/
-└── services/
-    └── app-cat-recognizer/
+└── app-cat-recognizer/
 ```
 
 ## Bootstrap
@@ -42,7 +41,7 @@ Docker-based smart home foundation with one folder per service and a root-level 
 
    Do not commit real local IPs, tokens, secrets, or host-specific `.env` values.
 
-3. Build the cat recognizer native executable from `services/`:
+3. Build the cat recognizer native executable:
 
    ```bash
    ./gradlew :app-cat-recognizer:build
@@ -86,12 +85,13 @@ Use Tailscale to reach the host remotely from your phone instead of exposing the
 
 ## Cat Recognizer Real Snapshot Verification
 
-Use `quarkusDev` from `services/` when you want to test the existing snapshot-first plumbing against a real ESP32-CAM snapshot endpoint before building or starting the full Compose stack. Prefer runtime overrides so private camera URLs, tokens, and local IPs never get committed.
+Use `quarkusDev` when you want to test the existing snapshot-first plumbing against a real ESP32-CAM snapshot endpoint
+before building or starting the full Compose stack. Prefer runtime overrides so private camera URLs, tokens, and local
+IPs never get committed.
 
 Environment-variable override example:
 
 ```bash
-cd services
 CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL="http://esp32-cam.local/snapshot" \
 CAT_RECOGNIZER_DETECTION_MODE="ALWAYS_PRESENT" \
 CAT_RECOGNIZER_WORKER_ENABLED="false" \
@@ -102,7 +102,6 @@ CAT_RECOGNIZER_DEBUG_MANUAL_TRIGGER_ENABLED="true" \
 Quarkus system-property override example:
 
 ```bash
-cd services
 ./gradlew \
   -Dcat-recognizer.camera.snapshot-url="http://esp32-cam.local/snapshot" \
   -Dcat-recognizer.detection.mode="ALWAYS_PRESENT" \
@@ -152,7 +151,7 @@ curl http://localhost:8080/q/health/live
 curl http://localhost:8080/api/recognition/latest
 ```
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test
@@ -168,12 +167,13 @@ docker compose pull
 docker compose up -d
 ```
 
-The cat recognizer runtime image is built locally by Compose from the native executable generated under `services/app-cat-recognizer/build/`.
+The cat recognizer runtime image is built locally by Compose from the native executable generated under
+`app-cat-recognizer/build/`.
 
 ## Adding More Services
 
 Follow the same pattern:
 
-- create a top-level folder for the service, or add application modules under `services/`
+- create a top-level folder for the service, or add application modules
 - put service config/data inside the appropriate folder
 - define the service in the root `docker-compose.yml`

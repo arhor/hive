@@ -4,7 +4,7 @@
 
 ## Goal
 
-Add a minimal OpenCV-backed detector mode to `services/app-cat-recognizer` that proves:
+Add a minimal OpenCV-backed detector mode to `app-cat-recognizer` that proves:
 
 - the service can use `quarkus-opencv` in JVM mode
 - snapshot JPEG and PNG byte arrays can be decoded into an OpenCV image matrix

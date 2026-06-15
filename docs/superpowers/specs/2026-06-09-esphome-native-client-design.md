@@ -2,7 +2,7 @@
 
 ## Goal
 
-Implement `services/lib-esphome-client` as a reusable Kotlin library for the ESPHome native API, using
+Implement `lib-esphome-client` as a reusable Kotlin library for the ESPHome native API, using
 `hjdhjd/esphome-client` as the behavioral reference, and migrate `app-cat-recognizer` away from the Node.js-native
 client path toward JVM-native ESPHome communication.
 
@@ -14,7 +14,7 @@ without changing the app-facing API.
 
 In scope:
 
-- Build a Kotlin/JVM ESPHome native API client under `services/lib-esphome-client`
+- Build a Kotlin/JVM ESPHome native API client under `lib-esphome-client`
 - Use the existing checked-in ESPHome `api.proto` and generated protobuf classes
 - Implement the plaintext ESPHome frame format over TCP
 - Implement hello/connect, device info, camera image request/response, and clean disconnect
@@ -52,7 +52,7 @@ faster initially, but it would make future encryption and reuse harder and would
 
 ## Module Design
 
-`services/lib-esphome-client` should expose a small synchronous Kotlin API:
+`lib-esphome-client` should expose a small synchronous Kotlin API:
 
 ```kotlin
 interface EspHomeClient : AutoCloseable {
@@ -188,7 +188,7 @@ App tests:
 - native frame client maps client exceptions into retriable `FrameSourceError`
 - existing snapshot client tests remain valid
 
-Verification commands from `services/`:
+Verification commands:
 
 ```bash
 ./gradlew :lib-esphome-client:test

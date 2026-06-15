@@ -2,7 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the Quarkus starter scaffold in `services/app-cat-recognizer` with a snapshot-first cat recognizer skeleton that runs mainly as a background worker, keeps the latest result in memory, and exposes minimal operational HTTP and health endpoints.
+**Goal:** Replace the Quarkus starter scaffold in `app-cat-recognizer` with a snapshot-first cat recognizer skeleton
+that runs mainly as a background worker, keeps the latest result in memory, and exposes minimal operational HTTP and
+health endpoints.
 
 **Architecture:** The service stays as one Quarkus module with clear seams between frame acquisition, detection, recognition orchestration, worker lifecycle, state, and thin HTTP/health adapters. The first version uses a generic `FrameSource`, a config-driven stub detector, and a polling worker so the later ML detector can replace only one component instead of rewriting the service.
 
@@ -14,83 +16,84 @@
 
 ### Existing files to modify or remove
 
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties`
+- Modify: `app-cat-recognizer/src/main/resources/application.properties`
   - Add typed defaults for worker, camera, detection, state, and debug flags.
-- Delete: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
+- Delete: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
   - Remove the starter REST endpoint.
-- Delete: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
+- Delete: `app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
   - Remove the starter HTTP test.
-- Delete: `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
+- Delete: `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
   - Remove the starter native smoke test.
 
 ### Main source files to create
 
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
   - Nested config mapping for `worker`, `camera`, `detection`, `state`, and `debug`.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
   - Detector interface.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
   - Enum for `STUB`, `ALWAYS_PRESENT`, and `ALWAYS_ABSENT`.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
   - First concrete detector driven by config.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
   - Detector-level sealed result.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
   - Frame acquisition interface.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
   - Snapshot URL implementation using the JDK HTTP client.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
   - Frame bytes and metadata.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
   - Domain-specific source failure type.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
   - Runs one recognition cycle and maps errors.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
   - Public result enum.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
   - API-safe error representation.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
   - Public recognition result.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
   - In-memory latest result plus worker metadata.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
   - Startup/shutdown and polling loop.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
   - Latest result and manual trigger endpoints.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
   - Runtime config summary endpoint.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
   - Readiness from cached worker state.
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
   - Health details around recent frame-source failures.
 
 ### Test files to create
 
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
-- Create: `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
+- Create: `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
 
 ## Task 1: Add Config, Core Models, and the Stub Detector
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
-- Modify: `services/app-cat-recognizer/src/main/resources/application.properties`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
+- Modify: `app-cat-recognizer/src/main/resources/application.properties`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt`
 
 - [ ] **Step 1: Write the failing detector tests**
 
@@ -175,7 +178,7 @@ class StubCatDetectorTest {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.detection.StubCatDetectorTest"
@@ -185,7 +188,7 @@ Expected: FAIL with unresolved references for `RecognizerConfig`, `DetectionMode
 
 - [ ] **Step 3: Add config mapping, domain models, and the stub detector**
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.config
@@ -230,7 +233,7 @@ interface RecognizerConfig {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.detection
@@ -242,7 +245,7 @@ enum class DetectionMode {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.detection.model
@@ -254,7 +257,7 @@ sealed interface DetectionOutcome {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.frame.model
@@ -268,7 +271,7 @@ data class FramePayload(
 )
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.frame.model
@@ -281,7 +284,7 @@ class FrameSourceError(
 ) : RuntimeException(message, cause)
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.frame
@@ -293,7 +296,7 @@ fun interface FrameSource {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.detection
@@ -306,7 +309,7 @@ fun interface CatDetector {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.recognition.model
@@ -318,7 +321,7 @@ enum class CatPresenceStatus {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.recognition.model
@@ -333,7 +336,7 @@ data class RecognitionError(
 )
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.recognition.model
@@ -352,7 +355,7 @@ data class RecognitionResult(
 )
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.detection
@@ -376,7 +379,7 @@ class StubCatDetector(
 }
 ```
 
-`services/app-cat-recognizer/src/main/resources/application.properties`
+`app-cat-recognizer/src/main/resources/application.properties`
 
 ```properties
 quarkus.package.jar.enabled=false
@@ -404,7 +407,7 @@ cat-recognizer.debug.manual-trigger-enabled=true
 
 - [ ] **Step 4: Run the detector test again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.detection.StubCatDetectorTest"
@@ -415,15 +418,28 @@ Expected: PASS.
 - [ ] **Step 5: Commit the core model and detector scaffold**
 
 ```bash
-git add services/app-cat-recognizer/src/main/resources/application.properties services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt
+git add app-cat-recognizer/src/main/resources/application.properties \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/config/RecognizerConfig.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/CatDetector.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/DetectionMode.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetector.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/detection/model/DetectionOutcome.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/FrameSource.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FramePayload.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/model/FrameSourceError.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/CatPresenceStatus.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionError.kt \
+    app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/model/RecognitionResult.kt \
+    app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/detection/StubCatDetectorTest.kt
 git commit -m "feat: add cat recognizer core models"
 ```
 
 ## Task 2: Implement the Snapshot Frame Source
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt`
 
 - [ ] **Step 1: Write the failing frame source tests**
 
@@ -516,7 +532,7 @@ class SnapshotFrameSourceTest {
 
 - [ ] **Step 2: Run the frame source test to verify it fails**
 
-Run from `services/`:
+Run :
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.frame.SnapshotFrameSourceTest"
@@ -526,7 +542,7 @@ Expected: FAIL with unresolved reference `SnapshotFrameSource`.
 
 - [ ] **Step 3: Implement the snapshot frame source**
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.frame
@@ -589,7 +605,7 @@ class SnapshotFrameSource(
 
 - [ ] **Step 4: Run the frame source tests again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.frame.SnapshotFrameSourceTest"
@@ -600,21 +616,23 @@ Expected: PASS.
 - [ ] **Step 5: Commit the snapshot frame source**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSource.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/frame/SnapshotFrameSourceTest.kt
 git commit -m "feat: add snapshot frame source"
 ```
 
 ## Task 3: Add Latest State and the Recognition Orchestrator
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
 
 - [ ] **Step 1: Write the failing state and orchestrator tests**
 
-`services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
+`app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.state
@@ -675,7 +693,7 @@ class LatestRecognitionStateTest {
 }
 ```
 
-`services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
+`app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.recognition
@@ -788,17 +806,19 @@ class RecognitionOrchestratorTest {
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
-Run from `services/`:
+Run:
 
 ```bash
-./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.state.LatestRecognitionStateTest" --tests "io.github.arhor.catrecognizer.recognition.RecognitionOrchestratorTest"
+./gradlew :app-cat-recognizer:test \
+          --tests "io.github.arhor.catrecognizer.state.LatestRecognitionStateTest" \
+          --tests "io.github.arhor.catrecognizer.recognition.RecognitionOrchestratorTest"
 ```
 
 Expected: FAIL with unresolved references for `LatestRecognitionState` and `RecognitionOrchestrator`.
 
 - [ ] **Step 3: Implement state storage and orchestration**
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.state
@@ -856,7 +876,7 @@ class LatestRecognitionState {
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.recognition
@@ -958,7 +978,7 @@ class RecognitionOrchestrator(
 
 - [ ] **Step 4: Run the state and orchestrator tests again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.state.LatestRecognitionStateTest" --tests "io.github.arhor.catrecognizer.recognition.RecognitionOrchestratorTest"
@@ -969,15 +989,19 @@ Expected: PASS.
 - [ ] **Step 5: Commit the state and orchestrator**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionState.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestrator.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/state/LatestRecognitionStateTest.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/recognition/RecognitionOrchestratorTest.kt
 git commit -m "feat: add recognition orchestration"
 ```
 
 ## Task 4: Add the Worker Lifecycle and Polling Loop
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt`
 
 - [ ] **Step 1: Write the failing worker lifecycle tests**
 
@@ -1095,7 +1119,7 @@ class WorkerLifecycleTest {
 
 - [ ] **Step 2: Run the worker lifecycle test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.bootstrap.WorkerLifecycleTest"
@@ -1105,7 +1129,7 @@ Expected: FAIL with unresolved reference `WorkerLifecycle`.
 
 - [ ] **Step 3: Add the worker lifecycle**
 
-Create `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
+Create `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.bootstrap
@@ -1171,7 +1195,7 @@ class WorkerLifecycle(
 
 - [ ] **Step 4: Run the worker lifecycle test again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.bootstrap.WorkerLifecycleTest"
@@ -1182,18 +1206,20 @@ Expected: PASS.
 - [ ] **Step 5: Commit the worker lifecycle**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycle.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/bootstrap/WorkerLifecycleTest.kt
 git commit -m "feat: add cat recognizer worker lifecycle"
 ```
 
 ## Task 5: Replace the Starter Endpoint with Recognition and Debug APIs
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
-- Delete: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
-- Delete: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
-- Test: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
+- Delete: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
+- Delete: `app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
+- Test: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt`
 
 - [ ] **Step 1: Write the failing resource tests**
 
@@ -1261,7 +1287,7 @@ class RecognitionResourceTest {
 
 - [ ] **Step 2: Run the resource tests to verify they fail**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.web.RecognitionResourceTest"
@@ -1271,7 +1297,7 @@ Expected: FAIL because `/api/recognition/latest`, `/api/recognition/run`, and `/
 
 - [ ] **Step 3: Add the REST resources and remove the greeting resource**
 
-Create `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
+Create `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.web
@@ -1344,7 +1370,7 @@ data class WorkerStatusResponse(
 )
 ```
 
-Create `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
+Create `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.web
@@ -1384,13 +1410,13 @@ data class DebugConfigResponse(
 )
 ```
 
-Delete `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
+Delete `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt`
 
 ```text
 Delete the file entirely.
 ```
 
-Delete `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
+Delete `app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt`
 
 ```text
 Delete the file entirely.
@@ -1398,7 +1424,7 @@ Delete the file entirely.
 
 - [ ] **Step 4: Run the resource tests again**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.web.RecognitionResourceTest"
@@ -1409,24 +1435,27 @@ Expected: PASS.
 - [ ] **Step 5: Commit the recognition and debug API**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt
-git rm services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt
-git add services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/RecognitionResource.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/web/DebugResource.kt
+git rm app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/GreetingResource.kt \
+       app-cat-recognizer/src/test/kotlin/io/github/arhor/GreetingResourceTest.kt
+git add app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceTest.kt
 git commit -m "feat: add recognition debug api"
 ```
 
 ## Task 6: Add Health Checks and Native Smoke Coverage
 
 **Files:**
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
-- Create: `services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
-- Create: `services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
-- Create: `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
-- Delete: `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
+
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
+- Create: `app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
+- Create: `app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
+- Create: `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
+- Delete: `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
 
 - [ ] **Step 1: Write the failing health and native smoke tests**
 
-`services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
+`app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.health
@@ -1460,7 +1489,7 @@ class HealthEndpointsTest {
 }
 ```
 
-`services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
+`app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.web
@@ -1473,7 +1502,7 @@ class RecognitionResourceIT : RecognitionResourceTest()
 
 - [ ] **Step 2: Run the health test to verify it fails**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.health.HealthEndpointsTest"
@@ -1483,7 +1512,7 @@ Expected: FAIL because the response does not yet include the `worker-readiness` 
 
 - [ ] **Step 3: Implement readiness and frame-source health**
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.health
@@ -1531,7 +1560,7 @@ class WorkerReadinessCheck(
 }
 ```
 
-`services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
+`app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt`
 
 ```kotlin
 package io.github.arhor.catrecognizer.health
@@ -1566,7 +1595,7 @@ class FrameSourceHealthCheck(
 }
 ```
 
-Delete `services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
+Delete `app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt`
 
 ```text
 Delete the file entirely.
@@ -1574,7 +1603,7 @@ Delete the file entirely.
 
 - [ ] **Step 4: Run unit, integration, and native smoke checks**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test --tests "io.github.arhor.catrecognizer.health.HealthEndpointsTest"
@@ -1589,8 +1618,11 @@ Expected:
 - [ ] **Step 5: Commit the health and native coverage**
 
 ```bash
-git add services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt services/app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt services/app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt
-git rm services/app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt
+git add app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/WorkerReadinessCheck.kt \
+        app-cat-recognizer/src/main/kotlin/io/github/arhor/catrecognizer/health/FrameSourceHealthCheck.kt \
+        app-cat-recognizer/src/test/kotlin/io/github/arhor/catrecognizer/health/HealthEndpointsTest.kt \
+        app-cat-recognizer/src/native-test/kotlin/io/github/arhor/catrecognizer/web/RecognitionResourceIT.kt
+git rm app-cat-recognizer/src/native-test/kotlin/io/github/arhor/GreetingResourceIT.kt
 git commit -m "feat: add cat recognizer health checks"
 ```
 
@@ -1598,11 +1630,11 @@ git commit -m "feat: add cat recognizer health checks"
 
 **Files:**
 - Modify: no source changes expected
-- Verify: `services/app-cat-recognizer`
+- Verify: `app-cat-recognizer`
 
 - [ ] **Step 1: Run the full JVM test suite**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:test
@@ -1612,7 +1644,7 @@ Expected: PASS with all unit and Quarkus JVM tests green.
 
 - [ ] **Step 2: Run the Quarkus integration tests**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:quarkusIntTest
@@ -1622,7 +1654,7 @@ Expected: PASS with the native/integration smoke tests green.
 
 - [ ] **Step 3: Run the full module build**
 
-Run from `services/`:
+Run:
 
 ```bash
 ./gradlew :app-cat-recognizer:build

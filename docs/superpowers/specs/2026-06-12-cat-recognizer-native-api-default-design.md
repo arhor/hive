@@ -2,9 +2,8 @@
 
 ## Goal
 
-Use the ESPHome native API as the default camera source for `app-cat-recognizer`, backed by
-`services/lib-esphome-client`, while keeping the existing HTTP snapshot source available as an explicit configuration
-choice.
+Use the ESPHome native API as the default camera source for `app-cat-recognizer`, backed by`lib-esphome-client`, while
+keeping the existing HTTP snapshot source available as an explicit configuration choice.
 
 ## Scope
 

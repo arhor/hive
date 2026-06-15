@@ -2,7 +2,7 @@
 
 ## Goal
 
-Grow `services/lib-esphome-client` toward full `hjdhjd/esphome-client` parity by adding read-only support for every
+Grow `lib-esphome-client` toward full `hjdhjd/esphome-client` parity by adding read-only support for every
 entity discovery and state subscription message family present in the checked-in ESPHome `api.proto`.
 
 This slice should preserve the current camera-focused API while introducing a broader Java/Kotlin client surface that can
@@ -187,7 +187,7 @@ Library tests:
 Extract mapping logic into focused helpers if it keeps `EspHomeProtocolClient` from becoming a large message switch. Cover
 those helpers with `EspHomeEntityMapperTest` and `EspHomeStateMapperTest`.
 
-Verification commands from `services/`:
+Verification commands:
 
 ```bash
 ./gradlew :lib-esphome-client:test

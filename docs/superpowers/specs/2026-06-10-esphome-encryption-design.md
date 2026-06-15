@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add explicit ESPHome native API encryption support to `services/lib-esphome-client` and expose it through
+Add explicit ESPHome native API encryption support to `lib-esphome-client` and expose it through
 `app-cat-recognizer` without changing the existing camera-facing `FrameClient` contract.
 
 This slice supports ESPHome's Noise-based encrypted transport only when the operator enables it and provides a base64

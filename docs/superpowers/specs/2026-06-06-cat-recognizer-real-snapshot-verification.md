@@ -4,7 +4,8 @@
 
 ## Goal
 
-Verify the existing `services/app-cat-recognizer` snapshot-first service against a real ESP32-CAM snapshot endpoint without changing its architecture or adding real recognition logic.
+Verify the existing `app-cat-recognizer` snapshot-first service against a real ESP32-CAM snapshot endpoint without
+changing its architecture or adding real recognition logic.
 
 This step exists to prove the service plumbing end-to-end before any CV/ML work begins:
 
@@ -24,7 +25,7 @@ The detector is still intentionally stubbed. For deterministic plumbing checks, 
 ## Expected Operator Workflow
 
 1. Confirm the ESP32-CAM snapshot URL works outside the service, for example in a browser or with `curl`.
-2. Start the service from `services/` with runtime overrides for the snapshot URL and detector mode.
+2. Start the service with runtime overrides for the snapshot URL and detector mode.
 3. Call the debug config endpoint and confirm a snapshot URL is configured and the expected detector mode is active.
 4. Check the latest-recognition endpoint before a manual run to understand the current cached state.
 5. Trigger recognition manually with `POST /api/recognition/run`.
