@@ -13,6 +13,11 @@ kotlin {
     }
     compilerOptions {
         javaParameters = true
+        freeCompilerArgs.addAll(
+            "-XXLanguage:+ContextParameters",
+            "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode",
+            "-Xname-based-destructuring=complete",
+        )
     }
 }
 

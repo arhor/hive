@@ -30,117 +30,95 @@ internal object EspHomeStateMapper {
     fun map(messageType: Int, payload: ByteArray): EspHomeState =
         try {
             when (messageType) {
-                EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE ->
-                    BinarySensorStateResponse.parseFrom(payload).let {
-                        EspHomeState.BinarySensor(it)
-                    }
+                EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE -> {
+                    EspHomeState.BinarySensor(BinarySensorStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.COVER_STATE_RESPONSE ->
-                    CoverStateResponse.parseFrom(payload).let {
-                        EspHomeState.Cover(it)
-                    }
+                EspHomeMessageType.COVER_STATE_RESPONSE -> {
+                    EspHomeState.Cover(CoverStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.FAN_STATE_RESPONSE ->
-                    FanStateResponse.parseFrom(payload).let {
-                        EspHomeState.Fan(it)
-                    }
+                EspHomeMessageType.FAN_STATE_RESPONSE -> {
+                    EspHomeState.Fan(FanStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.LIGHT_STATE_RESPONSE ->
-                    LightStateResponse.parseFrom(payload).let {
-                        EspHomeState.Light(it)
-                    }
+                EspHomeMessageType.LIGHT_STATE_RESPONSE -> {
+                    EspHomeState.Light(LightStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.SENSOR_STATE_RESPONSE ->
-                    SensorStateResponse.parseFrom(payload).let {
-                        EspHomeState.Sensor(it)
-                    }
+                EspHomeMessageType.SENSOR_STATE_RESPONSE -> {
+                    EspHomeState.Sensor(SensorStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.SWITCH_STATE_RESPONSE ->
-                    SwitchStateResponse.parseFrom(payload).let {
-                        EspHomeState.Switch(it)
-                    }
+                EspHomeMessageType.SWITCH_STATE_RESPONSE -> {
+                    EspHomeState.Switch(SwitchStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE ->
-                    TextSensorStateResponse.parseFrom(payload).let {
-                        EspHomeState.TextSensor(it)
-                    }
+                EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE -> {
+                    EspHomeState.TextSensor(TextSensorStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.CLIMATE_STATE_RESPONSE ->
-                    ClimateStateResponse.parseFrom(payload).let {
-                        EspHomeState.Climate(it)
-                    }
+                EspHomeMessageType.CLIMATE_STATE_RESPONSE -> {
+                    EspHomeState.Climate(ClimateStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.NUMBER_STATE_RESPONSE ->
-                    NumberStateResponse.parseFrom(payload).let {
-                        EspHomeState.Number(it)
-                    }
+                EspHomeMessageType.NUMBER_STATE_RESPONSE -> {
+                    EspHomeState.Number(NumberStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.SELECT_STATE_RESPONSE ->
-                    SelectStateResponse.parseFrom(payload).let {
-                        EspHomeState.Select(it)
-                    }
+                EspHomeMessageType.SELECT_STATE_RESPONSE -> {
+                    EspHomeState.Select(SelectStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.SIREN_STATE_RESPONSE ->
-                    SirenStateResponse.parseFrom(payload).let {
-                        EspHomeState.Siren(it)
-                    }
+                EspHomeMessageType.SIREN_STATE_RESPONSE -> {
+                    EspHomeState.Siren(SirenStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.LOCK_STATE_RESPONSE ->
-                    LockStateResponse.parseFrom(payload).let {
-                        EspHomeState.Lock(it)
-                    }
+                EspHomeMessageType.LOCK_STATE_RESPONSE -> {
+                    EspHomeState.Lock(LockStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE ->
-                    MediaPlayerStateResponse.parseFrom(payload).let {
-                        EspHomeState.MediaPlayer(it)
-                    }
+                EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE -> {
+                    EspHomeState.MediaPlayer(MediaPlayerStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE ->
-                    AlarmControlPanelStateResponse.parseFrom(payload).let {
-                        EspHomeState.AlarmControlPanel(it)
-                    }
+                EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE -> {
+                    EspHomeState.AlarmControlPanel(AlarmControlPanelStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.TEXT_STATE_RESPONSE ->
-                    TextStateResponse.parseFrom(payload).let {
-                        EspHomeState.Text(it)
-                    }
+                EspHomeMessageType.TEXT_STATE_RESPONSE -> {
+                    EspHomeState.Text(TextStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.DATE_STATE_RESPONSE ->
-                    DateStateResponse.parseFrom(payload).let {
-                        EspHomeState.Date(it)
-                    }
+                EspHomeMessageType.DATE_STATE_RESPONSE -> {
+                    EspHomeState.Date(DateStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.TIME_STATE_RESPONSE ->
-                    TimeStateResponse.parseFrom(payload).let {
-                        EspHomeState.Time(it)
-                    }
+                EspHomeMessageType.TIME_STATE_RESPONSE -> {
+                    EspHomeState.Time(TimeStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.EVENT_RESPONSE ->
-                    EventResponse.parseFrom(payload).let {
-                        EspHomeState.Event(it)
-                    }
+                EspHomeMessageType.EVENT_RESPONSE -> {
+                    EspHomeState.Event(EventResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.VALVE_STATE_RESPONSE ->
-                    ValveStateResponse.parseFrom(payload).let {
-                        EspHomeState.Valve(it)
-                    }
+                EspHomeMessageType.VALVE_STATE_RESPONSE -> {
+                    EspHomeState.Valve(ValveStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.DATETIME_STATE_RESPONSE ->
-                    DateTimeStateResponse.parseFrom(payload).let {
-                        EspHomeState.DateTime(it)
-                    }
+                EspHomeMessageType.DATETIME_STATE_RESPONSE -> {
+                    EspHomeState.DateTime(DateTimeStateResponse.parseFrom(payload))
+                }
 
-                EspHomeMessageType.UPDATE_STATE_RESPONSE ->
-                    UpdateStateResponse.parseFrom(payload).let {
-                        EspHomeState.Update(it)
-                    }
+                EspHomeMessageType.UPDATE_STATE_RESPONSE -> {
+                    EspHomeState.Update(UpdateStateResponse.parseFrom(payload))
+                }
 
-                else -> throw EspHomeProtocolException("Unsupported ESPHome state message: $messageType")
+                else -> {
+                    throw EspHomeProtocolException("Unsupported ESPHome state message: $messageType")
+                }
             }
-        } catch (exception: InvalidProtocolBufferException) {
-            throw EspHomeProtocolException(
-                "Malformed ESPHome state payload for message $messageType",
-                exception,
-            )
+        } catch (ex: InvalidProtocolBufferException) {
+            throw EspHomeProtocolException("Malformed ESPHome state payload for message $messageType", ex)
         }
 }
