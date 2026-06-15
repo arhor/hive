@@ -24,7 +24,7 @@ services:
     container_name: cat-recognizer
     image: ${CAT_RECOGNIZER_IMAGE:-cat-recognizer:jvm}
     build:
-      context: ./services/app-cat-recognizer
+      context: ./app-cat-recognizer
       dockerfile: src/main/docker/Dockerfile.jvm
     environment:
       CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL: ${CAT_RECOGNIZER_CAMERA_SNAPSHOT_URL:-http://esp32-cam.local/snapshot}
