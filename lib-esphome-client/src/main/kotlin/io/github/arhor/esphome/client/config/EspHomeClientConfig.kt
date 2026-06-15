@@ -19,4 +19,10 @@ data class EspHomeClientConfig(
         require(!connectTimeout.isNegative && !connectTimeout.isZero) { "connectTimeout must be positive" }
         require(!readTimeout.isNegative && !readTimeout.isZero) { "readTimeout must be positive" }
     }
+
+    val connectTimeoutMillis: Int
+        get() = connectTimeout.toMillis().toInt()
+
+    val readTimeoutMillis: Int
+        get() = readTimeout.toMillis().toInt()
 }

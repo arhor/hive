@@ -7,12 +7,18 @@ import io.github.arhor.esphome.client.EspHomeStateHandler
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.EspHomeMessageType.CONNECT_REQUEST
+import io.github.arhor.esphome.client.internal.EspHomeMessageType.CONNECT_RESPONSE
+import io.github.arhor.esphome.client.internal.EspHomeMessageType.HELLO_REQUEST
+import io.github.arhor.esphome.client.internal.EspHomeMessageType.HELLO_RESPONSE
 import io.github.arhor.esphome.client.internal.transport.EspHomeTransport
 import io.github.arhor.esphome.client.model.EspHomeDeviceInfo
 import io.github.arhor.esphome.client.model.EspHomeEntity
 import io.github.arhor.esphome.client.proto.CameraImageResponse
+import io.github.arhor.esphome.client.proto.ConnectRequestKt
 import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse
+import io.github.arhor.esphome.client.proto.HelloRequestKt
 import io.github.arhor.esphome.client.proto.HelloResponse
 import io.github.arhor.esphome.client.proto.cameraImageRequest
 import io.github.arhor.esphome.client.proto.connectRequest
@@ -31,22 +37,18 @@ class ProtobufConnection(
 ) : EspHomeConnection {
 
     fun initialize() {
-        send(EspHomeMessageType.HELLO_REQUEST, helloRequest {
+        val hello = sendHello {
             clientInfo = config.clientName
             apiVersionMajor = config.apiVersionMajor
             apiVersionMinor = config.apiVersionMinor
-        })
-
-        val hello = expect(EspHomeMessageType.HELLO_RESPONSE, HelloResponse.parser())
-        if (hello.apiVersionMajor != 1) {
+        }
+        if (hello.apiVersionMajor != config.apiVersionMajor) {
             throw EspHomeProtocolException("Unsupported ESPHome API major version: ${hello.apiVersionMajor}")
         }
 
-        send(EspHomeMessageType.CONNECT_REQUEST, connectRequest {
+        val connect = sendConnect {
             password = config.password.orEmpty()
-        })
-
-        val connect = expect(EspHomeMessageType.CONNECT_RESPONSE, ConnectResponse.parser())
+        }
         if (connect.invalidPassword) {
             throw EspHomeAuthenticationException("ESPHome device rejected the configured password")
         }
@@ -156,6 +158,17 @@ class ProtobufConnection(
     }
 
     // -------------------------------------------- internal implementation --------------------------------------------
+
+    private fun sendHello(body: HelloRequestKt.Dsl.() -> Unit): HelloResponse =
+        send(HELLO_REQUEST, HELLO_RESPONSE, helloRequest(body), HelloResponse.parser())
+
+    private fun sendConnect(body: ConnectRequestKt.Dsl.() -> Unit): ConnectResponse =
+        send(CONNECT_REQUEST, CONNECT_RESPONSE, connectRequest(body), ConnectResponse.parser())
+
+    private fun <R> send(reqType: Int, resType: Int, payload: MessageLite, parser: Parser<R>): R {
+        send(reqType, payload)
+        return expect(resType, parser)
+    }
 
     private fun send(messageType: Int, payload: MessageLite) {
         transport.send(EspHomeFrame(messageType, payload.toByteArray()))

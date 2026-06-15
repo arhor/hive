@@ -16,20 +16,22 @@ class PlaintextTransport private constructor(
 
     override fun send(frame: EspHomeFrame) {
         try {
-            output.write(PlaintextEspHomeFrameCodec.encode(frame))
+            val bytes = PlaintextEspHomeFrameCodec.encode(frame)
+
+            output.write(bytes)
             output.flush()
-        } catch (exception: Exception) {
-            throw EspHomeTransportException("Failed to write ESPHome frame", exception)
+        } catch (ex: Exception) {
+            throw EspHomeTransportException("Failed to write ESPHome frame", ex)
         }
     }
 
     override fun receive(): EspHomeFrame =
         try {
             PlaintextEspHomeFrameCodec.decode(input)
-        } catch (exception: EspHomeTransportException) {
-            throw exception
-        } catch (exception: Exception) {
-            throw EspHomeTransportException("Failed to read ESPHome frame", exception)
+        } catch (ex: EspHomeTransportException) {
+            throw ex
+        } catch (ex: Exception) {
+            throw EspHomeTransportException("Failed to read ESPHome frame", ex)
         }
 
     override fun close() {
@@ -38,23 +40,24 @@ class PlaintextTransport private constructor(
 
     companion object {
         @JvmStatic
-        fun connect(config: EspHomeClientConfig): PlaintextTransport {
-            val socket = Socket()
-            try {
-                socket.soTimeout = config.readTimeout.toMillis().toInt()
-                socket.tcpNoDelay = true
-                socket.connect(
-                    InetSocketAddress(config.host, config.port),
-                    config.connectTimeout.toMillis().toInt(),
-                )
-                return PlaintextTransport(socket)
-            } catch (ex: Exception) {
-                socket.close()
-                throw EspHomeTransportException(
-                    "Failed to connect to ESPHome device at ${config.host}:${config.port}",
-                    ex,
-                )
+        fun connect(config: EspHomeClientConfig): PlaintextTransport =
+            Socket().let {
+                val host = config.host
+                val port = config.port
+
+                try {
+                    val sockAddress = InetSocketAddress(host, port)
+                    val connTimeout = config.connectTimeoutMillis
+
+                    it.soTimeout = config.readTimeoutMillis
+                    it.tcpNoDelay = true
+                    it.connect(sockAddress, connTimeout)
+
+                    PlaintextTransport(it)
+                } catch (ex: Exception) {
+                    it.close()
+                    throw EspHomeTransportException("Failed to connect to ESPHome device at $host:$port", ex)
+                }
             }
-        }
     }
 }
