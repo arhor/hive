@@ -1,15 +1,17 @@
-package io.github.arhor.esphome.client.internal
+package io.github.arhor.esphome.client.internal.transport
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.exception.EspHomeClientException
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import io.github.arhor.esphome.client.exception.EspHomeTransportException
+import io.github.arhor.esphome.client.internal.EspHomeFrame
+import io.github.arhor.esphome.client.internal.codec.EncryptedEspHomeFrameCodec
 import io.github.arhor.esphome.client.internal.noise.NoiseCipherState
 import io.github.arhor.esphome.client.internal.noise.NoiseHandshakeState
 import java.net.InetSocketAddress
 import java.net.Socket
 
-internal class EncryptedEspHomeTransport private constructor(
+internal class EncryptedTransport private constructor(
     private val socket: Socket,
     private val sendCipher: NoiseCipherState,
     private val receiveCipher: NoiseCipherState,
@@ -42,7 +44,7 @@ internal class EncryptedEspHomeTransport private constructor(
 
     companion object {
         @JvmStatic
-        fun connect(config: EspHomeClientConfig, psk: ByteArray): EncryptedEspHomeTransport {
+        fun connect(config: EspHomeClientConfig, psk: ByteArray): EncryptedTransport {
             val socket = Socket()
             try {
                 socket.soTimeout = config.readTimeout.toMillis().toInt()
@@ -77,7 +79,7 @@ internal class EncryptedEspHomeTransport private constructor(
                 }
                 handshake.readMessage(serverHandshake.copyOfRange(1, serverHandshake.size))
 
-                return EncryptedEspHomeTransport(socket, handshake.sendCipher, handshake.receiveCipher)
+                return EncryptedTransport(socket, handshake.sendCipher, handshake.receiveCipher)
             } catch (exception: EspHomeClientException) {
                 socket.close()
                 throw exception

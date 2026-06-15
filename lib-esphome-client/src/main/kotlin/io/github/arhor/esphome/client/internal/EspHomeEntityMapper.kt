@@ -34,131 +34,80 @@ internal object EspHomeEntityMapper {
         try {
             when (messageType) {
                 EspHomeMessageType.LIST_ENTITIES_BINARY_SENSOR_RESPONSE ->
-                    ListEntitiesBinarySensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.BinarySensor(it)
-                    }
+                    EspHomeEntity.BinarySensor(ListEntitiesBinarySensorResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_COVER_RESPONSE ->
-                    ListEntitiesCoverResponse.parseFrom(payload).let {
-                        EspHomeEntity.Cover(it)
-                    }
+                    EspHomeEntity.Cover(ListEntitiesCoverResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_FAN_RESPONSE ->
-                    ListEntitiesFanResponse.parseFrom(payload).let {
-                        EspHomeEntity.Fan(it)
-                    }
+                    EspHomeEntity.Fan(ListEntitiesFanResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_LIGHT_RESPONSE ->
-                    ListEntitiesLightResponse.parseFrom(payload).let {
-                        EspHomeEntity.Light(it)
-                    }
+                    EspHomeEntity.Light(ListEntitiesLightResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_SENSOR_RESPONSE ->
-                    ListEntitiesSensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.Sensor(it)
-                    }
+                    EspHomeEntity.Sensor(ListEntitiesSensorResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE ->
-                    ListEntitiesSwitchResponse.parseFrom(payload).let {
-                        EspHomeEntity.Switch(it)
-                    }
+                    EspHomeEntity.Switch(ListEntitiesSwitchResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_TEXT_SENSOR_RESPONSE ->
-                    ListEntitiesTextSensorResponse.parseFrom(payload).let {
-                        EspHomeEntity.TextSensor(it)
-                    }
+                    EspHomeEntity.TextSensor(ListEntitiesTextSensorResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_SERVICES_RESPONSE ->
-                    ListEntitiesServicesResponse.parseFrom(payload).let {
-                        EspHomeEntity.Service(it)
-                    }
+                    EspHomeEntity.Service(ListEntitiesServicesResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_CAMERA_RESPONSE ->
-                    ListEntitiesCameraResponse.parseFrom(payload).let {
-                        EspHomeEntity.Camera(it)
-                    }
+                    EspHomeEntity.Camera(ListEntitiesCameraResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE ->
-                    ListEntitiesClimateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Climate(it)
-                    }
+                    EspHomeEntity.Climate(ListEntitiesClimateResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE ->
-                    ListEntitiesNumberResponse.parseFrom(payload).let {
-                        EspHomeEntity.Number(it)
-                    }
+                    EspHomeEntity.Number(ListEntitiesNumberResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE ->
-                    ListEntitiesSelectResponse.parseFrom(payload).let {
-                        EspHomeEntity.Select(it)
-                    }
+                    EspHomeEntity.Select(ListEntitiesSelectResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE ->
-                    ListEntitiesSirenResponse.parseFrom(payload).let {
-                        EspHomeEntity.Siren(it)
-                    }
+                    EspHomeEntity.Siren(ListEntitiesSirenResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE ->
-                    ListEntitiesLockResponse.parseFrom(payload).let {
-                        EspHomeEntity.Lock(it)
-                    }
+                    EspHomeEntity.Lock(ListEntitiesLockResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE ->
-                    ListEntitiesButtonResponse.parseFrom(payload).let {
-                        EspHomeEntity.Button(it)
-                    }
+                    EspHomeEntity.Button(ListEntitiesButtonResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE ->
-                    ListEntitiesMediaPlayerResponse.parseFrom(payload).let {
-                        EspHomeEntity.MediaPlayer(it)
-                    }
+                    EspHomeEntity.MediaPlayer(ListEntitiesMediaPlayerResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE ->
-                    ListEntitiesAlarmControlPanelResponse.parseFrom(payload).let {
-                        EspHomeEntity.AlarmControlPanel(it)
-                    }
+                    EspHomeEntity.AlarmControlPanel(ListEntitiesAlarmControlPanelResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE ->
-                    ListEntitiesTextResponse.parseFrom(payload).let {
-                        EspHomeEntity.Text(it)
-                    }
+                    EspHomeEntity.Text(ListEntitiesTextResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE ->
-                    ListEntitiesDateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Date(it)
-                    }
+                    EspHomeEntity.Date(ListEntitiesDateResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE ->
-                    ListEntitiesTimeResponse.parseFrom(payload).let {
-                        EspHomeEntity.Time(it)
-                    }
+                    EspHomeEntity.Time(ListEntitiesTimeResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE ->
-                    ListEntitiesEventResponse.parseFrom(payload).let {
-                        EspHomeEntity.Event(it)
-                    }
+                    EspHomeEntity.Event(ListEntitiesEventResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE ->
-                    ListEntitiesValveResponse.parseFrom(payload).let {
-                        EspHomeEntity.Valve(it)
-                    }
+                    EspHomeEntity.Valve(ListEntitiesValveResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE ->
-                    ListEntitiesDateTimeResponse.parseFrom(payload).let {
-                        EspHomeEntity.DateTime(it)
-                    }
+                    EspHomeEntity.DateTime(ListEntitiesDateTimeResponse.parseFrom(payload))
 
                 EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE ->
-                    ListEntitiesUpdateResponse.parseFrom(payload).let {
-                        EspHomeEntity.Update(it)
-                    }
+                    EspHomeEntity.Update(ListEntitiesUpdateResponse.parseFrom(payload))
 
                 else -> throw EspHomeProtocolException("Unsupported ESPHome entity discovery message: $messageType")
             }
-        } catch (exception: InvalidProtocolBufferException) {
-            throw EspHomeProtocolException(
-                "Malformed ESPHome entity discovery payload for message $messageType",
-                exception,
-            )
+        } catch (ex: InvalidProtocolBufferException) {
+            throw EspHomeProtocolException("Malformed ESPHome entity discovery payload for message $messageType", ex)
         }
 }

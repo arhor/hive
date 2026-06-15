@@ -3,10 +3,10 @@ package io.github.arhor.esphome.client
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
-import io.github.arhor.esphome.client.internal.DefaultEspHomeClient
+import io.github.arhor.esphome.client.internal.EspHomeClientDefault
 import io.github.arhor.esphome.client.internal.EspHomeFrame
 import io.github.arhor.esphome.client.internal.EspHomeMessageType
-import io.github.arhor.esphome.client.internal.EspHomeTransport
+import io.github.arhor.esphome.client.internal.transport.EspHomeTransport
 import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.HelloResponse
 import java.util.Base64
@@ -15,7 +15,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-class DefaultEspHomeClientTest {
+class EspHomeClientDefaultTest {
 
     @Test
     fun `closes transport when handshake fails`() {
@@ -25,7 +25,7 @@ class DefaultEspHomeClientTest {
                 HelloResponse.newBuilder().setApiVersionMajor(2).build().toByteArray(),
             ),
         )
-        val client = DefaultEspHomeClient(
+        val client = EspHomeClientDefault(
             EspHomeClientConfig(host = "camera"),
             transportFactory = { transport },
         )
@@ -51,7 +51,7 @@ class DefaultEspHomeClientTest {
             ),
         )
         var encryptedFactoryUsed = false
-        val client = DefaultEspHomeClient(
+        val client = EspHomeClientDefault(
             config = EspHomeClientConfig(
                 host = "camera",
                 encryption = EspHomeEncryptionConfig(

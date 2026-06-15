@@ -1,6 +1,8 @@
 package io.github.arhor.esphome.client.internal
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.internal.codec.PlaintextEspHomeFrameCodec
+import io.github.arhor.esphome.client.internal.transport.PlaintextTransport
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.time.Duration
@@ -9,7 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class PlaintextEspHomeTransportTest {
+class PlaintextTransportTest {
 
     @Test
     fun `sends encoded frame over socket`() {
@@ -18,17 +20,17 @@ class PlaintextEspHomeTransportTest {
             val accepted = executor.submit<EspHomeFrame> {
                 server.accept().use { socket ->
                     socket.soTimeout = 1_000
-                    EspHomeFrameCodec.decode(socket.getInputStream())
+                    PlaintextEspHomeFrameCodec.decode(socket.getInputStream())
                 }
             }
 
-            PlaintextEspHomeTransport.connect(configFor(server)).use { transport ->
-                transport.send(EspHomeFrame(messageType = 45, payload = byteArrayOf(1, 2, 3)))
+            PlaintextTransport.connect(configFor(server)).use { transport ->
+                transport.send(EspHomeFrame(type = 45, data = byteArrayOf(1, 2, 3)))
             }
 
             val frame = accepted.get()
-            assertEquals(45, frame.messageType)
-            assertContentEquals(byteArrayOf(1, 2, 3), frame.payload)
+            assertEquals(45, frame.type)
+            assertContentEquals(byteArrayOf(1, 2, 3), frame.data)
             executor.shutdown()
         }
     }
@@ -40,18 +42,18 @@ class PlaintextEspHomeTransportTest {
             val sent = executor.submit<Unit> {
                 server.accept().use { socket ->
                     socket.getOutputStream().write(
-                        EspHomeFrameCodec.encode(EspHomeFrame(messageType = 46, payload = byteArrayOf(4, 5))),
+                        PlaintextEspHomeFrameCodec.encode(EspHomeFrame(type = 46, data = byteArrayOf(4, 5))),
                     )
                     socket.getOutputStream().flush()
                 }
             }
 
-            val frame = PlaintextEspHomeTransport.connect(configFor(server)).use { transport ->
+            val frame = PlaintextTransport.connect(configFor(server)).use { transport ->
                 transport.receive()
             }
 
-            assertEquals(46, frame.messageType)
-            assertContentEquals(byteArrayOf(4, 5), frame.payload)
+            assertEquals(46, frame.type)
+            assertContentEquals(byteArrayOf(4, 5), frame.data)
             sent.get()
             executor.shutdown()
         }

@@ -1,6 +1,5 @@
 package io.github.arhor.esphome.client
 
-interface EspHomeClient : AutoCloseable {
+interface EspHomeClient {
     fun connect(): EspHomeConnection
 }
-

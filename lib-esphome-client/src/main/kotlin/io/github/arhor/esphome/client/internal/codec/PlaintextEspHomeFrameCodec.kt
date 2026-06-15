@@ -1,23 +1,24 @@
-package io.github.arhor.esphome.client.internal
+package io.github.arhor.esphome.client.internal.codec
 
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.EspHomeFrame
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-object EspHomeFrameCodec {
+object PlaintextEspHomeFrameCodec {
 
     private const val PLAINTEXT_INDICATOR = 0x00
     private const val MAX_PAYLOAD_SIZE = 2 * 1024 * 1024
 
     fun encode(frame: EspHomeFrame): ByteArray {
-        require(frame.messageType in 0..0xffff) { "messageType must fit into uint16" }
-        require(frame.payload.size <= MAX_PAYLOAD_SIZE) { "payload is too large" }
+        require(frame.type in 0..0xffff) { "messageType must fit into uint16" }
+        require(frame.data.size <= MAX_PAYLOAD_SIZE) { "payload is too large" }
 
-        val output = ByteArrayOutputStream(1 + 5 + 3 + frame.payload.size)
+        val output = ByteArrayOutputStream(1 + 5 + 3 + frame.data.size)
         output.write(PLAINTEXT_INDICATOR)
-        writeVarInt(output, frame.payload.size)
-        writeVarInt(output, frame.messageType)
-        output.write(frame.payload)
+        writeVarInt(output, frame.data.size)
+        writeVarInt(output, frame.type)
+        output.write(frame.data)
         return output.toByteArray()
     }
 
@@ -39,7 +40,7 @@ object EspHomeFrameCodec {
         if (payload.size != payloadSize) {
             throw EspHomeProtocolException("ESPHome frame ended before payload was complete")
         }
-        return EspHomeFrame(messageType = messageType, payload = payload)
+        return EspHomeFrame(type = messageType, data = payload)
     }
 
     private fun writeVarInt(output: ByteArrayOutputStream, value: Int) {

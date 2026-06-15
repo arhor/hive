@@ -1,6 +1,7 @@
 package io.github.arhor.esphome.client.internal
 
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.codec.EncryptedEspHomeFrameCodec
 import io.github.arhor.esphome.client.internal.noise.NoiseCipherState
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -30,7 +31,7 @@ class EncryptedEspHomeFrameCodecTest {
         val receiver = NoiseCipherState().apply { initializeKey(key) }
 
         val encoded = EncryptedEspHomeFrameCodec.encodeFrame(
-            EspHomeFrame(messageType = 45, payload = byteArrayOf(1, 2, 3)),
+            EspHomeFrame(type = 45, data = byteArrayOf(1, 2, 3)),
             sender,
         )
         val encryptedPayload = EncryptedEspHomeFrameCodec.decode(encoded.inputStream())
@@ -54,8 +55,8 @@ class EncryptedEspHomeFrameCodecTest {
             receiver,
         )
 
-        assertEquals(46, frame.messageType)
-        assertContentEquals(byteArrayOf(9, 8), frame.payload)
+        assertEquals(46, frame.type)
+        assertContentEquals(byteArrayOf(9, 8), frame.data)
     }
 
     @Test
@@ -65,7 +66,7 @@ class EncryptedEspHomeFrameCodecTest {
 
         val error = assertFailsWith<EspHomeProtocolException> {
             EncryptedEspHomeFrameCodec.encodeFrame(
-                EspHomeFrame(messageType = 45, payload = ByteArray(65_516)),
+                EspHomeFrame(type = 45, data = ByteArray(65_516)),
                 sender,
             )
         }

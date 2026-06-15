@@ -4,6 +4,7 @@ import com.google.protobuf.ByteString
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.transport.EspHomeTransport
 import io.github.arhor.esphome.client.proto.CameraImageResponse
 import io.github.arhor.esphome.client.proto.ConnectResponse
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse
@@ -19,7 +20,7 @@ import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class EspHomeProtocolClientTest {
+class ProtobufConnectionTest {
 
     @Test
     fun `connect sends hello and connect requests`() {
@@ -34,10 +35,10 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).connect()
+        ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).initialize()
 
-        assertEquals(EspHomeMessageType.HELLO_REQUEST, transport.sent[0].messageType)
-        assertEquals(EspHomeMessageType.CONNECT_REQUEST, transport.sent[1].messageType)
+        assertEquals(EspHomeMessageType.HELLO_REQUEST, transport.sent[0].type)
+        assertEquals(EspHomeMessageType.CONNECT_REQUEST, transport.sent[1].type)
     }
 
     @Test
@@ -54,7 +55,7 @@ class EspHomeProtocolClientTest {
         )
 
         assertFailsWith<EspHomeAuthenticationException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).connect()
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).initialize()
         }
     }
 
@@ -73,7 +74,7 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        val info = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).deviceInfo()
+        val info = ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).deviceInfo()
 
         assertEquals("esp32-cam", info.name)
         assertEquals("AA:BB", info.macAddress)
@@ -101,10 +102,10 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        val image = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
+        val image = ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
 
         assertContentEquals(byteArrayOf(1, 2, 3), image)
-        assertEquals(EspHomeMessageType.CAMERA_IMAGE_REQUEST, transport.sent.single().messageType)
+        assertEquals(EspHomeMessageType.CAMERA_IMAGE_REQUEST, transport.sent.single().type)
     }
 
     @Test
@@ -124,11 +125,11 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        val image = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
+        val image = ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
 
         assertContentEquals(byteArrayOf(4), image)
-        assertEquals(EspHomeMessageType.CAMERA_IMAGE_REQUEST, transport.sent[0].messageType)
-        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].messageType)
+        assertEquals(EspHomeMessageType.CAMERA_IMAGE_REQUEST, transport.sent[0].type)
+        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].type)
     }
 
     @Test
@@ -141,7 +142,7 @@ class EspHomeProtocolClientTest {
         )
 
         val error = assertFailsWith<EspHomeProtocolException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).fetchCameraImage()
         }
 
         assertEquals("ESPHome camera response completed without image data", error.message)
@@ -174,9 +175,9 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        val entities = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+        val entities = ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).listEntities()
 
-        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent.single().messageType)
+        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent.single().type)
         assertEquals(listOf("temperature", "relay"), entities.map { it.objectId })
     }
 
@@ -193,11 +194,11 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        val entities = EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+        val entities = ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).listEntities()
 
         assertEquals(emptyList(), entities)
-        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent[0].messageType)
-        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].messageType)
+        assertEquals(EspHomeMessageType.LIST_ENTITIES_REQUEST, transport.sent[0].type)
+        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].type)
     }
 
     @Test
@@ -210,7 +211,7 @@ class EspHomeProtocolClientTest {
         )
 
         val error = assertFailsWith<EspHomeProtocolException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).listEntities()
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).listEntities()
         }
 
         assertEquals("Expected ESPHome entity discovery message but received 10", error.message)
@@ -240,7 +241,7 @@ class EspHomeProtocolClientTest {
         val stop = RuntimeException("stop after two states")
 
         val error = assertFailsWith<RuntimeException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates { state ->
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).subscribeStates { state ->
                 received += state.key
                 if (received.size == 2) throw stop
             }
@@ -248,7 +249,7 @@ class EspHomeProtocolClientTest {
 
         assertEquals(stop, error)
         assertEquals(listOf(1, 2), received)
-        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent.single().messageType)
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent.single().type)
     }
 
     @Test
@@ -270,14 +271,14 @@ class EspHomeProtocolClientTest {
         val stop = RuntimeException("stop after state")
 
         val error = assertFailsWith<RuntimeException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).subscribeStates {
                 throw stop
             }
         }
 
         assertEquals(stop, error)
-        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].messageType)
-        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].messageType)
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].type)
+        assertEquals(EspHomeMessageType.PING_RESPONSE, transport.sent[1].type)
     }
 
     @Test
@@ -290,7 +291,7 @@ class EspHomeProtocolClientTest {
         )
 
         val error = assertFailsWith<EspHomeProtocolException> {
-            EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
+            ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
         }
 
         assertEquals("Expected ESPHome state message but received 10", error.message)
@@ -305,10 +306,10 @@ class EspHomeProtocolClientTest {
             ),
         )
 
-        EspHomeProtocolClient(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
+        ProtobufConnection(EspHomeClientConfig(host = "camera"), transport).subscribeStates {}
 
-        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].messageType)
-        assertEquals(EspHomeMessageType.DISCONNECT_RESPONSE, transport.sent[1].messageType)
+        assertEquals(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, transport.sent[0].type)
+        assertEquals(EspHomeMessageType.DISCONNECT_RESPONSE, transport.sent[1].type)
     }
 
     private class FakeTransport(vararg frames: EspHomeFrame) : EspHomeTransport {

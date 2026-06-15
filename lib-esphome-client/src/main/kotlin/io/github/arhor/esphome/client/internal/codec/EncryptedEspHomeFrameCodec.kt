@@ -1,6 +1,7 @@
-package io.github.arhor.esphome.client.internal
+package io.github.arhor.esphome.client.internal.codec
 
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.EspHomeFrame
 import io.github.arhor.esphome.client.internal.noise.NoiseCipherState
 import io.github.arhor.esphome.client.internal.noise.NoiseConstants
 import java.io.ByteArrayOutputStream
@@ -49,19 +50,19 @@ internal object EncryptedEspHomeFrameCodec {
     }
 
     fun encodeFrame(frame: EspHomeFrame, cipher: NoiseCipherState): ByteArray {
-        if (frame.messageType !in 0..MAX_PAYLOAD_SIZE) {
-            throw EspHomeProtocolException("ESPHome encrypted message type is out of range: ${frame.messageType}")
+        if (frame.type !in 0..MAX_PAYLOAD_SIZE) {
+            throw EspHomeProtocolException("ESPHome encrypted message type is out of range: ${frame.type}")
         }
-        if (frame.payload.size > MAX_ENCRYPTED_PROTOBUF_PAYLOAD_SIZE) {
-            throw EspHomeProtocolException("ESPHome encrypted payload is too large: ${frame.payload.size} bytes")
+        if (frame.data.size > MAX_ENCRYPTED_PROTOBUF_PAYLOAD_SIZE) {
+            throw EspHomeProtocolException("ESPHome encrypted payload is too large: ${frame.data.size} bytes")
         }
 
-        val plaintext = ByteArrayOutputStream(4 + frame.payload.size)
-        plaintext.write((frame.messageType ushr 8) and 0xff)
-        plaintext.write(frame.messageType and 0xff)
-        plaintext.write((frame.payload.size ushr 8) and 0xff)
-        plaintext.write(frame.payload.size and 0xff)
-        plaintext.write(frame.payload)
+        val plaintext = ByteArrayOutputStream(4 + frame.data.size)
+        plaintext.write((frame.type ushr 8) and 0xff)
+        plaintext.write(frame.type and 0xff)
+        plaintext.write((frame.data.size ushr 8) and 0xff)
+        plaintext.write(frame.data.size and 0xff)
+        plaintext.write(frame.data)
         return encode(cipher.encryptWithAd(NoiseConstants.EMPTY, plaintext.toByteArray()))
     }
 
@@ -77,8 +78,8 @@ internal object EncryptedEspHomeFrameCodec {
             throw EspHomeProtocolException("ESPHome encrypted data length exceeds decrypted payload")
         }
         return EspHomeFrame(
-            messageType = messageType,
-            payload = plaintext.copyOfRange(4, 4 + payloadSize),
+            type = messageType,
+            data = plaintext.copyOfRange(4, 4 + payloadSize),
         )
     }
 }

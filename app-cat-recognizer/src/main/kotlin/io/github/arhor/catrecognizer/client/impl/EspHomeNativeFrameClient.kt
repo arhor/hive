@@ -4,15 +4,13 @@ import io.github.arhor.catrecognizer.client.FrameClient
 import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
-import io.github.arhor.esphome.client.EspHomeConnection
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
-import io.github.arhor.esphome.client.internal.DefaultEspHomeClient
+import io.github.arhor.esphome.client.internal.EspHomeClientDefault
+import io.github.arhor.esphome.client.internal.EspHomeConnectionFactory
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import java.time.Instant
-
-private typealias EspHomeConnectionFactory = (EspHomeClientConfig) -> EspHomeConnection
 
 @ApplicationScoped
 @NativeApiCameraClient
@@ -20,7 +18,7 @@ class EspHomeNativeFrameClient @Inject constructor(
     private val config: RecognizerConfig,
 ) : FrameClient {
 
-    private var factory: EspHomeConnectionFactory = { DefaultEspHomeClient(it).connect() }
+    private var factory: EspHomeConnectionFactory = { EspHomeClientDefault(it).connect() }
 
     internal constructor(
         config: RecognizerConfig,

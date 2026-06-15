@@ -1,7 +1,9 @@
 package io.github.arhor.esphome.client.internal
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
+import io.github.arhor.esphome.client.internal.codec.EncryptedEspHomeFrameCodec
 import io.github.arhor.esphome.client.internal.noise.NoiseHandshakeState
+import io.github.arhor.esphome.client.internal.transport.EncryptedTransport
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.time.Duration
@@ -10,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
-class EncryptedEspHomeTransportTest {
+class EncryptedTransportTest {
 
     @Test
     fun `sends and receives frames over encrypted socket`() {
@@ -39,7 +41,7 @@ class EncryptedEspHomeTransportTest {
 
                     output.write(
                         EncryptedEspHomeFrameCodec.encodeFrame(
-                            EspHomeFrame(messageType = 46, payload = byteArrayOf(9, 8)),
+                            EspHomeFrame(type = 46, data = byteArrayOf(9, 8)),
                             responder.sendCipher,
                         ),
                     )
@@ -48,18 +50,18 @@ class EncryptedEspHomeTransportTest {
                 }
             }
 
-            EncryptedEspHomeTransport.connect(configFor(server), psk).use { transport ->
-                transport.send(EspHomeFrame(messageType = 45, payload = byteArrayOf(1, 2, 3)))
+            EncryptedTransport.connect(configFor(server), psk).use { transport ->
+                transport.send(EspHomeFrame(type = 45, data = byteArrayOf(1, 2, 3)))
 
                 val response = transport.receive()
 
-                assertEquals(46, response.messageType)
-                assertContentEquals(byteArrayOf(9, 8), response.payload)
+                assertEquals(46, response.type)
+                assertContentEquals(byteArrayOf(9, 8), response.data)
             }
 
             val received = serverResult.get()
-            assertEquals(45, received.messageType)
-            assertContentEquals(byteArrayOf(1, 2, 3), received.payload)
+            assertEquals(45, received.type)
+            assertContentEquals(byteArrayOf(1, 2, 3), received.data)
             executor.shutdown()
         }
     }

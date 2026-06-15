@@ -10,6 +10,8 @@ data class EspHomeClientConfig(
     val readTimeout: Duration = Duration.ofSeconds(5),
     val password: String? = null,
     val encryption: EspHomeEncryptionConfig = EspHomeEncryptionConfig(),
+    val apiVersionMajor: Int = 1,
+    val apiVersionMinor: Int = 10,
 ) {
     init {
         require(host.isNotBlank()) { "host must not be blank" }

@@ -1,11 +1,13 @@
-package io.github.arhor.esphome.client.internal
+package io.github.arhor.esphome.client.internal.transport
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.exception.EspHomeTransportException
+import io.github.arhor.esphome.client.internal.EspHomeFrame
+import io.github.arhor.esphome.client.internal.codec.PlaintextEspHomeFrameCodec
 import java.net.InetSocketAddress
 import java.net.Socket
 
-class PlaintextEspHomeTransport private constructor(
+class PlaintextTransport private constructor(
     private val socket: Socket,
 ) : EspHomeTransport {
 
@@ -14,7 +16,7 @@ class PlaintextEspHomeTransport private constructor(
 
     override fun send(frame: EspHomeFrame) {
         try {
-            output.write(EspHomeFrameCodec.encode(frame))
+            output.write(PlaintextEspHomeFrameCodec.encode(frame))
             output.flush()
         } catch (exception: Exception) {
             throw EspHomeTransportException("Failed to write ESPHome frame", exception)
@@ -23,7 +25,7 @@ class PlaintextEspHomeTransport private constructor(
 
     override fun receive(): EspHomeFrame =
         try {
-            EspHomeFrameCodec.decode(input)
+            PlaintextEspHomeFrameCodec.decode(input)
         } catch (exception: EspHomeTransportException) {
             throw exception
         } catch (exception: Exception) {
@@ -36,7 +38,7 @@ class PlaintextEspHomeTransport private constructor(
 
     companion object {
         @JvmStatic
-        fun connect(config: EspHomeClientConfig): PlaintextEspHomeTransport {
+        fun connect(config: EspHomeClientConfig): PlaintextTransport {
             val socket = Socket()
             try {
                 socket.soTimeout = config.readTimeout.toMillis().toInt()
@@ -45,12 +47,12 @@ class PlaintextEspHomeTransport private constructor(
                     InetSocketAddress(config.host, config.port),
                     config.connectTimeout.toMillis().toInt(),
                 )
-                return PlaintextEspHomeTransport(socket)
-            } catch (exception: Exception) {
+                return PlaintextTransport(socket)
+            } catch (ex: Exception) {
                 socket.close()
                 throw EspHomeTransportException(
                     "Failed to connect to ESPHome device at ${config.host}:${config.port}",
-                    exception,
+                    ex,
                 )
             }
         }

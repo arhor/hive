@@ -6,6 +6,7 @@ import io.github.arhor.esphome.client.EspHomeStateHandler
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
 import io.github.arhor.esphome.client.exception.EspHomeAuthenticationException
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
+import io.github.arhor.esphome.client.internal.transport.EspHomeTransport
 import io.github.arhor.esphome.client.model.EspHomeDeviceInfo
 import io.github.arhor.esphome.client.model.EspHomeEntity
 import io.github.arhor.esphome.client.proto.CameraImageResponse
@@ -23,21 +24,19 @@ import io.github.arhor.esphome.client.proto.pingResponse
 import io.github.arhor.esphome.client.proto.subscribeStatesRequest
 import java.io.ByteArrayOutputStream
 
-class EspHomeProtocolClient(
+class ProtobufConnection(
     private val config: EspHomeClientConfig,
     private val transport: EspHomeTransport,
 ) : EspHomeConnection {
 
-    fun connect() {
+    fun initialize() {
         send(EspHomeMessageType.HELLO_REQUEST, helloRequest {
             clientInfo = config.clientName
-            apiVersionMajor = 1
-            apiVersionMinor = 10
+            apiVersionMajor = config.apiVersionMajor
+            apiVersionMinor = config.apiVersionMinor
         })
 
-        val hello = expect(EspHomeMessageType.HELLO_RESPONSE) {
-            HelloResponse.parseFrom(it)
-        }
+        val hello = expect(EspHomeMessageType.HELLO_RESPONSE, HelloResponse::parseFrom)
         if (hello.apiVersionMajor != 1) {
             throw EspHomeProtocolException("Unsupported ESPHome API major version: ${hello.apiVersionMajor}")
         }
@@ -94,7 +93,7 @@ class EspHomeProtocolClient(
 
         while (true) {
             val frame = transport.receive()
-            when (frame.messageType) {
+            when (frame.type) {
                 EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE -> {
                     return entities
                 }
@@ -105,14 +104,14 @@ class EspHomeProtocolClient(
 
                 in ENTITY_DISCOVERY_MESSAGE_TYPES -> {
                     entities += EspHomeEntityMapper.map(
-                        frame.messageType,
-                        frame.payload,
+                        frame.type,
+                        frame.data,
                     )
                 }
 
                 else -> {
                     throw EspHomeProtocolException(
-                        "Expected ESPHome entity discovery message but received ${frame.messageType}",
+                        "Expected ESPHome entity discovery message but received ${frame.type}",
                     )
                 }
             }
@@ -124,7 +123,7 @@ class EspHomeProtocolClient(
 
         while (true) {
             val frame = transport.receive()
-            when (frame.messageType) {
+            when (frame.type) {
                 EspHomeMessageType.PING_REQUEST -> {
                     send(EspHomeMessageType.PING_RESPONSE, pingResponse { })
                 }
@@ -136,13 +135,13 @@ class EspHomeProtocolClient(
 
                 in ENTITY_STATE_MESSAGE_TYPES -> handler.onState(
                     EspHomeStateMapper.map(
-                        frame.messageType,
-                        frame.payload
+                        frame.type,
+                        frame.data
                     )
                 )
 
                 else -> throw EspHomeProtocolException(
-                    "Expected ESPHome state message but received ${frame.messageType}",
+                    "Expected ESPHome state message but received ${frame.type}",
                 )
             }
         }
@@ -162,15 +161,20 @@ class EspHomeProtocolClient(
     private fun <T> expect(messageType: Int, parser: (ByteArray) -> T): T {
         while (true) {
             val frame = transport.receive()
-            when (frame.messageType) {
-                messageType -> return parser(frame.payload)
+            when (frame.type) {
+                messageType -> {
+                    return parser(frame.data)
+                }
+
                 EspHomeMessageType.PING_REQUEST -> {
                     send(EspHomeMessageType.PING_RESPONSE, pingResponse { })
                 }
 
-                else -> throw EspHomeProtocolException(
-                    "Expected ESPHome message $messageType but received ${frame.messageType}",
-                )
+                else -> {
+                    throw EspHomeProtocolException(
+                        "Expected ESPHome message $messageType but received ${frame.type}",
+                    )
+                }
             }
         }
     }
