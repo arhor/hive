@@ -1,0 +1,66 @@
+package io.github.arhor.esphome.client.async;
+
+public final class EspHomeMessageType {
+    public static final int HELLO_REQUEST = 1;
+    public static final int HELLO_RESPONSE = 2;
+    public static final int CONNECT_REQUEST = 3;
+    public static final int CONNECT_RESPONSE = 4;
+    public static final int DISCONNECT_REQUEST = 5;
+    public static final int DISCONNECT_RESPONSE = 6;
+    public static final int PING_REQUEST = 7;
+    public static final int PING_RESPONSE = 8;
+    public static final int DEVICE_INFO_REQUEST = 9;
+    public static final int DEVICE_INFO_RESPONSE = 10;
+    public static final int LIST_ENTITIES_REQUEST = 11;
+    public static final int LIST_ENTITIES_BINARY_SENSOR_RESPONSE = 12;
+    public static final int LIST_ENTITIES_COVER_RESPONSE = 13;
+    public static final int LIST_ENTITIES_FAN_RESPONSE = 14;
+    public static final int LIST_ENTITIES_LIGHT_RESPONSE = 15;
+    public static final int LIST_ENTITIES_SENSOR_RESPONSE = 16;
+    public static final int LIST_ENTITIES_SWITCH_RESPONSE = 17;
+    public static final int LIST_ENTITIES_TEXT_SENSOR_RESPONSE = 18;
+    public static final int LIST_ENTITIES_DONE_RESPONSE = 19;
+    public static final int SUBSCRIBE_STATES_REQUEST = 20;
+    public static final int BINARY_SENSOR_STATE_RESPONSE = 21;
+    public static final int COVER_STATE_RESPONSE = 22;
+    public static final int FAN_STATE_RESPONSE = 23;
+    public static final int LIGHT_STATE_RESPONSE = 24;
+    public static final int SENSOR_STATE_RESPONSE = 25;
+    public static final int SWITCH_STATE_RESPONSE = 26;
+    public static final int TEXT_SENSOR_STATE_RESPONSE = 27;
+    public static final int LIST_ENTITIES_SERVICES_RESPONSE = 41;
+    public static final int LIST_ENTITIES_CAMERA_RESPONSE = 43;
+    public static final int CAMERA_IMAGE_RESPONSE = 44;
+    public static final int CAMERA_IMAGE_REQUEST = 45;
+    public static final int LIST_ENTITIES_CLIMATE_RESPONSE = 46;
+    public static final int CLIMATE_STATE_RESPONSE = 47;
+    public static final int LIST_ENTITIES_NUMBER_RESPONSE = 49;
+    public static final int NUMBER_STATE_RESPONSE = 50;
+    public static final int LIST_ENTITIES_SELECT_RESPONSE = 52;
+    public static final int SELECT_STATE_RESPONSE = 53;
+    public static final int LIST_ENTITIES_SIREN_RESPONSE = 55;
+    public static final int SIREN_STATE_RESPONSE = 56;
+    public static final int LIST_ENTITIES_LOCK_RESPONSE = 58;
+    public static final int LOCK_STATE_RESPONSE = 59;
+    public static final int LIST_ENTITIES_BUTTON_RESPONSE = 61;
+    public static final int LIST_ENTITIES_MEDIA_PLAYER_RESPONSE = 63;
+    public static final int MEDIA_PLAYER_STATE_RESPONSE = 64;
+    public static final int LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE = 94;
+    public static final int ALARM_CONTROL_PANEL_STATE_RESPONSE = 95;
+    public static final int LIST_ENTITIES_TEXT_RESPONSE = 97;
+    public static final int TEXT_STATE_RESPONSE = 98;
+    public static final int LIST_ENTITIES_DATE_RESPONSE = 100;
+    public static final int DATE_STATE_RESPONSE = 101;
+    public static final int LIST_ENTITIES_TIME_RESPONSE = 103;
+    public static final int TIME_STATE_RESPONSE = 104;
+    public static final int LIST_ENTITIES_EVENT_RESPONSE = 107;
+    public static final int EVENT_RESPONSE = 108;
+    public static final int LIST_ENTITIES_VALVE_RESPONSE = 109;
+    public static final int VALVE_STATE_RESPONSE = 110;
+    public static final int LIST_ENTITIES_DATETIME_RESPONSE = 112;
+    public static final int DATETIME_STATE_RESPONSE = 113;
+    public static final int LIST_ENTITIES_UPDATE_RESPONSE = 116;
+    public static final int UPDATE_STATE_RESPONSE = 117;
+
+    private EspHomeMessageType() {}
+}

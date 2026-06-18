@@ -19,6 +19,14 @@ kotlin {
     }
 }
 
+sourceSets {
+    main {
+        proto {
+            srcDir("src/main/proto")
+        }
+    }
+}
+
 protobuf {
     protoc {
         artifact = libs.protobuf.protoc.get().toString()
@@ -33,7 +41,11 @@ protobuf {
 }
 
 dependencies {
-    implementation(libs.kotlin.stdlib.jdk8)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.netty.buffer)
+    implementation(libs.netty.codec)
+    implementation(libs.netty.codec.protobuf)
+    implementation(libs.netty.transport)
     implementation(libs.protobuf.kotlin)
 
     testImplementation(libs.kotlin.test)

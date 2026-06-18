@@ -1,0 +1,66 @@
+package io.github.arhor.esphome.client.async;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageLite;
+import com.google.protobuf.Parser;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageDecoder;
+
+import java.util.List;
+
+public class EspHomeProtobufDecoder extends MessageToMessageDecoder<EspHomeFrame> {
+
+    @Override
+    protected void decode(
+        final ChannelHandlerContext ctx,
+        final EspHomeFrame frame,
+        final List<Object> out
+    ) throws Exception {
+
+        final ByteBuf payload = frame.payload();
+        try {
+            final var type = frame.messageType();
+            final var parser = EspHomeProtobufRegistry.getParser(type);
+
+            if (parser != null) {
+                final var message = parseMessage(payload, parser);
+
+                out.add(message);
+            } else {
+                ctx.fireUserEventTriggered("Unknown message type: " + type);
+            }
+        } finally {
+            payload.release();
+        }
+    }
+
+    private static MessageLite parseMessage(
+        final ByteBuf payload,
+        final Parser<? extends MessageLite> parser
+    ) throws InvalidProtocolBufferException {
+
+        final var length = payload.readableBytes();
+        final var rIndex = payload.readerIndex();
+
+        MessageLite message;
+
+        if (payload.hasArray()) {
+            final var array = payload.array();
+            final var offset = payload.arrayOffset() + rIndex;
+
+            message = parser.parseFrom(array, offset, length);
+        } else if (payload.nioBufferCount() == 1) {
+            final var buffer = payload.nioBuffer(rIndex, length);
+
+            message = parser.parseFrom(buffer);
+        } else {
+            final var slice = payload.slice(rIndex, length);
+            final var input = new ByteBufInputStream(slice, false);
+
+            message = parser.parseFrom(input);
+        }
+        return message;
+    }
+}

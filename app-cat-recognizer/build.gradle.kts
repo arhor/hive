@@ -30,10 +30,13 @@ allOpen {
 }
 
 dependencies {
-    implementation(project(":lib-esphome-client"))
-
     implementation(enforcedPlatform(libs.quarkus.platform))
-
+    implementation(project(":lib-esphome-client"))
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.jdk8)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.onnxruntime)
     implementation(libs.quarkus.arc)
     implementation(libs.quarkus.container.image.docker)
     implementation(libs.quarkus.kotlin)
@@ -44,12 +47,6 @@ dependencies {
     implementation(libs.quarkus.scheduler)
     implementation(libs.quarkus.smallrye.fault.tolerance)
     implementation(libs.quarkus.smallrye.health)
-
-    implementation(libs.kotlin.stdlib.jdk8)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.jdk8)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.onnxruntime)
 
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlinx.coroutines.test)
