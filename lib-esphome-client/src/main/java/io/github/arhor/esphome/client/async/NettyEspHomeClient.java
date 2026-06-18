@@ -1,5 +1,9 @@
 package io.github.arhor.esphome.client.async;
 
+import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameDecoder;
+import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameEncoder;
+import io.github.arhor.esphome.client.async.codec.plaintext.EspHomeVarIntFrameDecoder;
+import io.github.arhor.esphome.client.async.codec.plaintext.EspHomeVarIntFrameEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -7,10 +11,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class NettyEspHomeClient implements EspHomeClient {
 
@@ -32,6 +38,7 @@ public class NettyEspHomeClient implements EspHomeClient {
             .group(workerGroup)
             .channelFactory(NioSocketChannel::new)
             .option(ChannelOption.TCP_NODELAY, true)
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, config.connectTimeoutMillis())
             .handler(createChannelInitializer(subscriptions, resultFuture))
             .connect(config.host(), config.port())
             .addListener((future) -> {
@@ -52,8 +59,6 @@ public class NettyEspHomeClient implements EspHomeClient {
         workerGroup.shutdownGracefully();
     }
 
-    /* ------------------------------------------ Internal implementation ------------------------------------------- */
-
     private ChannelInitializer<SocketChannel> createChannelInitializer(
         final List<EspHomeSubscription> subscriptions,
         final CompletableFuture<EspHomeConnection> resultFuture
@@ -61,20 +66,44 @@ public class NettyEspHomeClient implements EspHomeClient {
         return new ChannelInitializer<>() {
             @Override
             protected void initChannel(final SocketChannel ch) {
-                var pipeline = ch.pipeline();
-
-                // 1. Inbound traffic decoders (framing and Protobuf)
-                pipeline.addLast("frameDecoder", new EspHomeVarIntFrameDecoder());
-                pipeline.addLast("protobufDecoder", new EspHomeProtobufDecoder());
-
-                // 2. Outbound traffic encoders (commands -> Protobuf -> VarInt framing)
-                pipeline.addLast("frameEncoder", new EspHomeVarIntFrameEncoder());
-                pipeline.addLast("protobufEncoder", new EspHomeProtobufEncoder());
-
-                // 3. Temporary Handshake Handler
-                // It will replace itself with NettyEspHomeEventHandler upon successful login
-                pipeline.addLast("handshakeHandler", new EspHomeHandshakeHandler(resultFuture, subscriptions, config));
+                if (config.encryption().enabled()) {
+                    initEncryptedChannel(ch, subscriptions, resultFuture);
+                } else {
+                    initPlaintextChannel(ch, subscriptions, resultFuture);
+                }
             }
         };
+    }
+
+    private void initPlaintextChannel(
+        final SocketChannel ch,
+        final List<EspHomeSubscription> subscriptions,
+        final CompletableFuture<EspHomeConnection> resultFuture
+    ) {
+        var pipeline = ch.pipeline();
+
+        pipeline.addLast("readTimeout", new ReadTimeoutHandler(config.readTimeoutMillis(), TimeUnit.MILLISECONDS));
+        pipeline.addLast("frameDecoder", new EspHomeVarIntFrameDecoder());
+        pipeline.addLast("protobufDecoder", new EspHomeProtobufDecoder());
+        pipeline.addLast("frameEncoder", new EspHomeVarIntFrameEncoder());
+        pipeline.addLast("protobufEncoder", new EspHomeProtobufEncoder());
+        pipeline.addLast("handshakeHandler", new EspHomeHandshakeHandler(resultFuture, subscriptions, config));
+    }
+
+    private void initEncryptedChannel(
+        final SocketChannel ch,
+        final List<EspHomeSubscription> subscriptions,
+        final CompletableFuture<EspHomeConnection> resultFuture
+    ) {
+        final var psk = io.github.arhor.esphome.client.async.noise.NoiseKeyMaterial.decodeBase64(config.encryption().key());
+        var pipeline = ch.pipeline();
+
+        pipeline.addLast("readTimeout", new ReadTimeoutHandler(config.readTimeoutMillis(), TimeUnit.MILLISECONDS));
+        pipeline.addLast("encryptedFrameDecoder", new EspHomeEncryptedFrameDecoder());
+        pipeline.addLast("encryptedFrameEncoder", new EspHomeEncryptedFrameEncoder());
+        pipeline.addLast(
+            "noiseHandshakeHandler",
+            new EspHomeNoiseHandshakeHandler(psk, config, subscriptions, resultFuture)
+        );
     }
 }

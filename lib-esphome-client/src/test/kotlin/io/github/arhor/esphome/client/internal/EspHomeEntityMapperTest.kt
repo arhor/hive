@@ -63,7 +63,7 @@ class EspHomeEntityMapperTest {
             EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE to entityPayload(ListEntitiesUpdateResponse.newBuilder()),
         )
 
-        val mapped = cases.map { (messageType, payload) -> EspHomeEntityMapper.map(messageType, payload) }
+        val mapped = cases.map { (first, second) -> EspHomeEntityMapper.map(first, second) }
 
         assertIs<EspHomeEntity.BinarySensor>(mapped[0])
         assertIs<EspHomeEntity.Cover>(mapped[1])

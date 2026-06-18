@@ -37,14 +37,15 @@ public final class EspHomeHandshakeHandler extends SimpleChannelInboundHandler<O
     }
 
     @Override
+    public void handlerAdded(final ChannelHandlerContext ctx) {
+        if (ctx.channel().isActive()) {
+            ctx.executor().execute(() -> sendHelloRequest(ctx));
+        }
+    }
+
+    @Override
     public void channelActive(final ChannelHandlerContext ctx) {
-        ctx.channel().writeAndFlush(
-            HelloRequest.newBuilder()
-                .setClientInfo(config.clientName())
-                .setApiVersionMajor(config.apiVersionMajor())
-                .setApiVersionMinor(config.apiVersionMinor())
-                .build()
-        );
+        sendHelloRequest(ctx);
         ctx.fireChannelActive();
     }
 
@@ -72,6 +73,19 @@ public final class EspHomeHandshakeHandler extends SimpleChannelInboundHandler<O
     }
 
     /* ------------------------------------------ Internal implementation ------------------------------------------- */
+
+    private void sendHelloRequest(final ChannelHandlerContext ctx) {
+        if (step != Step.WAITING_FOR_HELLO) {
+            return;
+        }
+        ctx.channel().writeAndFlush(
+            HelloRequest.newBuilder()
+                .setClientInfo(config.clientName())
+                .setApiVersionMajor(config.apiVersionMajor())
+                .setApiVersionMinor(config.apiVersionMinor())
+                .build()
+        );
+    }
 
     private void onPingRequest(final ChannelHandlerContext ctx) {
         ctx.channel().writeAndFlush(PingResponse.getDefaultInstance());
