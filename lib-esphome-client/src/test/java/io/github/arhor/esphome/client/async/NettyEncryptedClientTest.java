@@ -75,8 +75,7 @@ class NettyEncryptedClientTest {
                 EspHomeClientConfig.API_VERSION_MINOR
             );
 
-            final var client = new NettyEspHomeClient(config);
-            try {
+            try (var client = new NettyEspHomeClient(config)) {
                 final EspHomeConnection connection = client.connect().get(15, TimeUnit.SECONDS);
                 assertNotNull(connection);
                 assertTrue(serverGotInit.get(), "server should receive noise init frame");
@@ -88,8 +87,6 @@ class NettyEncryptedClientTest {
                         + ", serverGotHello=" + serverGotHello.get(),
                     exception
                 );
-            } finally {
-                client.close();
             }
         } finally {
             group.shutdownGracefully().sync();
