@@ -23,12 +23,18 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NettyEspHomeClient implements EspHomeClient {
 
+    enum ClientState {
+        ACTIVE,
+        CLOSED,
+    }
+
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
     private final EspHomeClientConfig config;
-    private volatile boolean isClosed = false;
+    private final AtomicReference<ClientState> state = new AtomicReference<>(ClientState.ACTIVE);
 
     public NettyEspHomeClient(final EspHomeClientConfig config) {
         this.config = config;
@@ -36,6 +42,10 @@ public class NettyEspHomeClient implements EspHomeClient {
 
     @Override
     public CompletableFuture<EspHomeConnection> connect() {
+        if (state.get() != ClientState.ACTIVE) {
+            return CompletableFuture.failedFuture(new IllegalStateException("Client is closed"));
+        }
+
         var bootstrap = new Bootstrap();
         var subscriptions = new CopyOnWriteArrayList<EspHomeSubscription>();
         var resultFuture = new CompletableFuture<EspHomeConnection>();
@@ -58,11 +68,9 @@ public class NettyEspHomeClient implements EspHomeClient {
 
     @Override
     public void close() {
-        if (isClosed) {
-            return;
+        if (state.compareAndSet(ClientState.ACTIVE, ClientState.CLOSED)) {
+            workerGroup.shutdownGracefully();
         }
-        isClosed = true;
-        workerGroup.shutdownGracefully();
     }
 
     private ChannelInitializer<Channel> createChannelInitializer(

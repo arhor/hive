@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Flow;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NettyEspHomeConnection implements EspHomeConnection {
     public static final Flow.Subscription NO_OP_SUBSCRIPTION = new Flow.Subscription() {
@@ -21,10 +22,15 @@ public class NettyEspHomeConnection implements EspHomeConnection {
         public void cancel() {}
     };
 
+    enum ConnectionState {
+        ACTIVE,
+        CLOSING,
+        CLOSED,
+    }
+
     private final List<EspHomeSubscription> subscriptions;
     private final Channel channel;
-
-    private volatile boolean isClosed = false;
+    private final AtomicReference<ConnectionState> state = new AtomicReference<>(ConnectionState.ACTIVE);
 
     public NettyEspHomeConnection(
         final List<EspHomeSubscription> subscriptions,
@@ -32,11 +38,12 @@ public class NettyEspHomeConnection implements EspHomeConnection {
     ) {
         this.subscriptions = Objects.requireNonNull(subscriptions);
         this.channel = Objects.requireNonNull(channel);
+        channel.closeFuture().addListener(_ -> onChannelClosed());
     }
 
     @Override
     public CompletableFuture<Void> send(final EspHomeCommand command) {
-        if (isClosed || !channel.isActive()) {
+        if (!acceptsOperations()) {
             return CompletableFuture.failedFuture(new IllegalStateException("Client is not connected"));
         }
         CompletableFuture<Void> commandFuture = new CompletableFuture<>();
@@ -64,35 +71,56 @@ public class NettyEspHomeConnection implements EspHomeConnection {
     @Override
     public Flow.Publisher<EspHomeEvent> observeEvents() {
         return (subscriber) -> {
-            if (isClosed || !channel.isActive()) {
+            if (acceptsOperations()) {
+                subscribe(channel, subscriptions, subscriber);
+            } else {
                 subscriber.onSubscribe(NO_OP_SUBSCRIPTION);
                 subscriber.onError(new IllegalStateException("Client is not connected"));
-                return;
             }
-            subscribe(channel, subscriptions, subscriber);
         };
     }
 
     @Override
     public void close() {
-        if (isClosed) {
-            return;
+        if (beginClosing()) {
+            try {
+                channel.close().awaitUninterruptibly();
+            } finally {
+                state.set(ConnectionState.CLOSED);
+            }
         }
-        isClosed = true;
+    }
 
-        // Cancel all active subscriptions
+    /* ------------------------------------------ Internal implementation ------------------------------------------- */
+
+    private boolean acceptsOperations() {
+        return state.get() == ConnectionState.ACTIVE && channel.isActive();
+    }
+
+    private boolean beginClosing() {
+        while (true) {
+            final var current = state.get();
+            if (current == ConnectionState.CLOSED || current == ConnectionState.CLOSING) {
+                return false;
+            }
+            if (state.compareAndSet(ConnectionState.ACTIVE, ConnectionState.CLOSING)) {
+                cleanupSubscriptions();
+                return true;
+            }
+        }
+    }
+
+    private void onChannelClosed() {
+        beginClosing();
+        state.set(ConnectionState.CLOSED);
+    }
+
+    private void cleanupSubscriptions() {
         for (EspHomeSubscription sub : subscriptions) {
             sub.cancel();
         }
         subscriptions.clear();
-
-        // Close the network channel
-        channel
-            .close()
-            .awaitUninterruptibly();
     }
-
-    /* ------------------------------------------ Internal implementation ------------------------------------------- */
 
     private void subscribe(
         final Channel channel,
