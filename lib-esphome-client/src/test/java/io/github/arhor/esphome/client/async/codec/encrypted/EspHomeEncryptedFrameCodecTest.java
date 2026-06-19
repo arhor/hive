@@ -1,6 +1,8 @@
 package io.github.arhor.esphome.client.async.codec.encrypted;
 
-import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameEncoder;
+import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;

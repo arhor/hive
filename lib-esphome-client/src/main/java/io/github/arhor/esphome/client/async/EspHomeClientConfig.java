@@ -7,7 +7,7 @@ public record EspHomeClientConfig(
     int port,
     String clientName,
     String password,
-    EspHomeEncryptionConfig encryption,
+    EncryptionConfig encryption,
     Duration connectTimeout,
     Duration readTimeout,
     int apiVersionMajor,
@@ -29,7 +29,7 @@ public record EspHomeClientConfig(
             port,
             clientName,
             password,
-            EspHomeEncryptionConfig.disabled(),
+            EncryptionConfig.disabled(),
             DEFAULT_CONNECT_TIMEOUT,
             DEFAULT_READ_TIMEOUT,
             API_VERSION_MAJOR,
@@ -51,7 +51,7 @@ public record EspHomeClientConfig(
             throw new IllegalArgumentException("readTimeout must be positive");
         }
         if (encryption == null) {
-            encryption = EspHomeEncryptionConfig.disabled();
+            encryption = EncryptionConfig.disabled();
         }
     }
 
@@ -61,5 +61,20 @@ public record EspHomeClientConfig(
 
     public int readTimeoutMillis() {
         return Math.toIntExact(readTimeout.toMillis());
+    }
+
+    public record EncryptionConfig(
+        boolean enabled,
+        String key
+    ) {
+        public EncryptionConfig {
+            if (enabled && (key == null || key.isBlank())) {
+                throw new IllegalArgumentException("key must be configured when encryption is enabled");
+            }
+        }
+
+        public static EncryptionConfig disabled() {
+            return new EncryptionConfig(false, null);
+        }
     }
 }

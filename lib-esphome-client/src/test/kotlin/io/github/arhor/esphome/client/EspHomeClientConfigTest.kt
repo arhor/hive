@@ -1,7 +1,6 @@
 package io.github.arhor.esphome.client
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
-import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,7 +17,7 @@ class EspHomeClientConfigTest {
         assertEquals(Duration.ofSeconds(2), config.connectTimeout)
         assertEquals(Duration.ofSeconds(5), config.readTimeout)
         assertEquals(null, config.password)
-        assertEquals(EspHomeEncryptionConfig(), config.encryption)
+        assertEquals(EspHomeClientConfig.EncryptionConfig(), config.encryption)
     }
 
     @Test
@@ -36,10 +35,10 @@ class EspHomeClientConfigTest {
     @Test
     fun `rejects enabled encryption without key`() {
         assertFailsWith<IllegalArgumentException> {
-            EspHomeEncryptionConfig(enabled = true, key = null)
+            EspHomeClientConfig.EncryptionConfig(enabled = true, key = null)
         }
         assertFailsWith<IllegalArgumentException> {
-            EspHomeEncryptionConfig(enabled = true, key = " ")
+            EspHomeClientConfig.EncryptionConfig(enabled = true, key = " ")
         }
     }
 }

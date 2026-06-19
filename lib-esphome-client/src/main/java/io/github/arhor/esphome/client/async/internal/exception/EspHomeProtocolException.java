@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.exception;
+package io.github.arhor.esphome.client.async.internal.exception;
 
 public class EspHomeProtocolException extends EspHomeClientException {
     public EspHomeProtocolException(final String message, final Throwable cause) {

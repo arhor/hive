@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.exception;
+package io.github.arhor.esphome.client.async.internal.exception;
 
 public abstract class EspHomeClientException extends RuntimeException {
 

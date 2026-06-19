@@ -5,7 +5,6 @@ import io.github.arhor.catrecognizer.client.model.FramePayload
 import io.github.arhor.catrecognizer.config.RecognizerConfig
 import io.github.arhor.catrecognizer.domain.FrameSourceError
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
-import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
 import io.github.arhor.esphome.client.internal.EspHomeClientDefault
 import io.github.arhor.esphome.client.internal.EspHomeConnectionFactory
 import jakarta.enterprise.context.ApplicationScoped
@@ -34,7 +33,7 @@ class EspHomeNativeFrameClient @Inject constructor(
             port = nativeApi.port(),
             connectTimeout = nativeApi.connectTimeout(),
             readTimeout = nativeApi.readTimeout(),
-            encryption = EspHomeEncryptionConfig(
+            encryption = EspHomeClientConfig.EncryptionConfig(
                 enabled = nativeApi.encryption().enabled(),
                 key = nativeApi.encryption().key().orElse(null),
             ),

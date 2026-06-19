@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.codec;
+package io.github.arhor.esphome.client.async.internal.codec;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;

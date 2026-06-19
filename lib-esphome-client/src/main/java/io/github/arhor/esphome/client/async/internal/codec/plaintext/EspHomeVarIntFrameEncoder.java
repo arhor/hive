@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.codec.plaintext;
+package io.github.arhor.esphome.client.async.internal.codec.plaintext;
 
 import io.github.arhor.esphome.client.async.internal.EspHomeFrame;
 import io.netty.buffer.ByteBuf;

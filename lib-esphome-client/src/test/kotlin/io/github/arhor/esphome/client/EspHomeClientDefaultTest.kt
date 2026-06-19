@@ -1,7 +1,6 @@
 package io.github.arhor.esphome.client
 
 import io.github.arhor.esphome.client.config.EspHomeClientConfig
-import io.github.arhor.esphome.client.config.EspHomeEncryptionConfig
 import io.github.arhor.esphome.client.exception.EspHomeProtocolException
 import io.github.arhor.esphome.client.internal.EspHomeClientDefault
 import io.github.arhor.esphome.client.internal.EspHomeFrame
@@ -54,7 +53,7 @@ class EspHomeClientDefaultTest {
         val client = EspHomeClientDefault(
             config = EspHomeClientConfig(
                 host = "camera",
-                encryption = EspHomeEncryptionConfig(
+                encryption = EspHomeClientConfig.EncryptionConfig(
                     enabled = true,
                     key = Base64.getEncoder().encodeToString(key),
                 ),

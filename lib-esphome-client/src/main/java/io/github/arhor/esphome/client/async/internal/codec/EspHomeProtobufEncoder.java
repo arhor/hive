@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.codec;
+package io.github.arhor.esphome.client.async.internal.codec;
 
 import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.internal.EspHomeFrame;

@@ -1,15 +1,15 @@
 package io.github.arhor.esphome.client.async;
 
 import com.google.protobuf.MessageLite;
-import io.github.arhor.esphome.client.async.codec.EspHomeProtobufDecoder;
-import io.github.arhor.esphome.client.async.codec.EspHomeProtobufEncoder;
-import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameDecoder;
-import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameEncoder;
-import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedPayloadDecoder;
-import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedPayloadEncoder;
 import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
-import io.github.arhor.esphome.client.async.noise.NoiseHandshakeState;
+import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
+import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameEncoder;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedPayloadDecoder;
+import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedPayloadEncoder;
+import io.github.arhor.esphome.client.async.internal.noise.NoiseHandshakeState;
 import io.github.arhor.esphome.client.proto.ConnectResponse;
 import io.github.arhor.esphome.client.proto.HelloRequest;
 import io.github.arhor.esphome.client.proto.HelloResponse;
@@ -72,7 +72,7 @@ class NettyEncryptedClientTest {
                 port,
                 "test-client",
                 null,
-                new EspHomeEncryptionConfig(true, Base64.getEncoder().encodeToString(psk)),
+                new EspHomeClientConfig.EncryptionConfig(true, Base64.getEncoder().encodeToString(psk)),
                 Duration.ofSeconds(10),
                 Duration.ofSeconds(10),
                 EspHomeClientConfig.API_VERSION_MAJOR,

@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.noise;
+package io.github.arhor.esphome.client.async.internal.noise;
 
 import java.nio.charset.StandardCharsets;
 

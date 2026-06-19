@@ -1,9 +1,9 @@
-package io.github.arhor.esphome.client.async.codec.encrypted;
+package io.github.arhor.esphome.client.async.internal.codec.encrypted;
 
-import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
 import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
 import io.github.arhor.esphome.client.async.internal.EspHomeFrame;
-import io.github.arhor.esphome.client.async.noise.NoiseConstants;
+import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.internal.noise.NoiseConstants;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;

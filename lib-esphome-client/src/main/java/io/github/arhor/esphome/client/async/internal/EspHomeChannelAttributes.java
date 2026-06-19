@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.noise.NoiseCipherState;
+import io.github.arhor.esphome.client.async.internal.noise.NoiseCipherState;
 import io.netty.util.AttributeKey;
 
 public final class EspHomeChannelAttributes {

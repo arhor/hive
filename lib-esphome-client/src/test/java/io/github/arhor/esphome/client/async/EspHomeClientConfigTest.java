@@ -11,7 +11,7 @@ class EspHomeClientConfigTest {
 
     @Test
     void encryptionEnabledRequiresKey() {
-        assertThrows(IllegalArgumentException.class, () -> new EspHomeEncryptionConfig(true, null));
+        assertThrows(IllegalArgumentException.class, () -> new EspHomeClientConfig.EncryptionConfig(true, null));
     }
 
     @Test
@@ -29,7 +29,7 @@ class EspHomeClientConfigTest {
                 6053,
                 "client",
                 null,
-                EspHomeEncryptionConfig.disabled(),
+                EspHomeClientConfig.EncryptionConfig.disabled(),
                 Duration.ZERO,
                 Duration.ofSeconds(5),
                 EspHomeClientConfig.API_VERSION_MAJOR,

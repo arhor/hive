@@ -9,7 +9,7 @@ data class EspHomeClientConfig(
     val connectTimeout: Duration = Duration.ofSeconds(2),
     val readTimeout: Duration = Duration.ofSeconds(5),
     val password: String? = null,
-    val encryption: EspHomeEncryptionConfig = EspHomeEncryptionConfig(),
+    val encryption: EncryptionConfig = EncryptionConfig(),
     val apiVersionMajor: Int = 1,
     val apiVersionMinor: Int = 10,
 ) {
@@ -25,4 +25,15 @@ data class EspHomeClientConfig(
 
     val readTimeoutMillis: Int
         get() = readTimeout.toMillis().toInt()
+
+    data class EncryptionConfig(
+        val enabled: Boolean = false,
+        val key: String? = null,
+    ) {
+        init {
+            require(!enabled || !key.isNullOrBlank()) {
+                "key must be configured when encryption is enabled"
+            }
+        }
+    }
 }

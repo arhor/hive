@@ -1,6 +1,8 @@
 package io.github.arhor.esphome.client.async.noise;
 
-import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.internal.noise.NoiseCipherState;
+import io.github.arhor.esphome.client.async.internal.noise.NoiseConstants;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

@@ -1,6 +1,6 @@
-package io.github.arhor.esphome.client.async.noise;
+package io.github.arhor.esphome.client.async.internal.noise;
 
-import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
 
 import java.util.Base64;
 
