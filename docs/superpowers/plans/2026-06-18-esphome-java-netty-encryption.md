@@ -232,7 +232,7 @@ Port logic from Kotlin `internal/noise/*` to Java `async/noise/*`. Behavior must
 ```java
 package io.github.arhor.esphome.client.async.noise;
 
-import io.github.arhor.esphome.client.async.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
 import org.junit.jupiter.api.Test;
 
 import java.util.Base64;

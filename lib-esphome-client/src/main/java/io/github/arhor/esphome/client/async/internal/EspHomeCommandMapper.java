@@ -1,6 +1,7 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.internal;
 
 import com.google.protobuf.MessageLite;
+import io.github.arhor.esphome.client.async.EspHomeCommand;
 import io.github.arhor.esphome.client.proto.CameraImageRequest;
 import io.github.arhor.esphome.client.proto.DeviceInfoRequest;
 

@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.internal;
 
 public final class EspHomeMessageType {
     public static final int HELLO_REQUEST = 1;

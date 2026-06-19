@@ -1,10 +1,14 @@
 package io.github.arhor.esphome.client.async;
 
 import com.google.protobuf.MessageLite;
+import io.github.arhor.esphome.client.async.codec.EspHomeProtobufDecoder;
+import io.github.arhor.esphome.client.async.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameDecoder;
 import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedFrameEncoder;
 import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedPayloadDecoder;
 import io.github.arhor.esphome.client.async.codec.encrypted.EspHomeEncryptedPayloadEncoder;
+import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
+import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
 import io.github.arhor.esphome.client.async.noise.NoiseHandshakeState;
 import io.github.arhor.esphome.client.proto.ConnectResponse;
 import io.github.arhor.esphome.client.proto.HelloRequest;

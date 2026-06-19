@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.async.noise;
 
-import io.github.arhor.esphome.client.async.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.exception.EspHomeProtocolException;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.Mac;

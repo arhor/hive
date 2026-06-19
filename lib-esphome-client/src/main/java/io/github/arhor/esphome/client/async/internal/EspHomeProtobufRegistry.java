@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.internal;
 
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;

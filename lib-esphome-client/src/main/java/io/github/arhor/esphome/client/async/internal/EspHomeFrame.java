@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.internal;
 
 import io.netty.buffer.ByteBuf;
 

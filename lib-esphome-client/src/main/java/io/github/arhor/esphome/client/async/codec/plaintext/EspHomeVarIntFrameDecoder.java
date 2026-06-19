@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.async.codec.plaintext;
 
-import io.github.arhor.esphome.client.async.EspHomeFrame;
+import io.github.arhor.esphome.client.async.internal.EspHomeFrame;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

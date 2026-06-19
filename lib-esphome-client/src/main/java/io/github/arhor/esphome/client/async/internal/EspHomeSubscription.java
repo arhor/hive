@@ -1,5 +1,6 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.internal;
 
+import io.github.arhor.esphome.client.async.EspHomeEvent;
 import io.netty.channel.Channel;
 
 import java.util.concurrent.Flow;

@@ -1,8 +1,10 @@
-package io.github.arhor.esphome.client.async;
+package io.github.arhor.esphome.client.async.codec;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
+import io.github.arhor.esphome.client.async.internal.EspHomeFrame;
+import io.github.arhor.esphome.client.async.internal.EspHomeProtobufRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
