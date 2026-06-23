@@ -1,8 +1,8 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeClient;
 import io.github.arhor.esphome.client.async.EspHomeClientConfig;
 import io.github.arhor.esphome.client.async.EspHomeConnection;
+import io.github.arhor.esphome.client.async.EspHomeConnectionManager;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
@@ -25,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NettyEspHomeClient implements EspHomeClient {
+public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
 
     enum ClientState {
         ACTIVE,
@@ -36,7 +36,7 @@ public class NettyEspHomeClient implements EspHomeClient {
     private final EspHomeClientConfig config;
     private final AtomicReference<ClientState> state = new AtomicReference<>(ClientState.ACTIVE);
 
-    public NettyEspHomeClient(final EspHomeClientConfig config) {
+    public NettyEspHomeConnectionManager(final EspHomeClientConfig config) {
         this.config = config;
     }
 

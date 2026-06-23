@@ -2,7 +2,7 @@ package io.github.arhor.esphome.client.async;
 
 import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
-import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
+import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnectionManager;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
@@ -79,7 +79,7 @@ class NettyEncryptedClientTest {
                 EspHomeClientConfig.API_VERSION_MINOR
             );
 
-            try (var client = new NettyEspHomeClient(config)) {
+            try (var client = new NettyEspHomeConnectionManager(config)) {
                 final EspHomeConnection connection = client.connect().get(15, TimeUnit.SECONDS);
                 assertNotNull(connection);
                 assertTrue(serverGotInit.get(), "server should receive noise init frame");
