@@ -1,19 +1,19 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.ClimateFanMode;
-import io.github.arhor.esphome.client.async.ClimateMode;
-import io.github.arhor.esphome.client.async.ClimatePreset;
-import io.github.arhor.esphome.client.async.ClimateSwingMode;
-import io.github.arhor.esphome.client.async.ColorMode;
-import io.github.arhor.esphome.client.async.EntityCategory;
-import io.github.arhor.esphome.client.async.MediaPlayerFormat;
-import io.github.arhor.esphome.client.async.MediaPlayerFormatPurpose;
-import io.github.arhor.esphome.client.async.NumberMode;
-import io.github.arhor.esphome.client.async.SensorLastResetType;
-import io.github.arhor.esphome.client.async.SensorStateClass;
-import io.github.arhor.esphome.client.async.ServiceArgType;
-import io.github.arhor.esphome.client.async.ServiceArgument;
-import io.github.arhor.esphome.client.async.TextMode;
+import io.github.arhor.esphome.client.async.model.ClimateFanMode;
+import io.github.arhor.esphome.client.async.model.ClimateMode;
+import io.github.arhor.esphome.client.async.model.ClimatePreset;
+import io.github.arhor.esphome.client.async.model.ClimateSwingMode;
+import io.github.arhor.esphome.client.async.model.ColorMode;
+import io.github.arhor.esphome.client.async.model.EntityCategory;
+import io.github.arhor.esphome.client.async.model.MediaPlayerFormat;
+import io.github.arhor.esphome.client.async.model.MediaPlayerFormatPurpose;
+import io.github.arhor.esphome.client.async.model.NumberMode;
+import io.github.arhor.esphome.client.async.model.SensorLastResetType;
+import io.github.arhor.esphome.client.async.model.SensorStateClass;
+import io.github.arhor.esphome.client.async.model.ServiceArgType;
+import io.github.arhor.esphome.client.async.model.ServiceArgument;
+import io.github.arhor.esphome.client.async.model.TextMode;
 import io.github.arhor.esphome.client.proto.ListEntitiesServicesArgument;
 
 import java.util.List;

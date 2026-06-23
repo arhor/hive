@@ -1,6 +1,6 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeEvent;
+import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.github.arhor.esphome.client.proto.CameraImageResponse;
 
 public class EspHomeEventMapper {

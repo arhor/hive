@@ -1,7 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeEntity;
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
+import io.github.arhor.esphome.client.async.model.EspHomeEntity;
 import io.github.arhor.esphome.client.proto.ListEntitiesAlarmControlPanelResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesBinarySensorResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesButtonResponse;

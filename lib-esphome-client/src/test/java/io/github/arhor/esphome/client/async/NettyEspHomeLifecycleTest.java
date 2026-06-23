@@ -2,6 +2,8 @@ package io.github.arhor.esphome.client.async;
 
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnection;
+import io.github.arhor.esphome.client.async.model.EspHomeCommand;
+import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
 
