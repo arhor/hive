@@ -1,6 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeClientConfig;
+import io.github.arhor.esphome.client.async.EspHomeClient;
+import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
@@ -23,7 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
+public class NettyEspHomeClient implements EspHomeClient {
 
     enum ClientState {
         ACTIVE,
@@ -31,10 +32,10 @@ public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
     }
 
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-    private final EspHomeClientConfig config;
+    private final Config config;
     private final AtomicReference<ClientState> state = new AtomicReference<>(ClientState.ACTIVE);
 
-    public NettyEspHomeConnectionManager(final EspHomeClientConfig config) {
+    public NettyEspHomeClient(final Config config) {
         this.config = config;
     }
 
@@ -52,7 +53,7 @@ public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
             .group(workerGroup)
             .channelFactory(NioSocketChannel::new)
             .option(ChannelOption.TCP_NODELAY, true)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, config.connectTimeoutMillis())
+            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, Math.toIntExact(config.connectTimeout().toMillis()))
             .handler(createChannelInitializer(subscriptions, resultFuture))
             .connect(config.host(), config.port())
             .addListener((future) -> {
@@ -94,7 +95,7 @@ public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
     ) {
         var pipeline = ch.pipeline();
 
-        pipeline.addLast("readTimeout", new ReadTimeoutHandler(config.readTimeoutMillis(), TimeUnit.MILLISECONDS));
+        pipeline.addLast("readTimeout", new ReadTimeoutHandler(Math.toIntExact(config.readTimeout().toMillis()), TimeUnit.MILLISECONDS));
         pipeline.addLast("frameDecoder", new EspHomeVarIntFrameDecoder());
         pipeline.addLast("protobufDecoder", new EspHomeProtobufDecoder());
         pipeline.addLast("frameEncoder", new EspHomeVarIntFrameEncoder());
@@ -110,7 +111,7 @@ public class NettyEspHomeConnectionManager implements EspHomeConnectionManager {
         final var psk = NoiseKeyMaterial.decodeBase64(config.encryption().key());
         final var pipeline = ch.pipeline();
 
-        pipeline.addLast("readTimeout", new ReadTimeoutHandler(config.readTimeoutMillis(), TimeUnit.MILLISECONDS));
+        pipeline.addLast("readTimeout", new ReadTimeoutHandler(Math.toIntExact(config.readTimeout().toMillis()), TimeUnit.MILLISECONDS));
         pipeline.addLast("encryptedFrameDecoder", new EspHomeEncryptedFrameDecoder());
         pipeline.addLast("encryptedFrameEncoder", new EspHomeEncryptedFrameEncoder());
         pipeline.addLast("noiseHandshakeHandler", new EspHomeNoiseHandshakeHandler(psk, config, subscriptions, resultFuture));

@@ -2,8 +2,7 @@ package io.github.arhor.esphome.client.async;
 
 import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
-import io.github.arhor.esphome.client.async.internal.EspHomeConnection;
-import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnectionManager;
+import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;
@@ -68,19 +67,19 @@ class NettyEncryptedClientTest {
             final var serverChannel = server.bind(new InetSocketAddress("127.0.0.1", 0)).sync().channel();
             final var port = ((InetSocketAddress) serverChannel.localAddress()).getPort();
 
-            final var config = new EspHomeClientConfig(
+            final var config = new EspHomeClient.Config(
                 "127.0.0.1",
                 port,
                 "test-client",
                 null,
-                new EspHomeClientConfig.EncryptionConfig(true, Base64.getEncoder().encodeToString(psk)),
+                new EspHomeClient.Config.Encryption(true, Base64.getEncoder().encodeToString(psk)),
                 Duration.ofSeconds(10),
                 Duration.ofSeconds(10),
-                EspHomeClientConfig.API_VERSION_MAJOR,
-                EspHomeClientConfig.API_VERSION_MINOR
+                EspHomeClient.API_VERSION_MAJOR,
+                EspHomeClient.API_VERSION_MINOR
             );
 
-            try (var client = new NettyEspHomeConnectionManager(config)) {
+            try (var client = new NettyEspHomeClient(config)) {
                 final EspHomeConnection connection = client.connect().get(15, TimeUnit.SECONDS);
                 assertNotNull(connection);
                 assertTrue(serverGotInit.get(), "server should receive noise init frame");
@@ -194,8 +193,8 @@ class NettyEncryptedClientTest {
                     serverGotHello.set(true);
                     ctx.writeAndFlush(
                     HelloResponse.newBuilder()
-                        .setApiVersionMajor(EspHomeClientConfig.API_VERSION_MAJOR)
-                        .setApiVersionMinor(EspHomeClientConfig.API_VERSION_MINOR)
+                        .setApiVersionMajor(EspHomeClient.API_VERSION_MAJOR)
+                        .setApiVersionMinor(EspHomeClient.API_VERSION_MINOR)
                         .setName("test-device")
                         .build()
                     );

@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.internal;
+package io.github.arhor.esphome.client.async;
 
 import io.github.arhor.esphome.client.async.model.EspHomeCommand;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;

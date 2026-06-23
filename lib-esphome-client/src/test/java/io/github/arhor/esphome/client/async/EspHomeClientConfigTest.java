@@ -11,12 +11,12 @@ class EspHomeClientConfigTest {
 
     @Test
     void encryptionEnabledRequiresKey() {
-        assertThrows(IllegalArgumentException.class, () -> new EspHomeClientConfig.EncryptionConfig(true, null));
+        assertThrows(IllegalArgumentException.class, () -> new EspHomeClient.Config.Encryption(true, null));
     }
 
     @Test
     void defaultEncryptionDisabled() {
-        final var config = new EspHomeClientConfig("host", 6053, "client", null);
+        final var config = new EspHomeClient.Config("host", 6053, "client", null);
         assertFalse(config.encryption().enabled());
     }
 
@@ -24,16 +24,16 @@ class EspHomeClientConfigTest {
     void rejectsZeroConnectTimeout() {
         assertThrows(
             IllegalArgumentException.class,
-            () -> new EspHomeClientConfig(
+            () -> new EspHomeClient.Config(
                 "host",
                 6053,
                 "client",
                 null,
-                EspHomeClientConfig.EncryptionConfig.disabled(),
+                EspHomeClient.Config.Encryption.disabled(),
                 Duration.ZERO,
                 Duration.ofSeconds(5),
-                EspHomeClientConfig.API_VERSION_MAJOR,
-                EspHomeClientConfig.API_VERSION_MINOR
+                EspHomeClient.API_VERSION_MAJOR,
+                EspHomeClient.API_VERSION_MINOR
             )
         );
     }

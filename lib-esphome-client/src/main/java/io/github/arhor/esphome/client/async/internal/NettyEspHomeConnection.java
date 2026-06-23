@@ -1,6 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
 import com.google.protobuf.MessageLite;
+import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.model.EspHomeCommand;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.netty.channel.Channel;

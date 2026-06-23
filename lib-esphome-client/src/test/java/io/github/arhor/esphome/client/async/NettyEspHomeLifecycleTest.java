@@ -1,7 +1,7 @@
 package io.github.arhor.esphome.client.async;
 
+import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnection;
-import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnectionManager;
 import io.github.arhor.esphome.client.async.model.EspHomeCommand;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -22,8 +22,8 @@ class NettyEspHomeLifecycleTest {
 
     @Test
     void connectFailsAfterClientClose() {
-        final var config = new EspHomeClientConfig("127.0.0.1", 1, "test-client", null);
-        final var client = new NettyEspHomeConnectionManager(config);
+        final var config = new EspHomeClient.Config("127.0.0.1", 1, "test-client", null);
+        final var client = new NettyEspHomeClient(config);
 
         client.close();
 
@@ -101,18 +101,18 @@ class NettyEspHomeLifecycleTest {
 
     @Test
     void repeatedClientCloseIsIdempotent() {
-        final var config = new EspHomeClientConfig(
+        final var config = new EspHomeClient.Config(
             "127.0.0.1",
             1,
             "test-client",
             null,
-            EspHomeClientConfig.EncryptionConfig.disabled(),
+            EspHomeClient.Config.Encryption.disabled(),
             Duration.ofSeconds(1),
             Duration.ofSeconds(1),
-            EspHomeClientConfig.API_VERSION_MAJOR,
-            EspHomeClientConfig.API_VERSION_MINOR
+            EspHomeClient.API_VERSION_MAJOR,
+            EspHomeClient.API_VERSION_MINOR
         );
-        final var client = new NettyEspHomeConnectionManager(config);
+        final var client = new NettyEspHomeClient(config);
 
         client.close();
         client.close();

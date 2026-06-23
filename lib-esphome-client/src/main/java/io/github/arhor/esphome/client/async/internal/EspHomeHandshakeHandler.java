@@ -1,6 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeClientConfig;
+import io.github.arhor.esphome.client.async.EspHomeClient;
+import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeAuthenticationException;
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
 import io.github.arhor.esphome.client.proto.ConnectRequest;
@@ -25,14 +26,14 @@ public final class EspHomeHandshakeHandler extends SimpleChannelInboundHandler<O
 
     private final CompletableFuture<EspHomeConnection> completion;
     private final List<EspHomeSubscription> subscriptions;
-    private final EspHomeClientConfig config;
+    private final EspHomeClient.Config config;
 
     private Step step = Step.WAITING_FOR_HELLO;
 
     public EspHomeHandshakeHandler(
         final CompletableFuture<EspHomeConnection> completion,
         final List<EspHomeSubscription> subscriptions,
-        final EspHomeClientConfig config
+        final EspHomeClient.Config config
     ) {
         this.completion = completion;
         this.subscriptions = subscriptions;

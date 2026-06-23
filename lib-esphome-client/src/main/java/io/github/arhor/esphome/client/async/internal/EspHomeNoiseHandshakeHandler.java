@@ -1,6 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.async.EspHomeClientConfig;
+import io.github.arhor.esphome.client.async.EspHomeClient;
+import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedPayloadDecoder;
@@ -26,7 +27,7 @@ public final class EspHomeNoiseHandshakeHandler extends SimpleChannelInboundHand
     }
 
     private final NoiseHandshakeState handshake;
-    private final EspHomeClientConfig config;
+    private final EspHomeClient.Config config;
     private final List<EspHomeSubscription> subscriptions;
     private final CompletableFuture<EspHomeConnection> connectionFuture;
 
@@ -35,7 +36,7 @@ public final class EspHomeNoiseHandshakeHandler extends SimpleChannelInboundHand
 
     public EspHomeNoiseHandshakeHandler(
         final byte[] psk,
-        final EspHomeClientConfig config,
+        final EspHomeClient.Config config,
         final List<EspHomeSubscription> subscriptions,
         final CompletableFuture<EspHomeConnection> connectionFuture
     ) {

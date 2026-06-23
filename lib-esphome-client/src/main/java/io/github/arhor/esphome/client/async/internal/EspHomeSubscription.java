@@ -21,7 +21,10 @@ public class EspHomeSubscription implements Flow.Subscription {
     private static final int HI_WATERMARK = 5000;
     private static final int LO_WATERMARK = 1000;
 
-    public EspHomeSubscription(Flow.Subscriber<? super EspHomeEvent> subscriber, Channel channel) {
+    public EspHomeSubscription(
+        final Flow.Subscriber<? super EspHomeEvent> subscriber,
+        final Channel channel
+    ) {
         this.subscriber = subscriber;
         this.channel = channel;
     }
