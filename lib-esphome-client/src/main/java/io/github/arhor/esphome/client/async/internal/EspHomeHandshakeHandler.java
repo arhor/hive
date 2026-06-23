@@ -1,7 +1,6 @@
 package io.github.arhor.esphome.client.async.internal;
 
 import io.github.arhor.esphome.client.async.EspHomeClientConfig;
-import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeAuthenticationException;
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
 import io.github.arhor.esphome.client.proto.ConnectRequest;

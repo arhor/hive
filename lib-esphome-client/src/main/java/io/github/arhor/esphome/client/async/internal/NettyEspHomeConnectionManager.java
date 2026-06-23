@@ -1,8 +1,6 @@
 package io.github.arhor.esphome.client.async.internal;
 
 import io.github.arhor.esphome.client.async.EspHomeClientConfig;
-import io.github.arhor.esphome.client.async.EspHomeConnection;
-import io.github.arhor.esphome.client.async.EspHomeConnectionManager;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
 import io.github.arhor.esphome.client.async.internal.codec.encrypted.EspHomeEncryptedFrameDecoder;

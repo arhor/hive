@@ -2,6 +2,7 @@ package io.github.arhor.esphome.client.async;
 
 import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.internal.EspHomeChannelAttributes;
+import io.github.arhor.esphome.client.async.internal.EspHomeConnection;
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnectionManager;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufDecoder;
 import io.github.arhor.esphome.client.async.internal.codec.EspHomeProtobufEncoder;
