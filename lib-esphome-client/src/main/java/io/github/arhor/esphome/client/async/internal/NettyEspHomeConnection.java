@@ -6,6 +6,7 @@ import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.github.arhor.esphome.client.async.model.EspHomeMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.concurrent.Future;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,7 +39,8 @@ public class NettyEspHomeConnection implements EspHomeConnection {
     ) {
         this.subscriptions = Objects.requireNonNull(subscriptions);
         this.channel = Objects.requireNonNull(channel);
-        channel.closeFuture().addListener(_ -> onChannelClosed());
+
+        channel.closeFuture().addListener(this::onChannelClosed);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class NettyEspHomeConnection implements EspHomeConnection {
 
     private boolean beginClosing() {
         while (true) {
-            final var current = state.get();
+            var current = state.get();
             if (current == ConnectionState.CLOSED || current == ConnectionState.CLOSING) {
                 return false;
             }
@@ -110,7 +112,7 @@ public class NettyEspHomeConnection implements EspHomeConnection {
         }
     }
 
-    private void onChannelClosed() {
+    private void onChannelClosed(final Future<? super Void> future) {
         beginClosing();
         state.set(ConnectionState.CLOSED);
     }
