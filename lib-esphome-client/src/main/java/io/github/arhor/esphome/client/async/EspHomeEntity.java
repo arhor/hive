@@ -1,18 +1,5 @@
 package io.github.arhor.esphome.client.async;
 
-import io.github.arhor.esphome.client.proto.ClimateFanMode;
-import io.github.arhor.esphome.client.proto.ClimateMode;
-import io.github.arhor.esphome.client.proto.ClimatePreset;
-import io.github.arhor.esphome.client.proto.ClimateSwingMode;
-import io.github.arhor.esphome.client.proto.ColorMode;
-import io.github.arhor.esphome.client.proto.EntityCategory;
-import io.github.arhor.esphome.client.proto.ListEntitiesServicesArgument;
-import io.github.arhor.esphome.client.proto.MediaPlayerSupportedFormat;
-import io.github.arhor.esphome.client.proto.NumberMode;
-import io.github.arhor.esphome.client.proto.SensorLastResetType;
-import io.github.arhor.esphome.client.proto.SensorStateClass;
-import io.github.arhor.esphome.client.proto.TextMode;
-
 import java.util.List;
 
 public sealed interface EspHomeEntity {
@@ -122,7 +109,7 @@ public sealed interface EspHomeEntity {
         int key,
         String objectId,
         String name,
-        List<ListEntitiesServicesArgument> args
+        List<ServiceArgument> args
     ) implements EspHomeEntity {}
 
     record Camera(
@@ -237,7 +224,7 @@ public sealed interface EspHomeEntity {
         boolean disabledByDefault,
         EntityCategory entityCategory,
         boolean supportsPause,
-        List<MediaPlayerSupportedFormat> supportedFormats
+        List<MediaPlayerFormat> supportedFormats
     ) implements EspHomeEntity {}
 
     record AlarmControlPanel(

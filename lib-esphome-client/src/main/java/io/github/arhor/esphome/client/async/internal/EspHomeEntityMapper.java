@@ -40,7 +40,7 @@ public class EspHomeEntityMapper {
                 res.getIsStatusBinarySensor(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesCoverResponse res -> new EspHomeEntity.Cover(
@@ -54,7 +54,7 @@ public class EspHomeEntityMapper {
                 res.getDeviceClass(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getSupportsStop()
             );
 
@@ -69,7 +69,7 @@ public class EspHomeEntityMapper {
                 res.getSupportedSpeedCount(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getSupportedPresetModesList()
             );
 
@@ -78,13 +78,13 @@ public class EspHomeEntityMapper {
                 res.getObjectId(),
                 res.getName(),
                 res.getUniqueId(),
-                res.getSupportedColorModesList(),
+                EspHomeProtoTypeMapper.mapColorModes(res.getSupportedColorModesList()),
                 res.getMinMireds(),
                 res.getMaxMireds(),
                 res.getEffectsList(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesSensorResponse res -> new EspHomeEntity.Sensor(
@@ -97,10 +97,10 @@ public class EspHomeEntityMapper {
                 res.getAccuracyDecimals(),
                 res.getForceUpdate(),
                 res.getDeviceClass(),
-                res.getStateClass(),
-                res.getLegacyLastResetType(),
+                EspHomeProtoTypeMapper.mapSensorStateClass(res.getStateClass()),
+                EspHomeProtoTypeMapper.mapSensorLastResetType(res.getLegacyLastResetType()),
                 res.getDisabledByDefault(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesSwitchResponse res -> new EspHomeEntity.Switch(
@@ -111,7 +111,7 @@ public class EspHomeEntityMapper {
                 res.getIcon(),
                 res.getAssumedState(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass()
             );
 
@@ -122,7 +122,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass()
             );
 
@@ -130,7 +130,7 @@ public class EspHomeEntityMapper {
                 res.getKey(),
                 res.getName(),
                 res.getName(),
-                res.getArgsList()
+                EspHomeProtoTypeMapper.mapServiceArguments(res.getArgsList())
             );
 
             case ListEntitiesCameraResponse res -> new EspHomeEntity.Camera(
@@ -140,7 +140,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesClimateResponse res -> new EspHomeEntity.Climate(
@@ -150,20 +150,20 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getSupportsCurrentTemperature(),
                 res.getSupportsTwoPointTargetTemperature(),
-                res.getSupportedModesList(),
+                EspHomeProtoTypeMapper.mapClimateModes(res.getSupportedModesList()),
                 res.getVisualMinTemperature(),
                 res.getVisualMaxTemperature(),
                 res.getVisualTargetTemperatureStep(),
                 res.getLegacySupportsAway(),
                 res.getSupportsAction(),
-                res.getSupportedFanModesList(),
-                res.getSupportedSwingModesList(),
+                EspHomeProtoTypeMapper.mapClimateFanModes(res.getSupportedFanModesList()),
+                EspHomeProtoTypeMapper.mapClimateSwingModes(res.getSupportedSwingModesList()),
                 res.getSupportedCustomFanModesList(),
-                res.getSupportedPresetsList(),
+                EspHomeProtoTypeMapper.mapClimatePresets(res.getSupportedPresetsList()),
                 res.getSupportedCustomPresetsList(),
                 res.getDisabledByDefault(),
                 res.getIcon(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getVisualCurrentTemperatureStep(),
                 res.getSupportsCurrentHumidity(),
                 res.getSupportsTargetHumidity(),
@@ -181,9 +181,9 @@ public class EspHomeEntityMapper {
                 res.getMaxValue(),
                 res.getStep(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getUnitOfMeasurement(),
-                res.getMode(),
+                EspHomeProtoTypeMapper.mapNumberMode(res.getMode()),
                 res.getDeviceClass()
             );
 
@@ -195,7 +195,7 @@ public class EspHomeEntityMapper {
                 res.getIcon(),
                 res.getOptionsList(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesSirenResponse res -> new EspHomeEntity.Siren(
@@ -208,7 +208,7 @@ public class EspHomeEntityMapper {
                 res.getTonesList(),
                 res.getSupportsDuration(),
                 res.getSupportsVolume(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesLockResponse res -> new EspHomeEntity.Lock(
@@ -218,7 +218,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getAssumedState(),
                 res.getSupportsOpen(),
                 res.getRequiresCode(),
@@ -232,7 +232,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass()
             );
 
@@ -243,9 +243,9 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getSupportsPause(),
-                res.getSupportedFormatsList()
+                EspHomeProtoTypeMapper.mapMediaPlayerFormats(res.getSupportedFormatsList())
             );
 
             case ListEntitiesAlarmControlPanelResponse res -> new EspHomeEntity.AlarmControlPanel(
@@ -255,7 +255,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getSupportedFeatures(),
                 res.getRequiresCode(),
                 res.getRequiresCodeToArm()
@@ -268,11 +268,11 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getMinLength(),
                 res.getMaxLength(),
                 res.getPattern(),
-                res.getMode()
+                EspHomeProtoTypeMapper.mapTextMode(res.getMode())
             );
 
             case ListEntitiesDateResponse res -> new EspHomeEntity.Date(
@@ -282,7 +282,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesTimeResponse res -> new EspHomeEntity.Time(
@@ -292,7 +292,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesEventResponse res -> new EspHomeEntity.Event(
@@ -302,7 +302,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass(),
                 res.getEventTypesList()
             );
@@ -314,7 +314,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass(),
                 res.getAssumedState(),
                 res.getSupportsPosition(),
@@ -328,7 +328,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory()
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory())
             );
 
             case ListEntitiesUpdateResponse res -> new EspHomeEntity.Update(
@@ -338,7 +338,7 @@ public class EspHomeEntityMapper {
                 res.getUniqueId(),
                 res.getIcon(),
                 res.getDisabledByDefault(),
-                res.getEntityCategory(),
+                EspHomeProtoTypeMapper.mapEntityCategory(res.getEntityCategory()),
                 res.getDeviceClass()
             );
 
