@@ -2,8 +2,8 @@ package io.github.arhor.esphome.client.async.internal;
 
 import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.EspHomeConnection;
-import io.github.arhor.esphome.client.async.model.EspHomeCommand;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
+import io.github.arhor.esphome.client.async.model.EspHomeMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
@@ -42,7 +42,7 @@ public class NettyEspHomeConnection implements EspHomeConnection {
     }
 
     @Override
-    public CompletableFuture<Void> send(final EspHomeCommand command) {
+    public CompletableFuture<Void> send(final EspHomeMessage command) {
         if (!acceptsOperations()) {
             return CompletableFuture.failedFuture(new IllegalStateException("Client is not connected"));
         }

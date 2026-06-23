@@ -2,8 +2,8 @@ package io.github.arhor.esphome.client.async;
 
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeClient;
 import io.github.arhor.esphome.client.async.internal.NettyEspHomeConnection;
-import io.github.arhor.esphome.client.async.model.EspHomeCommand;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
+import io.github.arhor.esphome.client.async.model.EspHomeMessage;
 import io.netty.channel.embedded.EmbeddedChannel;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +40,7 @@ class NettyEspHomeLifecycleTest {
 
         connection.close();
 
-        final var sendFuture = connection.send(new EspHomeCommand.GetDeviceInfo());
+        final var sendFuture = connection.send(new EspHomeMessage.GetDeviceInfo());
         final var error = assertThrows(ExecutionException.class, sendFuture::get);
         assertInstanceOf(IllegalStateException.class, error.getCause());
         assertEquals("Client is not connected", error.getCause().getMessage());
@@ -82,7 +82,7 @@ class NettyEspHomeLifecycleTest {
 
         channel.close();
 
-        final var sendFuture = connection.send(new EspHomeCommand.GetDeviceInfo());
+        final var sendFuture = connection.send(new EspHomeMessage.GetDeviceInfo());
         final var error = assertThrows(ExecutionException.class, sendFuture::get);
         assertInstanceOf(IllegalStateException.class, error.getCause());
         assertEquals("Client is not connected", error.getCause().getMessage());
