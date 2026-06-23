@@ -123,7 +123,7 @@ public final class EspHomeHandshakeHandler extends SimpleChannelInboundHandler<O
         var channel = ctx.channel();
         var connection = new NettyEspHomeConnection(subscriptions, channel);
 
-        // 3. Central handler that routes incoming data into the reactive stream
+        // Central handler that routes incoming data into the reactive stream
         // We pass the list of active subscriptions so the handler knows where to push events
         ctx.pipeline().replace(this, "eventHandler", new NettyEspHomeEventHandler(subscriptions));
 
