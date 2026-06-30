@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 public interface EspHomeClient extends AutoCloseable {
 
     int API_VERSION_MAJOR = 1;
-    int API_VERSION_MINOR = 10;
+    int API_VERSION_MINOR = 14;
     Duration DEFAULT_CONN_TIMEOUT = Duration.ofSeconds(15);
     Duration DEFAULT_READ_TIMEOUT = Duration.ofSeconds(15);
 

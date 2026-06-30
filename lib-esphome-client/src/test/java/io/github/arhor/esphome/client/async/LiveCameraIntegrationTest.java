@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Live integration tests against a real ESPHome camera at 192.168.0.14:6053.
- *
+ * <p>
  * Run: ./gradlew :lib-esphome-client:test --tests "*.LiveCameraIntegrationTest" -i
- *
+ * <p>
  * Tagged "live" — excluded from CI by default.
  */
 @Tag("live")
@@ -109,7 +109,7 @@ class LiveCameraIntegrationTest {
 
             conn.send(new EspHomeMessage.GetCameraImage(true, false));
 
-            var jpeg = imageFuture.get(10, TimeUnit.SECONDS);
+            var jpeg = imageFuture.get(15, TimeUnit.SECONDS);
 
             System.out.println("=== Camera Image ===");
             System.out.println("  total size: " + jpeg.length + " bytes");
@@ -123,7 +123,7 @@ class LiveCameraIntegrationTest {
 
     @Test
     void observesEventsAfterConnect() throws Exception {
-        try (var conn = client.connect().get(5, TimeUnit.SECONDS)) {
+        try (var conn = client.connect().get(15, TimeUnit.SECONDS)) {
             var firstEvent = new CompletableFuture<EspHomeEvent>();
 
             conn.observeEvents().subscribe(new Flow.Subscriber<>() {
@@ -149,7 +149,7 @@ class LiveCameraIntegrationTest {
 
             conn.send(new EspHomeMessage.GetCameraImage(true, false));
 
-            var event = firstEvent.get(10, TimeUnit.SECONDS);
+            var event = firstEvent.get(15, TimeUnit.SECONDS);
             assertNotNull(event);
         }
     }

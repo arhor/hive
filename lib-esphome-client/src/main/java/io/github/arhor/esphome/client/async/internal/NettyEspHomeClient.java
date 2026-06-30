@@ -19,7 +19,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,10 +33,23 @@ public class NettyEspHomeClient implements EspHomeClient {
 
     enum ClientState {
         ACTIVE,
+        /**
+         * Draining active connections before shutting down the worker group.
+         * New connect() calls are rejected in this state.
+         *
+         * Future: connect() calls that already passed the ACTIVE check before
+         * CLOSING was set will still complete and register into activeConnections
+         * after the drain loop finishes, missing graceful shutdown. Resolving
+         * this fully requires tracking in-flight (TCP-connecting, not-yet-
+         * established) connections — e.g. a set of pending CompletableFutures —
+         * so close() can cancel or await them before proceeding to CLOSED.
+         */
+        CLOSING,
         CLOSED,
     }
 
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private final Set<NettyEspHomeConnection> activeConnections = ConcurrentHashMap.newKeySet();
     private final Config config;
     private final AtomicReference<ClientState> state = new AtomicReference<>(ClientState.ACTIVE);
 
@@ -72,14 +87,32 @@ public class NettyEspHomeClient implements EspHomeClient {
                 }
             });
 
+        resultFuture.whenComplete((connection, _) -> {
+            if (connection instanceof NettyEspHomeConnection nettyConnection) {
+                activeConnections.add(nettyConnection);
+                nettyConnection
+                    .channel()
+                    .closeFuture()
+                    .addListener(_ -> activeConnections.remove(nettyConnection));
+            }
+        });
+
         return resultFuture;
     }
 
     @Override
     public void close() {
-        if (state.compareAndSet(ClientState.ACTIVE, ClientState.CLOSED)) {
-            log.fine("Closing NettyEspHomeClient, shutting down worker group");
+        if (state.compareAndSet(ClientState.ACTIVE, ClientState.CLOSING)) {
+            log.fine(() -> "Closing NettyEspHomeClient: draining " + activeConnections.size() + " active connection(s)");
+            for (var connection : activeConnections) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    log.warning(() -> "Error closing connection during client shutdown: " + e);
+                }
+            }
             workerGroup.shutdownGracefully();
+            state.set(ClientState.CLOSED);
         }
     }
 

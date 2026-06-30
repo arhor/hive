@@ -4,6 +4,7 @@ import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.EspHomeConnection;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.github.arhor.esphome.client.async.model.EspHomeMessage;
+import io.github.arhor.esphome.client.proto.DisconnectRequest;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Flow;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class NettyEspHomeConnection implements EspHomeConnection {
@@ -25,6 +27,16 @@ public class NettyEspHomeConnection implements EspHomeConnection {
 
     enum ConnectionState {
         ACTIVE,
+        /**
+         * Graceful disconnect in progress: DisconnectRequest sent, awaiting
+         * DisconnectResponse before the TCP channel is closed.
+         *
+         * Future: if transparent reconnection is added (e.g. automatic retry
+         * on transient network failures), a RECONNECTING state would sit here —
+         * between CLOSING and ACTIVE — to block new operations while the
+         * underlying channel is being replaced without exposing the disruption
+         * to the caller.
+         */
         CLOSING,
         CLOSED,
     }
@@ -86,11 +98,21 @@ public class NettyEspHomeConnection implements EspHomeConnection {
     public void close() {
         if (beginClosing()) {
             try {
-                channel.close().awaitUninterruptibly();
+                if (channel.isActive()) {
+                    channel.writeAndFlush(DisconnectRequest.getDefaultInstance()).awaitUninterruptibly();
+                    // Wait for the event handler to receive DisconnectResponse and close the channel.
+                    // Fall through to force-close after the timeout if the device doesn't respond.
+                    channel.closeFuture().awaitUninterruptibly(5, TimeUnit.SECONDS);
+                }
             } finally {
+                channel.close().awaitUninterruptibly();
                 state.set(ConnectionState.CLOSED);
             }
         }
+    }
+
+    Channel channel() {
+        return channel;
     }
 
     /* ------------------------------------------ Internal implementation ------------------------------------------- */
