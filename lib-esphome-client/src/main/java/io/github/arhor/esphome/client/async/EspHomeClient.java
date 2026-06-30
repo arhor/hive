@@ -7,8 +7,8 @@ public interface EspHomeClient extends AutoCloseable {
 
     int API_VERSION_MAJOR = 1;
     int API_VERSION_MINOR = 10;
-    Duration DEFAULT_CONNECT_TIMEOUT = Duration.ofSeconds(2);
-    Duration DEFAULT_READ_TIMEOUT = Duration.ofSeconds(5);
+    Duration DEFAULT_CONN_TIMEOUT = Duration.ofSeconds(15);
+    Duration DEFAULT_READ_TIMEOUT = Duration.ofSeconds(15);
 
     CompletableFuture<EspHomeConnection> connect();
 
@@ -35,7 +35,7 @@ public interface EspHomeClient extends AutoCloseable {
                 clientName,
                 password,
                 Encryption.disabled(),
-                DEFAULT_CONNECT_TIMEOUT,
+                DEFAULT_CONN_TIMEOUT,
                 DEFAULT_READ_TIMEOUT,
                 API_VERSION_MAJOR,
                 API_VERSION_MINOR

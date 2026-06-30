@@ -40,17 +40,20 @@ public final class EspHomeEncryptedPayloadEncoder extends MessageToMessageEncode
             throw new EspHomeProtocolException("ESPHome encrypted payload is too large: " + payloadSize + " bytes");
         }
 
+        ByteBuf plaintext = null;
         try {
-            final var plaintext = ctx.alloc().buffer(FIXED_DATA_HEADER_SIZE + payloadSize);
+            plaintext = ctx.alloc().buffer(FIXED_DATA_HEADER_SIZE + payloadSize);
             plaintext.writeShort(messageType);
             plaintext.writeShort(payloadSize);
             plaintext.writeBytes(payload, payload.readerIndex(), payloadSize);
 
             final var encrypted = cipher.encryptWithAd(NoiseConstants.EMPTY, ByteBufUtil.getBytes(plaintext));
-            plaintext.release();
 
             out.add(ctx.alloc().buffer(encrypted.length).writeBytes(encrypted));
         } finally {
+            if (plaintext != null) {
+                plaintext.release();
+            }
             payload.release();
         }
     }

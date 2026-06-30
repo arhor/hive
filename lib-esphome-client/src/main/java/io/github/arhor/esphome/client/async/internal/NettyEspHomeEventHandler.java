@@ -1,5 +1,7 @@
 package io.github.arhor.esphome.client.async.internal;
 
+import io.github.arhor.esphome.client.proto.GetTimeRequest;
+import io.github.arhor.esphome.client.proto.GetTimeResponse;
 import io.github.arhor.esphome.client.proto.PingRequest;
 import io.github.arhor.esphome.client.proto.PingResponse;
 import io.netty.channel.ChannelHandler;
@@ -21,6 +23,14 @@ public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<Object
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof PingRequest) {
             ctx.writeAndFlush(PingResponse.getDefaultInstance());
+            return;
+        }
+        if (msg instanceof GetTimeRequest) {
+            ctx.writeAndFlush(
+                GetTimeResponse.newBuilder()
+                    .setEpochSeconds((int) (System.currentTimeMillis() / 1000))
+                    .build()
+            );
             return;
         }
 

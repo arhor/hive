@@ -177,3 +177,7 @@ Follow the same pattern:
 - create a top-level folder for the service, or add application modules
 - put service config/data inside the appropriate folder
 - define the service in the root `docker-compose.yml`
+
+## Notes
+
+local camera address: http://192.168.0.14:6053

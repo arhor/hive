@@ -23,8 +23,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class NettyEspHomeClient implements EspHomeClient {
+
+    private static final Logger log = Logger.getLogger(NettyEspHomeClient.class.getName());
 
     enum ClientState {
         ACTIVE,
@@ -45,6 +48,10 @@ public class NettyEspHomeClient implements EspHomeClient {
             return CompletableFuture.failedFuture(new IllegalStateException("Client is closed"));
         }
 
+        log.fine(() -> "Connecting to " + config.host() + ":" + config.port()
+            + " (connectTimeout=" + config.connectTimeout() + ", readTimeout=" + config.readTimeout()
+            + ", encrypted=" + config.encryption().enabled() + ")");
+
         var bootstrap = new Bootstrap();
         var subscriptions = new CopyOnWriteArrayList<EspHomeSubscription>();
         var resultFuture = new CompletableFuture<EspHomeConnection>();
@@ -57,7 +64,10 @@ public class NettyEspHomeClient implements EspHomeClient {
             .handler(createChannelInitializer(subscriptions, resultFuture))
             .connect(config.host(), config.port())
             .addListener((future) -> {
-                if (!future.isSuccess()) {
+                if (future.isSuccess()) {
+                    log.fine(() -> "TCP connection established to " + config.host() + ":" + config.port());
+                } else {
+                    log.warning(() -> "TCP connection failed: " + future.cause());
                     resultFuture.completeExceptionally(future.cause());
                 }
             });
@@ -68,6 +78,7 @@ public class NettyEspHomeClient implements EspHomeClient {
     @Override
     public void close() {
         if (state.compareAndSet(ClientState.ACTIVE, ClientState.CLOSED)) {
+            log.fine("Closing NettyEspHomeClient, shutting down worker group");
             workerGroup.shutdownGracefully();
         }
     }

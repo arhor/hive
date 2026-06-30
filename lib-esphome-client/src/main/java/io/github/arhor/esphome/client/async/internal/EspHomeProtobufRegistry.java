@@ -2,14 +2,38 @@ package io.github.arhor.esphome.client.async.internal;
 
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
+import io.github.arhor.esphome.client.proto.AlarmControlPanelCommandRequest;
+import io.github.arhor.esphome.client.proto.AlarmControlPanelStateResponse;
+import io.github.arhor.esphome.client.proto.BinarySensorStateResponse;
+import io.github.arhor.esphome.client.proto.ButtonCommandRequest;
 import io.github.arhor.esphome.client.proto.CameraImageRequest;
 import io.github.arhor.esphome.client.proto.CameraImageResponse;
+import io.github.arhor.esphome.client.proto.ClimateCommandRequest;
+import io.github.arhor.esphome.client.proto.ClimateStateResponse;
 import io.github.arhor.esphome.client.proto.ConnectRequest;
 import io.github.arhor.esphome.client.proto.ConnectResponse;
+import io.github.arhor.esphome.client.proto.CoverCommandRequest;
+import io.github.arhor.esphome.client.proto.CoverStateResponse;
+import io.github.arhor.esphome.client.proto.DateCommandRequest;
+import io.github.arhor.esphome.client.proto.DateStateResponse;
+import io.github.arhor.esphome.client.proto.DateTimeCommandRequest;
+import io.github.arhor.esphome.client.proto.DateTimeStateResponse;
 import io.github.arhor.esphome.client.proto.DeviceInfoRequest;
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse;
+import io.github.arhor.esphome.client.proto.DisconnectRequest;
+import io.github.arhor.esphome.client.proto.DisconnectResponse;
+import io.github.arhor.esphome.client.proto.EventResponse;
+import io.github.arhor.esphome.client.proto.ExecuteServiceRequest;
+import io.github.arhor.esphome.client.proto.FanCommandRequest;
+import io.github.arhor.esphome.client.proto.FanStateResponse;
+import io.github.arhor.esphome.client.proto.GetTimeRequest;
+import io.github.arhor.esphome.client.proto.GetTimeResponse;
 import io.github.arhor.esphome.client.proto.HelloRequest;
 import io.github.arhor.esphome.client.proto.HelloResponse;
+import io.github.arhor.esphome.client.proto.HomeAssistantStateResponse;
+import io.github.arhor.esphome.client.proto.HomeassistantServiceResponse;
+import io.github.arhor.esphome.client.proto.LightCommandRequest;
+import io.github.arhor.esphome.client.proto.LightStateResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesAlarmControlPanelResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesBinarySensorResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesButtonResponse;
@@ -36,8 +60,38 @@ import io.github.arhor.esphome.client.proto.ListEntitiesTextSensorResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesTimeResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesUpdateResponse;
 import io.github.arhor.esphome.client.proto.ListEntitiesValveResponse;
+import io.github.arhor.esphome.client.proto.LockCommandRequest;
+import io.github.arhor.esphome.client.proto.LockStateResponse;
+import io.github.arhor.esphome.client.proto.MediaPlayerCommandRequest;
+import io.github.arhor.esphome.client.proto.MediaPlayerStateResponse;
+import io.github.arhor.esphome.client.proto.NoiseEncryptionSetKeyRequest;
+import io.github.arhor.esphome.client.proto.NoiseEncryptionSetKeyResponse;
+import io.github.arhor.esphome.client.proto.NumberCommandRequest;
+import io.github.arhor.esphome.client.proto.NumberStateResponse;
 import io.github.arhor.esphome.client.proto.PingRequest;
 import io.github.arhor.esphome.client.proto.PingResponse;
+import io.github.arhor.esphome.client.proto.SelectCommandRequest;
+import io.github.arhor.esphome.client.proto.SelectStateResponse;
+import io.github.arhor.esphome.client.proto.SensorStateResponse;
+import io.github.arhor.esphome.client.proto.SirenCommandRequest;
+import io.github.arhor.esphome.client.proto.SirenStateResponse;
+import io.github.arhor.esphome.client.proto.SubscribeHomeAssistantStateResponse;
+import io.github.arhor.esphome.client.proto.SubscribeHomeAssistantStatesRequest;
+import io.github.arhor.esphome.client.proto.SubscribeHomeassistantServicesRequest;
+import io.github.arhor.esphome.client.proto.SubscribeLogsRequest;
+import io.github.arhor.esphome.client.proto.SubscribeLogsResponse;
+import io.github.arhor.esphome.client.proto.SubscribeStatesRequest;
+import io.github.arhor.esphome.client.proto.SwitchCommandRequest;
+import io.github.arhor.esphome.client.proto.SwitchStateResponse;
+import io.github.arhor.esphome.client.proto.TextCommandRequest;
+import io.github.arhor.esphome.client.proto.TextSensorStateResponse;
+import io.github.arhor.esphome.client.proto.TextStateResponse;
+import io.github.arhor.esphome.client.proto.TimeCommandRequest;
+import io.github.arhor.esphome.client.proto.TimeStateResponse;
+import io.github.arhor.esphome.client.proto.UpdateCommandRequest;
+import io.github.arhor.esphome.client.proto.UpdateStateResponse;
+import io.github.arhor.esphome.client.proto.ValveCommandRequest;
+import io.github.arhor.esphome.client.proto.ValveStateResponse;
 
 import java.util.Map;
 
@@ -49,6 +103,8 @@ public class EspHomeProtobufRegistry {
             Map.entry(EspHomeMessageType.HELLO_RESPONSE, HelloResponse.parser()),
             Map.entry(EspHomeMessageType.CONNECT_REQUEST, ConnectRequest.parser()),
             Map.entry(EspHomeMessageType.CONNECT_RESPONSE, ConnectResponse.parser()),
+            Map.entry(EspHomeMessageType.DISCONNECT_REQUEST, DisconnectRequest.parser()),
+            Map.entry(EspHomeMessageType.DISCONNECT_RESPONSE, DisconnectResponse.parser()),
             Map.entry(EspHomeMessageType.PING_REQUEST, PingRequest.parser()),
             Map.entry(EspHomeMessageType.PING_RESPONSE, PingResponse.parser()),
             Map.entry(EspHomeMessageType.DEVICE_INFO_REQUEST, DeviceInfoRequest.parser()),
@@ -62,25 +118,77 @@ public class EspHomeProtobufRegistry {
             Map.entry(EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE, ListEntitiesSwitchResponse.parser()),
             Map.entry(EspHomeMessageType.LIST_ENTITIES_TEXT_SENSOR_RESPONSE, ListEntitiesTextSensorResponse.parser()),
             Map.entry(EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE, ListEntitiesDoneResponse.parser()),
+            Map.entry(EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE, BinarySensorStateResponse.parser()),
+            Map.entry(EspHomeMessageType.COVER_STATE_RESPONSE, CoverStateResponse.parser()),
+            Map.entry(EspHomeMessageType.FAN_STATE_RESPONSE, FanStateResponse.parser()),
+            Map.entry(EspHomeMessageType.LIGHT_STATE_RESPONSE, LightStateResponse.parser()),
+            Map.entry(EspHomeMessageType.SENSOR_STATE_RESPONSE, SensorStateResponse.parser()),
+            Map.entry(EspHomeMessageType.SWITCH_STATE_RESPONSE, SwitchStateResponse.parser()),
+            Map.entry(EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE, TextSensorStateResponse.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_LOGS_REQUEST, SubscribeLogsRequest.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_LOGS_RESPONSE, SubscribeLogsResponse.parser()),
+            Map.entry(EspHomeMessageType.COVER_COMMAND_REQUEST, CoverCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.FAN_COMMAND_REQUEST, FanCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIGHT_COMMAND_REQUEST, LightCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.SWITCH_COMMAND_REQUEST, SwitchCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_HOMEASSISTANT_SERVICES_REQUEST, SubscribeHomeassistantServicesRequest.parser()),
+            Map.entry(EspHomeMessageType.HOMEASSISTANT_SERVICE_RESPONSE, HomeassistantServiceResponse.parser()),
+            Map.entry(EspHomeMessageType.GET_TIME_REQUEST, GetTimeRequest.parser()),
+            Map.entry(EspHomeMessageType.GET_TIME_RESPONSE, GetTimeResponse.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_HOME_ASSISTANT_STATES_REQUEST, SubscribeHomeAssistantStatesRequest.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_HOME_ASSISTANT_STATE_RESPONSE, SubscribeHomeAssistantStateResponse.parser()),
+            Map.entry(EspHomeMessageType.HOME_ASSISTANT_STATE_RESPONSE, HomeAssistantStateResponse.parser()),
             Map.entry(EspHomeMessageType.LIST_ENTITIES_SERVICES_RESPONSE, ListEntitiesServicesResponse.parser()),
+            Map.entry(EspHomeMessageType.EXECUTE_SERVICE_REQUEST, ExecuteServiceRequest.parser()),
             Map.entry(EspHomeMessageType.LIST_ENTITIES_CAMERA_RESPONSE, ListEntitiesCameraResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE, ListEntitiesClimateResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE, ListEntitiesNumberResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE, ListEntitiesSelectResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE, ListEntitiesSirenResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE, ListEntitiesLockResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE, ListEntitiesButtonResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE, ListEntitiesMediaPlayerResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE, ListEntitiesAlarmControlPanelResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE, ListEntitiesTextResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE, ListEntitiesDateResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE, ListEntitiesTimeResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE, ListEntitiesEventResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE, ListEntitiesValveResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE, ListEntitiesDateTimeResponse.parser()),
-            Map.entry(EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE, ListEntitiesUpdateResponse.parser()),
             Map.entry(EspHomeMessageType.CAMERA_IMAGE_RESPONSE, CameraImageResponse.parser()),
-            Map.entry(EspHomeMessageType.CAMERA_IMAGE_REQUEST, CameraImageRequest.parser())
+            Map.entry(EspHomeMessageType.CAMERA_IMAGE_REQUEST, CameraImageRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE, ListEntitiesClimateResponse.parser()),
+            Map.entry(EspHomeMessageType.CLIMATE_STATE_RESPONSE, ClimateStateResponse.parser()),
+            Map.entry(EspHomeMessageType.CLIMATE_COMMAND_REQUEST, ClimateCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE, ListEntitiesNumberResponse.parser()),
+            Map.entry(EspHomeMessageType.NUMBER_STATE_RESPONSE, NumberStateResponse.parser()),
+            Map.entry(EspHomeMessageType.NUMBER_COMMAND_REQUEST, NumberCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE, ListEntitiesSelectResponse.parser()),
+            Map.entry(EspHomeMessageType.SELECT_STATE_RESPONSE, SelectStateResponse.parser()),
+            Map.entry(EspHomeMessageType.SELECT_COMMAND_REQUEST, SelectCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE, ListEntitiesSirenResponse.parser()),
+            Map.entry(EspHomeMessageType.SIREN_STATE_RESPONSE, SirenStateResponse.parser()),
+            Map.entry(EspHomeMessageType.SIREN_COMMAND_REQUEST, SirenCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE, ListEntitiesLockResponse.parser()),
+            Map.entry(EspHomeMessageType.LOCK_STATE_RESPONSE, LockStateResponse.parser()),
+            Map.entry(EspHomeMessageType.LOCK_COMMAND_REQUEST, LockCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE, ListEntitiesButtonResponse.parser()),
+            Map.entry(EspHomeMessageType.BUTTON_COMMAND_REQUEST, ButtonCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE, ListEntitiesMediaPlayerResponse.parser()),
+            Map.entry(EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE, MediaPlayerStateResponse.parser()),
+            Map.entry(EspHomeMessageType.MEDIA_PLAYER_COMMAND_REQUEST, MediaPlayerCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE, ListEntitiesAlarmControlPanelResponse.parser()),
+            Map.entry(EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE, AlarmControlPanelStateResponse.parser()),
+            Map.entry(EspHomeMessageType.ALARM_CONTROL_PANEL_COMMAND_REQUEST, AlarmControlPanelCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE, ListEntitiesTextResponse.parser()),
+            Map.entry(EspHomeMessageType.TEXT_STATE_RESPONSE, TextStateResponse.parser()),
+            Map.entry(EspHomeMessageType.TEXT_COMMAND_REQUEST, TextCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE, ListEntitiesDateResponse.parser()),
+            Map.entry(EspHomeMessageType.DATE_STATE_RESPONSE, DateStateResponse.parser()),
+            Map.entry(EspHomeMessageType.DATE_COMMAND_REQUEST, DateCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE, ListEntitiesTimeResponse.parser()),
+            Map.entry(EspHomeMessageType.TIME_STATE_RESPONSE, TimeStateResponse.parser()),
+            Map.entry(EspHomeMessageType.TIME_COMMAND_REQUEST, TimeCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE, ListEntitiesEventResponse.parser()),
+            Map.entry(EspHomeMessageType.EVENT_RESPONSE, EventResponse.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE, ListEntitiesValveResponse.parser()),
+            Map.entry(EspHomeMessageType.VALVE_STATE_RESPONSE, ValveStateResponse.parser()),
+            Map.entry(EspHomeMessageType.VALVE_COMMAND_REQUEST, ValveCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE, ListEntitiesDateTimeResponse.parser()),
+            Map.entry(EspHomeMessageType.DATETIME_STATE_RESPONSE, DateTimeStateResponse.parser()),
+            Map.entry(EspHomeMessageType.DATETIME_COMMAND_REQUEST, DateTimeCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE, ListEntitiesUpdateResponse.parser()),
+            Map.entry(EspHomeMessageType.UPDATE_STATE_RESPONSE, UpdateStateResponse.parser()),
+            Map.entry(EspHomeMessageType.UPDATE_COMMAND_REQUEST, UpdateCommandRequest.parser()),
+            Map.entry(EspHomeMessageType.NOISE_ENCRYPTION_SET_KEY_REQUEST, NoiseEncryptionSetKeyRequest.parser()),
+            Map.entry(EspHomeMessageType.NOISE_ENCRYPTION_SET_KEY_RESPONSE, NoiseEncryptionSetKeyResponse.parser()),
+            Map.entry(EspHomeMessageType.SUBSCRIBE_STATES_REQUEST, SubscribeStatesRequest.parser())
         );
     }
 
@@ -90,6 +198,8 @@ public class EspHomeProtobufRegistry {
             Map.entry(HelloResponse.class, EspHomeMessageType.HELLO_RESPONSE),
             Map.entry(ConnectRequest.class, EspHomeMessageType.CONNECT_REQUEST),
             Map.entry(ConnectResponse.class, EspHomeMessageType.CONNECT_RESPONSE),
+            Map.entry(DisconnectRequest.class, EspHomeMessageType.DISCONNECT_REQUEST),
+            Map.entry(DisconnectResponse.class, EspHomeMessageType.DISCONNECT_RESPONSE),
             Map.entry(PingRequest.class, EspHomeMessageType.PING_REQUEST),
             Map.entry(PingResponse.class, EspHomeMessageType.PING_RESPONSE),
             Map.entry(DeviceInfoRequest.class, EspHomeMessageType.DEVICE_INFO_REQUEST),
@@ -103,25 +213,77 @@ public class EspHomeProtobufRegistry {
             Map.entry(ListEntitiesSwitchResponse.class, EspHomeMessageType.LIST_ENTITIES_SWITCH_RESPONSE),
             Map.entry(ListEntitiesTextSensorResponse.class, EspHomeMessageType.LIST_ENTITIES_TEXT_SENSOR_RESPONSE),
             Map.entry(ListEntitiesDoneResponse.class, EspHomeMessageType.LIST_ENTITIES_DONE_RESPONSE),
+            Map.entry(BinarySensorStateResponse.class, EspHomeMessageType.BINARY_SENSOR_STATE_RESPONSE),
+            Map.entry(CoverStateResponse.class, EspHomeMessageType.COVER_STATE_RESPONSE),
+            Map.entry(FanStateResponse.class, EspHomeMessageType.FAN_STATE_RESPONSE),
+            Map.entry(LightStateResponse.class, EspHomeMessageType.LIGHT_STATE_RESPONSE),
+            Map.entry(SensorStateResponse.class, EspHomeMessageType.SENSOR_STATE_RESPONSE),
+            Map.entry(SwitchStateResponse.class, EspHomeMessageType.SWITCH_STATE_RESPONSE),
+            Map.entry(TextSensorStateResponse.class, EspHomeMessageType.TEXT_SENSOR_STATE_RESPONSE),
+            Map.entry(SubscribeLogsRequest.class, EspHomeMessageType.SUBSCRIBE_LOGS_REQUEST),
+            Map.entry(SubscribeLogsResponse.class, EspHomeMessageType.SUBSCRIBE_LOGS_RESPONSE),
+            Map.entry(CoverCommandRequest.class, EspHomeMessageType.COVER_COMMAND_REQUEST),
+            Map.entry(FanCommandRequest.class, EspHomeMessageType.FAN_COMMAND_REQUEST),
+            Map.entry(LightCommandRequest.class, EspHomeMessageType.LIGHT_COMMAND_REQUEST),
+            Map.entry(SwitchCommandRequest.class, EspHomeMessageType.SWITCH_COMMAND_REQUEST),
+            Map.entry(SubscribeHomeassistantServicesRequest.class, EspHomeMessageType.SUBSCRIBE_HOMEASSISTANT_SERVICES_REQUEST),
+            Map.entry(HomeassistantServiceResponse.class, EspHomeMessageType.HOMEASSISTANT_SERVICE_RESPONSE),
+            Map.entry(GetTimeRequest.class, EspHomeMessageType.GET_TIME_REQUEST),
+            Map.entry(GetTimeResponse.class, EspHomeMessageType.GET_TIME_RESPONSE),
+            Map.entry(SubscribeHomeAssistantStatesRequest.class, EspHomeMessageType.SUBSCRIBE_HOME_ASSISTANT_STATES_REQUEST),
+            Map.entry(SubscribeHomeAssistantStateResponse.class, EspHomeMessageType.SUBSCRIBE_HOME_ASSISTANT_STATE_RESPONSE),
+            Map.entry(HomeAssistantStateResponse.class, EspHomeMessageType.HOME_ASSISTANT_STATE_RESPONSE),
             Map.entry(ListEntitiesServicesResponse.class, EspHomeMessageType.LIST_ENTITIES_SERVICES_RESPONSE),
+            Map.entry(ExecuteServiceRequest.class, EspHomeMessageType.EXECUTE_SERVICE_REQUEST),
             Map.entry(ListEntitiesCameraResponse.class, EspHomeMessageType.LIST_ENTITIES_CAMERA_RESPONSE),
-            Map.entry(ListEntitiesClimateResponse.class, EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE),
-            Map.entry(ListEntitiesNumberResponse.class, EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE),
-            Map.entry(ListEntitiesSelectResponse.class, EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE),
-            Map.entry(ListEntitiesSirenResponse.class, EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE),
-            Map.entry(ListEntitiesLockResponse.class, EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE),
-            Map.entry(ListEntitiesButtonResponse.class, EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE),
-            Map.entry(ListEntitiesMediaPlayerResponse.class, EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE),
-            Map.entry(ListEntitiesAlarmControlPanelResponse.class, EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE),
-            Map.entry(ListEntitiesTextResponse.class, EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE),
-            Map.entry(ListEntitiesDateResponse.class, EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE),
-            Map.entry(ListEntitiesTimeResponse.class, EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE),
-            Map.entry(ListEntitiesEventResponse.class, EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE),
-            Map.entry(ListEntitiesValveResponse.class, EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE),
-            Map.entry(ListEntitiesDateTimeResponse.class, EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE),
-            Map.entry(ListEntitiesUpdateResponse.class, EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE),
+            Map.entry(CameraImageResponse.class, EspHomeMessageType.CAMERA_IMAGE_RESPONSE),
             Map.entry(CameraImageRequest.class, EspHomeMessageType.CAMERA_IMAGE_REQUEST),
-            Map.entry(CameraImageResponse.class, EspHomeMessageType.CAMERA_IMAGE_RESPONSE)
+            Map.entry(ListEntitiesClimateResponse.class, EspHomeMessageType.LIST_ENTITIES_CLIMATE_RESPONSE),
+            Map.entry(ClimateStateResponse.class, EspHomeMessageType.CLIMATE_STATE_RESPONSE),
+            Map.entry(ClimateCommandRequest.class, EspHomeMessageType.CLIMATE_COMMAND_REQUEST),
+            Map.entry(ListEntitiesNumberResponse.class, EspHomeMessageType.LIST_ENTITIES_NUMBER_RESPONSE),
+            Map.entry(NumberStateResponse.class, EspHomeMessageType.NUMBER_STATE_RESPONSE),
+            Map.entry(NumberCommandRequest.class, EspHomeMessageType.NUMBER_COMMAND_REQUEST),
+            Map.entry(ListEntitiesSelectResponse.class, EspHomeMessageType.LIST_ENTITIES_SELECT_RESPONSE),
+            Map.entry(SelectStateResponse.class, EspHomeMessageType.SELECT_STATE_RESPONSE),
+            Map.entry(SelectCommandRequest.class, EspHomeMessageType.SELECT_COMMAND_REQUEST),
+            Map.entry(ListEntitiesSirenResponse.class, EspHomeMessageType.LIST_ENTITIES_SIREN_RESPONSE),
+            Map.entry(SirenStateResponse.class, EspHomeMessageType.SIREN_STATE_RESPONSE),
+            Map.entry(SirenCommandRequest.class, EspHomeMessageType.SIREN_COMMAND_REQUEST),
+            Map.entry(ListEntitiesLockResponse.class, EspHomeMessageType.LIST_ENTITIES_LOCK_RESPONSE),
+            Map.entry(LockStateResponse.class, EspHomeMessageType.LOCK_STATE_RESPONSE),
+            Map.entry(LockCommandRequest.class, EspHomeMessageType.LOCK_COMMAND_REQUEST),
+            Map.entry(ListEntitiesButtonResponse.class, EspHomeMessageType.LIST_ENTITIES_BUTTON_RESPONSE),
+            Map.entry(ButtonCommandRequest.class, EspHomeMessageType.BUTTON_COMMAND_REQUEST),
+            Map.entry(ListEntitiesMediaPlayerResponse.class, EspHomeMessageType.LIST_ENTITIES_MEDIA_PLAYER_RESPONSE),
+            Map.entry(MediaPlayerStateResponse.class, EspHomeMessageType.MEDIA_PLAYER_STATE_RESPONSE),
+            Map.entry(MediaPlayerCommandRequest.class, EspHomeMessageType.MEDIA_PLAYER_COMMAND_REQUEST),
+            Map.entry(ListEntitiesAlarmControlPanelResponse.class, EspHomeMessageType.LIST_ENTITIES_ALARM_CONTROL_PANEL_RESPONSE),
+            Map.entry(AlarmControlPanelStateResponse.class, EspHomeMessageType.ALARM_CONTROL_PANEL_STATE_RESPONSE),
+            Map.entry(AlarmControlPanelCommandRequest.class, EspHomeMessageType.ALARM_CONTROL_PANEL_COMMAND_REQUEST),
+            Map.entry(ListEntitiesTextResponse.class, EspHomeMessageType.LIST_ENTITIES_TEXT_RESPONSE),
+            Map.entry(TextStateResponse.class, EspHomeMessageType.TEXT_STATE_RESPONSE),
+            Map.entry(TextCommandRequest.class, EspHomeMessageType.TEXT_COMMAND_REQUEST),
+            Map.entry(ListEntitiesDateResponse.class, EspHomeMessageType.LIST_ENTITIES_DATE_RESPONSE),
+            Map.entry(DateStateResponse.class, EspHomeMessageType.DATE_STATE_RESPONSE),
+            Map.entry(DateCommandRequest.class, EspHomeMessageType.DATE_COMMAND_REQUEST),
+            Map.entry(ListEntitiesTimeResponse.class, EspHomeMessageType.LIST_ENTITIES_TIME_RESPONSE),
+            Map.entry(TimeStateResponse.class, EspHomeMessageType.TIME_STATE_RESPONSE),
+            Map.entry(TimeCommandRequest.class, EspHomeMessageType.TIME_COMMAND_REQUEST),
+            Map.entry(ListEntitiesEventResponse.class, EspHomeMessageType.LIST_ENTITIES_EVENT_RESPONSE),
+            Map.entry(EventResponse.class, EspHomeMessageType.EVENT_RESPONSE),
+            Map.entry(ListEntitiesValveResponse.class, EspHomeMessageType.LIST_ENTITIES_VALVE_RESPONSE),
+            Map.entry(ValveStateResponse.class, EspHomeMessageType.VALVE_STATE_RESPONSE),
+            Map.entry(ValveCommandRequest.class, EspHomeMessageType.VALVE_COMMAND_REQUEST),
+            Map.entry(ListEntitiesDateTimeResponse.class, EspHomeMessageType.LIST_ENTITIES_DATETIME_RESPONSE),
+            Map.entry(DateTimeStateResponse.class, EspHomeMessageType.DATETIME_STATE_RESPONSE),
+            Map.entry(DateTimeCommandRequest.class, EspHomeMessageType.DATETIME_COMMAND_REQUEST),
+            Map.entry(ListEntitiesUpdateResponse.class, EspHomeMessageType.LIST_ENTITIES_UPDATE_RESPONSE),
+            Map.entry(UpdateStateResponse.class, EspHomeMessageType.UPDATE_STATE_RESPONSE),
+            Map.entry(UpdateCommandRequest.class, EspHomeMessageType.UPDATE_COMMAND_REQUEST),
+            Map.entry(NoiseEncryptionSetKeyRequest.class, EspHomeMessageType.NOISE_ENCRYPTION_SET_KEY_REQUEST),
+            Map.entry(NoiseEncryptionSetKeyResponse.class, EspHomeMessageType.NOISE_ENCRYPTION_SET_KEY_RESPONSE),
+            Map.entry(SubscribeStatesRequest.class, EspHomeMessageType.SUBSCRIBE_STATES_REQUEST)
         );
     }
 
