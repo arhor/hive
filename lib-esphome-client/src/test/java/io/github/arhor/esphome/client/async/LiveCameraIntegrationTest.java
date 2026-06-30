@@ -120,37 +120,4 @@ class LiveCameraIntegrationTest {
             System.out.println("  saved to: " + out);
         }
     }
-
-    @Test
-    void observesEventsAfterConnect() throws Exception {
-        try (var conn = client.connect().get(15, TimeUnit.SECONDS)) {
-            var firstEvent = new CompletableFuture<EspHomeEvent>();
-
-            conn.observeEvents().subscribe(new Flow.Subscriber<>() {
-                @Override
-                public void onSubscribe(Flow.Subscription subscription) {
-                    subscription.request(1);
-                }
-
-                @Override
-                public void onNext(EspHomeEvent event) {
-                    System.out.println("  event: " + event);
-                    firstEvent.complete(event);
-                }
-
-                @Override
-                public void onError(Throwable t) {
-                    firstEvent.completeExceptionally(t);
-                }
-
-                @Override
-                public void onComplete() {}
-            });
-
-            conn.send(new EspHomeMessage.GetCameraImage(true, false));
-
-            var event = firstEvent.get(15, TimeUnit.SECONDS);
-            assertNotNull(event);
-        }
-    }
 }

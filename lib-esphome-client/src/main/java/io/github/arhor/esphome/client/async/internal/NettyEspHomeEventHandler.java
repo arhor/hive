@@ -1,12 +1,9 @@
 package io.github.arhor.esphome.client.async.internal;
 
-import io.github.arhor.esphome.client.proto.DisconnectRequest;
-import io.github.arhor.esphome.client.proto.DisconnectResponse;
 import io.github.arhor.esphome.client.proto.GetTimeRequest;
 import io.github.arhor.esphome.client.proto.GetTimeResponse;
 import io.github.arhor.esphome.client.proto.PingRequest;
 import io.github.arhor.esphome.client.proto.PingResponse;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -24,15 +21,6 @@ public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<Object
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof DisconnectRequest) {
-            ctx.writeAndFlush(DisconnectResponse.getDefaultInstance())
-                .addListener(ChannelFutureListener.CLOSE);
-            return;
-        }
-        if (msg instanceof DisconnectResponse) {
-            ctx.close();
-            return;
-        }
         if (msg instanceof PingRequest) {
             ctx.writeAndFlush(PingResponse.getDefaultInstance());
             return;
@@ -66,7 +54,6 @@ public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<Object
             }
         }
 
-        ctx.writeAndFlush(DisconnectRequest.getDefaultInstance())
-            .addListener(ChannelFutureListener.CLOSE);
+        ctx.close();
     }
 }

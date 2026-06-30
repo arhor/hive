@@ -167,6 +167,7 @@ public final class EspHomeHandshakeHandler extends SimpleChannelInboundHandler<O
         final var channel = ctx.channel();
         final var connection = new NettyEspHomeConnection(subscriptions, channel);
 
+        ctx.pipeline().addBefore(ctx.name(), "gracefulDisconnect", new EspHomeGracefulDisconnectHandler());
         ctx.pipeline().replace(this, "eventHandler", new NettyEspHomeEventHandler(subscriptions));
         completion.complete(connection);
     }
