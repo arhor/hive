@@ -1,4 +1,4 @@
-package io.github.arhor.esphome.client.async.internal.codec.encrypted;
+package io.github.arhor.esphome.client.async.internal.codec.noise;
 
 import io.github.arhor.esphome.client.async.internal.exception.EspHomeProtocolException;
 import io.netty.buffer.ByteBuf;
