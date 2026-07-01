@@ -1,12 +1,13 @@
 package io.github.arhor.esphome.client.async.internal;
 
+import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.async.model.EspHomeEvent;
 import io.github.arhor.esphome.client.proto.CameraImageResponse;
 import io.github.arhor.esphome.client.proto.DeviceInfoResponse;
 
 public class EspHomeEventMapper {
 
-    public static EspHomeEvent map(Object message) {
+    public static EspHomeEvent map(final MessageLite message) {
         return switch (message) {
             case CameraImageResponse res -> new EspHomeEvent.CameraImage(
                 res.getKey(),

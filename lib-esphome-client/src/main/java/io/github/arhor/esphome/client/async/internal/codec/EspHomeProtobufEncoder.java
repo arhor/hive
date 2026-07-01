@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class EspHomeProtobufEncoder extends MessageToMessageEncoder<MessageLite> {
 
-    private static final Logger log = Logger.getLogger(EspHomeProtobufEncoder.class.getName());
+    private static final Logger logger = Logger.getLogger(EspHomeProtobufEncoder.class.getName());
 
     @Override
     protected void encode(
@@ -24,10 +24,10 @@ public class EspHomeProtobufEncoder extends MessageToMessageEncoder<MessageLite>
         // Определяем ID типа по классу Protobuf-сообщения
         int messageType = EspHomeProtobufRegistry.getMessageType(msg.getClass());
         if (messageType == -1) {
-            log.warning(() -> "No message type registered for " + msg.getClass().getSimpleName());
+            logger.warning(() -> "No message type registered for " + msg.getClass().getSimpleName());
             throw new IllegalArgumentException("Unsupported protobuf message type: " + msg.getClass());
         }
-        log.fine(() -> "Encoding: " + msg.getClass().getSimpleName() + " (type=" + messageType + ")");
+        logger.fine(() -> "Encoding: " + msg.getClass().getSimpleName() + " (type=" + messageType + ")");
 
         // Сериализуем Protobuf в массив байт и оборачиваем в Netty буфер
         byte[] protobufBytes = msg.toByteArray();

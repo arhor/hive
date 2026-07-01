@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class EspHomeVarIntFrameDecoder extends ByteToMessageDecoder {
 
-    private static final Logger log = Logger.getLogger(EspHomeVarIntFrameDecoder.class.getName());
+    private static final Logger logger = Logger.getLogger(EspHomeVarIntFrameDecoder.class.getName());
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -20,7 +20,7 @@ public class EspHomeVarIntFrameDecoder extends ByteToMessageDecoder {
             return;
         }
 
-        log.finest(() -> "decode() readable=" + in.readableBytes());
+        logger.finest(() -> "decode() readable=" + in.readableBytes());
 
         // Фиксируем позицию для возможного отката, если пакет пришел не полностью
         in.markReaderIndex();
@@ -28,7 +28,7 @@ public class EspHomeVarIntFrameDecoder extends ByteToMessageDecoder {
         // 1. Проверяем plaintext-индикатор (всегда 0x00)
         byte indicator = in.readByte();
         if (indicator != 0x00) {
-            log.warning(() -> "Invalid frame indicator byte: 0x" + Integer.toHexString(indicator & 0xFF));
+            logger.warning(() -> "Invalid frame indicator byte: 0x" + Integer.toHexString(indicator & 0xFF));
             in.resetReaderIndex();
             throw new CorruptedFrameException("Invalid ESPHome frame indicator: " + indicator);
         }
@@ -56,7 +56,7 @@ public class EspHomeVarIntFrameDecoder extends ByteToMessageDecoder {
         // Вырезаем точный кусок данных под payload (Netty увеличивает refCount для нового буфера)
         ByteBuf payload = in.readBytes(payloadSize);
 
-        log.fine(() -> "Frame decoded: type=" + messageType + " payloadSize=" + payloadSize);
+        logger.fine(() -> "Frame decoded: type=" + messageType + " payloadSize=" + payloadSize);
 
         // Передаем собранный фрейм следующему декодеру
         out.add(new EspHomeFrame(messageType, payload));

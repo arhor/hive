@@ -1,5 +1,6 @@
 package io.github.arhor.esphome.client.async.internal;
 
+import com.google.protobuf.MessageLite;
 import io.github.arhor.esphome.client.proto.GetTimeRequest;
 import io.github.arhor.esphome.client.proto.GetTimeResponse;
 import io.github.arhor.esphome.client.proto.PingRequest;
@@ -11,7 +12,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.util.List;
 
 @ChannelHandler.Sharable
-public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<Object> {
+public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<MessageLite> {
 
     private final List<EspHomeSubscription> subscriptions;
 
@@ -20,7 +21,7 @@ public class NettyEspHomeEventHandler extends SimpleChannelInboundHandler<Object
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
+    protected void channelRead0(final ChannelHandlerContext ctx, final MessageLite msg) {
         if (msg instanceof PingRequest) {
             ctx.writeAndFlush(PingResponse.getDefaultInstance());
             return;

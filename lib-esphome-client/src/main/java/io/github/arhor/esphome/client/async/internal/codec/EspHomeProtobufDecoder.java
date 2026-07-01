@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class EspHomeProtobufDecoder extends MessageToMessageDecoder<EspHomeFrame> {
 
-    private static final Logger log = Logger.getLogger(EspHomeProtobufDecoder.class.getName());
+    private static final Logger logger = Logger.getLogger(EspHomeProtobufDecoder.class.getName());
 
     @Override
     protected void decode(
@@ -31,10 +31,10 @@ public class EspHomeProtobufDecoder extends MessageToMessageDecoder<EspHomeFrame
 
             if (parser != null) {
                 final var message = parseMessage(payload, parser);
-                log.fine(() -> "Decoded: " + message.getClass().getSimpleName());
+                logger.fine(() -> "Decoded: " + message.getClass().getSimpleName());
                 out.add(message);
             } else {
-                log.warning(() -> "No parser registered for message type " + type + ", dropping frame");
+                logger.warning(() -> "No parser registered for message type " + type + ", dropping frame");
                 ctx.fireUserEventTriggered("Unknown message type: " + type);
             }
         } finally {

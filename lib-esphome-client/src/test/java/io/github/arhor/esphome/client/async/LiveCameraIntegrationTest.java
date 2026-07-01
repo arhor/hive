@@ -63,7 +63,7 @@ class LiveCameraIntegrationTest {
     void connects() throws Exception {
         try (var conn = client.connect().get(15, TimeUnit.SECONDS)) {
             assertNotNull(conn);
-            logger.info("Connected: " + conn);
+            logger.info(() -> "Connected: " + conn);
         }
     }
 

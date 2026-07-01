@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 public class NettyEspHomeClient implements EspHomeClient {
 
-    private static final Logger log = Logger.getLogger(NettyEspHomeClient.class.getName());
+    private static final Logger logger = Logger.getLogger(NettyEspHomeClient.class.getName());
 
     enum ClientState {
         ACTIVE,
@@ -63,7 +63,7 @@ public class NettyEspHomeClient implements EspHomeClient {
             return CompletableFuture.failedFuture(new IllegalStateException("Client is closed"));
         }
 
-        log.fine(() -> "Connecting to " + config.host() + ":" + config.port()
+        logger.fine(() -> "Connecting to " + config.host() + ":" + config.port()
             + " (connectTimeout=" + config.connectTimeout() + ", readTimeout=" + config.readTimeout()
             + ", encrypted=" + config.encryption().enabled() + ")");
 
@@ -80,9 +80,9 @@ public class NettyEspHomeClient implements EspHomeClient {
             .connect(config.host(), config.port())
             .addListener((future) -> {
                 if (future.isSuccess()) {
-                    log.fine(() -> "TCP connection established to " + config.host() + ":" + config.port());
+                    logger.fine(() -> "TCP connection established to " + config.host() + ":" + config.port());
                 } else {
-                    log.warning(() -> "TCP connection failed: " + future.cause());
+                    logger.warning(() -> "TCP connection failed: " + future.cause());
                     resultFuture.completeExceptionally(future.cause());
                 }
             });
@@ -103,12 +103,12 @@ public class NettyEspHomeClient implements EspHomeClient {
     @Override
     public void close() {
         if (state.compareAndSet(ClientState.ACTIVE, ClientState.CLOSING)) {
-            log.fine(() -> "Closing NettyEspHomeClient: draining " + activeConnections.size() + " active connection(s)");
+            logger.fine(() -> "Closing NettyEspHomeClient: draining " + activeConnections.size() + " active connection(s)");
             for (var connection : activeConnections) {
                 try {
                     connection.close();
                 } catch (Exception e) {
-                    log.warning(() -> "Error closing connection during client shutdown: " + e);
+                    logger.warning(() -> "Error closing connection during client shutdown: " + e);
                 }
             }
             workerGroup.shutdownGracefully();
