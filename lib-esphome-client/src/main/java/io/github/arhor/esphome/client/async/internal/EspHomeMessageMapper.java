@@ -5,11 +5,14 @@ import io.github.arhor.esphome.client.async.model.EspHomeMessage;
 import io.github.arhor.esphome.client.proto.CameraImageRequest;
 import io.github.arhor.esphome.client.proto.DeviceInfoRequest;
 
-public class EspHomeCommandMapper {
+public class EspHomeMessageMapper {
 
-    public static MessageLite map(EspHomeMessage command) {
-        return switch (command) {
-            case EspHomeMessage.GetCameraImage(var single, var stream) -> CameraImageRequest.newBuilder()
+    public static MessageLite map(final EspHomeMessage message) {
+        return switch (message) {
+            case EspHomeMessage.GetCameraImage(
+                var single,
+                var stream
+            ) -> CameraImageRequest.newBuilder()
                 .setSingle(single)
                 .setStream(stream)
                 .build();

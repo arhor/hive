@@ -62,7 +62,7 @@ public class NettyEspHomeConnection implements EspHomeConnection {
 
         try {
             // Transform the domain command into a Protobuf DTO
-            MessageLite protobufDto = EspHomeCommandMapper.map(command);
+            MessageLite protobufDto = EspHomeMessageMapper.map(command);
 
             // Write to the Netty channel asynchronously
             channel.writeAndFlush(protobufDto).addListener((ChannelFuture future) -> {

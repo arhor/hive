@@ -9,21 +9,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Flow;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Live integration tests against a real ESPHome camera at 192.168.0.14:6053.
+ * Live integration tests against a real ESPHome device at 192.168.0.14:6053.
  * <p>
  * Run: ./gradlew :lib-esphome-client:test --tests "*.LiveCameraIntegrationTest" -i
  * <p>
@@ -35,17 +33,19 @@ class LiveCameraIntegrationTest {
     @BeforeAll
     static void configureLogging() throws IOException {
         try (InputStream cfg = LiveCameraIntegrationTest.class.getClassLoader()
-                .getResourceAsStream("logging-live.properties")) {
+            .getResourceAsStream("logging-live.properties")) {
             if (cfg != null) {
                 LogManager.getLogManager().readConfiguration(cfg);
             }
         }
     }
 
+    private Logger logger;
     private EspHomeClient client;
 
     @BeforeEach
     void setUp() {
+        logger = Logger.getLogger(getClass().getName());
         client = new NettyEspHomeClient(new EspHomeClient.Config(
             "192.168.0.14",
             6053,
@@ -63,61 +63,62 @@ class LiveCameraIntegrationTest {
     void connects() throws Exception {
         try (var conn = client.connect().get(15, TimeUnit.SECONDS)) {
             assertNotNull(conn);
-            System.out.println("Connected: " + conn);
+            logger.info("Connected: " + conn);
         }
     }
 
     @Test
-    void fetchesSingleCameraImage() throws Exception {
+    void fetchesDeviceInfo() throws Exception {
         try (var conn = client.connect().get(15, TimeUnit.SECONDS)) {
-            var imageFuture = new CompletableFuture<byte[]>();
-            var buffer = new ByteArrayOutputStream();
+            var deviceInfoFuture = new CompletableFuture<EspHomeEvent.DeviceInfo>();
 
             conn.observeEvents().subscribe(new Flow.Subscriber<>() {
-                private Flow.Subscription sub;
-
                 @Override
                 public void onSubscribe(Flow.Subscription subscription) {
-                    this.sub = subscription;
-                    subscription.request(Long.MAX_VALUE);
+                    subscription.request(1);
                 }
 
                 @Override
                 public void onNext(EspHomeEvent event) {
-                    if (event instanceof EspHomeEvent.CameraImage(var key, var data, var done)) {
-                        buffer.write(data, 0, data.length);
-                        System.out.printf("  chunk: key=%d size=%d done=%b%n", key, data.length, done);
-                        if (done) {
-                            sub.cancel();
-                            imageFuture.complete(buffer.toByteArray());
-                        }
+                    if (event instanceof EspHomeEvent.DeviceInfo info) {
+                        deviceInfoFuture.complete(info);
                     }
                 }
 
                 @Override
                 public void onError(Throwable t) {
-                    imageFuture.completeExceptionally(t);
+                    deviceInfoFuture.completeExceptionally(t);
                 }
 
                 @Override
-                public void onComplete() {
-                    if (!imageFuture.isDone()) {
-                        imageFuture.complete(buffer.toByteArray());
-                    }
-                }
+                public void onComplete() {}
             });
 
-            conn.send(new EspHomeMessage.GetCameraImage(true, false));
+            conn.send(new EspHomeMessage.GetDeviceInfo());
 
-            var jpeg = imageFuture.get(15, TimeUnit.SECONDS);
+            var info = deviceInfoFuture.get(10, TimeUnit.SECONDS);
 
-            System.out.println("=== Camera Image ===");
-            System.out.println("  total size: " + jpeg.length + " bytes");
-            assertTrue(jpeg.length > 0, "image must not be empty");
+            logger.info(
+                () -> """
+                    
+                    === Device Info ===
+                      name:            %s
+                      mac:             %s
+                      esphome version: %s
+                      model:           %s
+                      manufacturer:    %s
+                      friendly name:   %s""".formatted(
+                    info.name(),
+                    info.macAddress(),
+                    info.esphomeVersion(),
+                    info.model(),
+                    info.manufacturer(),
+                    info.friendlyName()
+                )
+            );
 
-            var out = Paths.get(System.getProperty("java.io.tmpdir"), "esphome-camera-snapshot.jpg");
-            Files.write(out, jpeg);
-            System.out.println("  saved to: " + out);
+            assertNotNull(info.name());
+            assertFalse(info.name().isBlank());
         }
     }
 }
